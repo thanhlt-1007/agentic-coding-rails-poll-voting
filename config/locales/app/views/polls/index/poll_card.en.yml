@@ -8,3 +8,4 @@ en:
         created_at: "Created %{time} ago"
         expired: "Expired"
         active: "Active"
+        answered: "Answered"

@@ -1,3 +1,7 @@
+<%
+  has_answered = current_user.user_answers.exists?(poll_id: poll.id)
+%>
+
 <%= link_to poll_path(poll), class: "block bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow p-6" do %>
   <h3 class="text-lg font-semibold text-gray-900 mb-2"><%= poll.question %></h3>
   
@@ -21,17 +25,21 @@
     <%= t('.created_at', time: time_ago_in_words(poll.created_at)) %>
   </div>
 
-  <% if poll.deadline < Time.current %>
-    <div class="mt-2">
+  <div class="mt-2 flex gap-2">
+    <% if poll.deadline < Time.current %>
       <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800">
         <%= t('.expired') %>
       </span>
-    </div>
-  <% else %>
-    <div class="mt-2">
+    <% else %>
       <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
         <%= t('.active') %>
       </span>
-    </div>
-  <% end %>
+    <% end %>
+
+    <% if has_answered %>
+      <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+        <%= t('.answered') %>
+      </span>
+    <% end %>
+  </div>
 <% end %>
