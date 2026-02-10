@@ -1,50 +1,56 @@
 <!--
 SYNC IMPACT REPORT - Constitution Update
 ========================================
-Version Change: 1.11.0 → 1.12.0
-Type: MINOR (Gem i18n management principle)
+Version Change: 1.12.0 → 1.13.0
+Type: MINOR (Application model i18n management requirement)
 
 Modified Sections:
-  - Added new principle: VII. Gem Internationalization (i18n) Management
+  - Updated Principle VII: Gem Internationalization (i18n) Management
+  - Added new section: Application Model i18n Management
 
 Added Requirements:
-  - When installing gems with i18n files, MUST copy locale files from GitHub to config/locales/gems/[gem_name]/
-  - Organize gems by directory: config/locales/gems/rails/, config/locales/gems/devise/, etc.
-  - Use official source: GitHub repository at tagged version matching installed gem
-  - Download ALL locale files for the gem (en.yml minimum, additional languages optional)
-  - Rails core components use separate files: actionview.en.yml, activemodel.en.yml, activerecord.en.yml, activesupport.en.yml
-  - Update .gitignore to track locale files (NOT ignored)
-  - Document process in README.md for gem upgrades
+  - When creating/updating models in app/models/xxx.rb, MUST create/update i18n file at config/locales/app/models/xxx.en.yml
+  - Model locale files include: model name (singular/plural), all attributes with human-readable labels
+  - Organize by model: config/locales/app/models/user.en.yml, config/locales/app/models/poll.en.yml, etc.
+  - Use activerecord.models and activerecord.attributes namespaces per Rails i18n conventions
+  - Include database columns AND virtual attributes (password, password_confirmation, etc.)
+  - Update locale file when adding/removing/renaming model attributes
+  - Commit locale files alongside model changes (same PR/commit)
+
+Updated Locale File Organization:
+  - Added config/locales/app/ directory for application-specific translations
+  - Separated app-specific (config/locales/app/) from gem-specific (config/locales/gems/)
+  - Maintained config/locales/en.yml for global application translations
 
 Benefits Documented:
-  - Version control over i18n files (track changes, review diffs)
-  - Customization capability (modify translations without monkey-patching)
-  - Offline development (no runtime dependency on gem load paths)
-  - Explicit visibility (know exactly what translations are available)
-  - Consistency across environments (production uses exact translations as dev/test)
+  - Centralized model attribute translations (used in forms, labels, error messages)
+  - Human-readable attribute names in validation errors
+  - Consistent terminology across views and forms
+  - Easy customization without modifying view code
+  - Multi-language support preparation (add es.yml, fr.yml later)
 
 Rationale:
-  Rails 8.1.2 i18n setup revealed that gems include locale files in their load paths, but these
-  aren't tracked in version control or easily customizable. Copying from GitHub to config/locales/gems/
-  ensures we have explicit control over all user-facing text. This supports i18n configuration
-  with recursive locale loading (config.i18n.load_path += Dir[Rails.root.join('config', 'locales', '**', '*.{rb,yml}')]).
-  Pattern applies to Rails core (actionview, activemodel, activerecord, activesupport) and third-party
-  gems (Devise, Pundit, etc.). Directory organization (config/locales/gems/rails/, config/locales/gems/devise/)
-  keeps locale files separate from application-specific translations.
+  User model creation revealed need for standardized model i18n management. Rails i18n supports
+  model/attribute name translation via activerecord.models and activerecord.attributes, but requires
+  explicit locale files. Creating config/locales/app/models/xxx.en.yml per model ensures all
+  attribute names are translatable and maintainable. Separating app-specific (app/) from gem-specific
+  (gems/) locale files improves organization and prevents mixing concerns. Pattern aligns with
+  Rails i18n best practices (User.model_name.human, User.human_attribute_name(:email)) and
+  supports future multi-language requirements.
 
 Template Consistency Status:
   ✅ plan-template.md - No changes required (i18n management not in planning phase)
   ✅ spec-template.md - No changes required (acceptance criteria unchanged)
   ✅ tasks-template.md - No changes required (task patterns unchanged)
-  ⚠️  README.md - Should add section on gem i18n management for future gem installations
+  ⚠️  README.md - Should document model i18n file management process
 
 Follow-up TODOs:
-  - Add README.md section explaining gem i18n management process
-  - Document how to update locale files when upgrading gems
+  - Add README.md section explaining model i18n management process
+  - Document how to update locale files when modifying models
 
-Previous Update (v1.11.0):
-  Added Helper Spec Organization Pattern mandating one spec file per helper method
-  for improved maintainability and single responsibility at file level.
+Previous Update (v1.12.0):
+  Added Principle VII: Gem Internationalization Management with requirements for copying
+  gem locale files from GitHub to config/locales/gems/ for version control and customization.
 -->
 
 # Rails Poll Voting Constitution
@@ -445,6 +451,141 @@ config/locales/
 
 **Rationale**: Gems include locale files in their load paths, but these aren't tracked in version control or easily customizable. Copying from GitHub to `config/locales/gems/` ensures explicit control over all user-facing text and supports i18n best practices. This pattern applies to Rails core components (actionview, activemodel, activerecord, activesupport) and third-party gems (Devise, Pundit, etc.). Directory organization keeps gem locale files separate from application-specific translations (`config/locales/en.yml`), improving maintainability and reducing merge conflicts during gem upgrades.
 
+### VIII. Application Model Internationalization (i18n) Management
+
+When creating or updating models in `app/models/`, corresponding i18n locale files MUST be created/updated in `config/locales/app/models/` to provide human-readable model and attribute names.
+
+**Requirements**:
+- **Directory organization**: `config/locales/app/models/[model_name].en.yml`
+  - Example: User model → `config/locales/app/models/user.en.yml`
+  - Example: Poll model → `config/locales/app/models/poll.en.yml`
+  - Example: Vote model → `config/locales/app/models/vote.en.yml`
+- **Model names**: Include singular and plural forms under `activerecord.models`
+- **Attributes**: Include ALL attributes under `activerecord.attributes.[model_name]`
+  - Database columns (id, email, created_at, updated_at, etc.)
+  - Virtual attributes (password, password_confirmation, current_password, remember_me)
+  - Association names (author, comments, votes, etc.)
+- **Namespace convention**: Follow Rails i18n standards
+  ```yaml
+  en:
+    activerecord:
+      models:
+        user:
+          one: User
+          other: Users
+      attributes:
+        user:
+          email: Email
+          password: Password
+  ```
+- **Synchronization**: Update locale file when adding/removing/renaming model attributes
+- **Commit together**: Model changes and locale file updates in same PR/commit
+- **Version control**: Locale files MUST be committed to git
+
+**Implementation Process**:
+```bash
+# When creating User model
+rails generate model User email:string
+
+# Immediately create locale file
+mkdir -p config/locales/app/models
+touch config/locales/app/models/user.en.yml
+
+# Add translations for model name and all attributes
+```
+
+**Model Locale File Template**:
+```yaml
+en:
+  activerecord:
+    models:
+      [model_name]:
+        one: [Singular Name]
+        other: [Plural Name]
+    
+    attributes:
+      [model_name]:
+        # Database columns
+        id: ID
+        created_at: Created at
+        updated_at: Updated at
+        
+        # Model-specific attributes
+        [attribute_1]: [Human-readable label]
+        [attribute_2]: [Human-readable label]
+        
+        # Virtual attributes (if applicable)
+        # password: Password
+        # password_confirmation: Password confirmation
+```
+
+**Example - User Model**:
+```yaml
+en:
+  activerecord:
+    models:
+      user:
+        one: User
+        other: Users
+    
+    attributes:
+      user:
+        email: Email
+        password: Password
+        password_confirmation: Password confirmation
+        current_password: Current password
+        remember_me: Remember me
+        created_at: Created at
+        updated_at: Updated at
+```
+
+**Usage in Application**:
+```ruby
+# In views/forms
+User.model_name.human           # => "User"
+User.model_name.human.pluralize # => "Users"
+User.human_attribute_name(:email) # => "Email"
+
+# In error messages (automatically used by Rails)
+# "Email can't be blank" instead of "email can't be blank"
+```
+
+**Locale File Organization**:
+```
+config/locales/
+├── en.yml                          # Global application translations
+├── app/                            # Application-specific translations
+│   └── models/                     # Model translations
+│       ├── user.en.yml
+│       ├── poll.en.yml
+│       └── vote.en.yml
+└── gems/                           # Gem locale files
+    ├── rails/                      # Rails core
+    │   ├── actionview.en.yml
+    │   ├── activemodel.en.yml
+    │   ├── activerecord.en.yml
+    │   └── activesupport.en.yml
+    └── devise/                     # Third-party gems
+        └── en.yml
+```
+
+**Benefits**:
+- **Centralized translations**: All model attribute labels in one place per model
+- **Human-readable errors**: Validation errors use proper capitalization and formatting
+- **Consistent terminology**: Same attribute labels across forms, tables, and error messages
+- **Easy customization**: Change labels without modifying view/form code
+- **Multi-language ready**: Add es.yml, fr.yml files later for internationalization
+- **Rails integration**: Automatic usage in form labels, error messages, and model helpers
+- **Maintainability**: Clear mapping between models and their translations
+
+**Maintenance Workflow**:
+1. Add new attribute to model (migration + model file)
+2. Update `config/locales/app/models/[model].en.yml` with new attribute translation
+3. Commit model changes and locale file together
+4. Review: ensure all attributes have human-readable labels
+
+**Rationale**: Rails i18n supports model and attribute name translation via `activerecord.models` and `activerecord.attributes`, but requires explicit locale files. Creating `config/locales/app/models/xxx.en.yml` per model ensures all attribute names are translatable, improving user-facing error messages and form labels. Separating application-specific (`app/`) from gem-specific (`gems/`) locale files improves organization and prevents mixing concerns. This pattern aligns with Rails i18n best practices and supports future multi-language requirements without code changes.
+
 ## Technology Stack
 
 **Core**:
@@ -570,11 +711,37 @@ This constitution supersedes all ad-hoc practices. When in doubt, constitution r
 - Template commands reference constitution for validation gates
 - Onboarding checklist includes constitution review
 
-**Current Version**: 1.12.0 | **Ratified**: 2026-02-10 | **Last Amended**: 2026-02-11
+**Current Version**: 1.13.0 | **Ratified**: 2026-02-10 | **Last Amended**: 2026-02-11
 
 ---
 
 ## Version History
+
+### Version 1.13.0 - 2026-02-11
+**Type**: MINOR (Application model i18n management requirement)
+
+**Changes**:
+- Added new principle: VIII. Application Model Internationalization (i18n) Management
+- Established requirements for model locale files:
+  - Create/update config/locales/app/models/[model_name].en.yml when creating/updating models
+  - Include model names (singular/plural) under activerecord.models namespace
+  - Include ALL attributes under activerecord.attributes.[model_name] (database columns + virtual attributes)
+  - Follow Rails i18n namespace conventions (activerecord.models, activerecord.attributes)
+  - Update locale file when adding/removing/renaming attributes
+  - Commit locale files alongside model changes (same PR/commit)
+- Added implementation process with model locale file template
+- Added example for User model showing database columns and virtual attributes
+- Added usage examples: User.model_name.human, User.human_attribute_name(:email)
+- Updated locale file organization structure:
+  - Added config/locales/app/models/ for application model translations
+  - Separated app-specific (app/) from gem-specific (gems/) locale directories
+  - Maintained config/locales/en.yml for global application translations
+- Added maintenance workflow (add attribute → update locale → commit together)
+- Listed benefits: centralized translations, human-readable errors, consistent terminology, easy customization, multi-language ready, Rails integration, maintainability
+
+**Rationale**: User model creation revealed need for standardized model i18n management. Rails i18n supports model/attribute name translation via activerecord.models and activerecord.attributes, but requires explicit locale files. Creating config/locales/app/models/xxx.en.yml per model ensures all attribute names are translatable, improving user-facing error messages and form labels. Separating application-specific (app/) from gem-specific (gems/) locale files improves organization and prevents mixing concerns. Pattern aligns with Rails i18n best practices (User.model_name.human, User.human_attribute_name(:email)) and supports future multi-language requirements.
+
+---
 
 ### Version 1.12.0 - 2026-02-11
 **Type**: MINOR (Gem i18n management principle)
