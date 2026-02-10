@@ -1,0 +1,5 @@
+en:
+  polls:
+    show:
+      header:
+        deadline: "Deadline:"

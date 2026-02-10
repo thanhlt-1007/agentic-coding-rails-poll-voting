@@ -1,0 +1,7 @@
+en:
+  polls:
+    show:
+      voting_form:
+        answer_options_title: "Answer Options:"
+        back_to_polls: "← Back to Polls"
+        submit_button: "Submit Answer"

@@ -1,6 +1,6 @@
 <%= form_with url: poll_user_answers_path(poll), method: :post, local: true, scope: :user_answer do |f| %>
   <div class="mt-6">
-    <h2 class="text-lg font-semibold mb-3">Answer Options:</h2>
+    <h2 class="text-lg font-semibold mb-3"><%= t('.answer_options_title') %></h2>
     <div class="space-y-3">
       <% poll.answers.order(:position).each do |answer| %>
         <%= render 'polls/show/answer_option', 
@@ -14,9 +14,9 @@
   </div>
 
   <div class="mt-6 flex items-center justify-between">
-    <%= link_to "← Back to Polls", polls_path, class: "text-gray-600 hover:text-gray-900 font-medium" %>
+    <%= link_to t('.back_to_polls'), polls_path, class: "text-gray-600 hover:text-gray-900 font-medium" %>
     
-    <%= f.submit "Submit Answer", 
+    <%= f.submit t('.submit_button'), 
         disabled: (is_expired || has_answered),
         class: "px-6 py-3 rounded-lg font-semibold transition-colors #{is_expired || has_answered ? 'bg-gray-300 text-gray-500 cursor-not-allowed' : 'bg-blue-600 text-white hover:bg-blue-700 cursor-pointer'}" %>
   </div>

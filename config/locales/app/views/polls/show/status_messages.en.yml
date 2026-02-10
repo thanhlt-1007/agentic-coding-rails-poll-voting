@@ -1,0 +1,6 @@
+en:
+  polls:
+    show:
+      status_messages:
+        expired_message: "This poll has expired and is no longer accepting votes."
+        already_answered_message: "You have already answered this poll."
