@@ -1,4 +1,4 @@
-<%= form_with url: poll_user_answers_path(poll), method: :post, local: true, scope: :user_answer do |f| %>
+<%= form_with url: poll_user_answers_path(poll), method: :post, local: true, scope: :user_answer, data: { controller: (is_expired || has_answered ? "" : "voting-form") } do |f| %>
   <div class="mt-6">
     <h2 class="text-lg font-semibold mb-3"><%= t('.answer_options_title') %></h2>
     <div class="space-y-3">
@@ -18,6 +18,7 @@
     
     <%= f.submit t('.submit_button'), 
         disabled: (is_expired || has_answered),
-        class: "px-6 py-3 rounded-lg font-semibold transition-colors #{is_expired || has_answered ? 'bg-gray-300 text-gray-500 cursor-not-allowed' : 'bg-blue-600 text-white hover:bg-blue-700 cursor-pointer'}" %>
+        data: (is_expired || has_answered ? {} : { voting_form_target: "submit" }),
+        class: "px-6 py-3 rounded-lg font-semibold transition-colors #{is_expired || has_answered ? 'bg-gray-300 text-gray-500 cursor-not-allowed' : 'bg-blue-600 text-white hover:bg-blue-700 cursor-pointer disabled:bg-gray-300 disabled:text-gray-500 disabled:cursor-not-allowed'}" %>
   </div>
 <% end %>
