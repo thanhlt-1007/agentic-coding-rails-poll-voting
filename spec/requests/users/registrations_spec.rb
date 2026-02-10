@@ -218,7 +218,9 @@ RSpec.describe 'User Registrations', type: :request do
     let(:user) { create(:user) }
 
     context 'when user is signed in' do
-      before { sign_in user }
+      before do
+        post user_session_path, params: { user: { email: user.email, password: user.password } }
+      end
 
       it 'returns success response' do
         get edit_user_registration_path
