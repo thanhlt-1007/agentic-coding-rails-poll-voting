@@ -1,32 +1,32 @@
 <!--
 SYNC IMPACT REPORT - Constitution Update
 ========================================
-Version Change: 1.5.0 → 1.6.0
-Type: PATCH (Documentation clarity - production environment)
+Version Change: 1.6.0 → 1.7.0
+Type: MINOR (Bilingual specification workflow)
 
 Modified Principles: None
-Modified Sections: None (documentation update only)
+Modified Sections: Development Standards > Documentation Requirements (bilingual spec requirement)
 
 Rationale: 
-  DATABASE_URL environment variable was documented but lacked critical production-only
-  context, causing potential confusion for new developers. Developers might set
-  DATABASE_URL in local .env files, which overrides individual database variables
-  and breaks local development. This update adds explicit warnings in .env.example
-  and comprehensive production environment documentation in README.md to prevent
-  misconfiguration, fulfilling constitutional documentation accuracy requirements.
+  Bilingual documentation (English + Vietnamese) improves accessibility for Vietnamese-speaking
+  team members and stakeholders while maintaining English as the international standard.
+  English specification (spec.en.md) serves as the source of truth, then translated to
+  Vietnamese (spec.vi.md) to ensure consistency. This workflow ensures all stakeholders can
+  review and understand feature specifications in their preferred language.
 
 Template Consistency Status:
+  ⚠️  spec-template.md - Needs update to generate both spec.en.md and spec.vi.md
+  ⚠️  speckit.specify.prompt.md - Needs update to enforce bilingual workflow
   ✅ plan-template.md - No changes required
-  ✅ spec-template.md - No changes required
   ✅ tasks-template.md - No changes required
-  ✅ README.md - Updated with production environment section and DATABASE_URL warnings
-  ✅ .env.example - Updated with PRODUCTION ONLY warning for DATABASE_URL
-  ✅ config/database.yml - Already complete (no changes)
+  ✅ README.md - May need bilingual version (future consideration)
+  ✅ .env.example - No changes required
 
 Follow-up TODOs:
-  - Configure render.yaml for service definitions
-  - Set up environment variables in Render dashboard
-  - Configure database connection pooling for Render PostgreSQL
+  - Update spec-template.md to include bilingual instructions
+  - Update speckit.specify command to generate both spec.en.md and spec.vi.md
+  - Translate existing spec.md to spec.en.md and spec.vi.md
+  - Consider bilingual README.md for future releases
 -->
 
 # Rails Poll Voting Constitution
@@ -192,6 +192,12 @@ Start with the simplest solution that works. Complexity requires explicit justif
   - When setup steps change (database, Redis, background jobs)
   - When new dependencies require local installation
   - All updates MUST maintain accuracy of Quick Start section
+- Feature specifications MUST be bilingual (NON-NEGOTIABLE):
+  - Generate spec.en.md FIRST in English (source of truth)
+  - Translate spec.en.md to spec.vi.md in Vietnamese
+  - Both files MUST be kept in sync when changes occur
+  - English version takes precedence in case of translation discrepancies
+  - Workflow: English specification → Vietnamese translation → validate consistency
 - README updated for new user-facing features
 - Inline comments for non-obvious business logic
 - API documentation via RDoc for public methods
@@ -222,11 +228,26 @@ This constitution supersedes all ad-hoc practices. When in doubt, constitution r
 - Template commands reference constitution for validation gates
 - Onboarding checklist includes constitution review
 
-**Current Version**: 1.6.0 | **Ratified**: 2026-02-10 | **Last Amended**: 2026-02-10
+**Current Version**: 1.7.0 | **Ratified**: 2026-02-10 | **Last Amended**: 2026-02-10
 
 ---
 
 ## Version History
+
+### Version 1.7.0 - 2026-02-10
+**Type**: MINOR (Bilingual specification workflow)
+
+**Changes**:
+- Added bilingual specification requirement to Documentation Requirements section
+- Feature specifications MUST be created in both English (spec.en.md) and Vietnamese (spec.vi.md)
+- English version (spec.en.md) is the source of truth, generated first
+- Vietnamese version (spec.vi.md) is translated from English
+- Both files must be kept in sync when changes occur
+- English takes precedence in case of translation discrepancies
+
+**Rationale**: Bilingual documentation improves accessibility for Vietnamese-speaking team members and stakeholders while maintaining English as the international standard. This ensures all stakeholders can review and understand feature specifications in their preferred language. English-first workflow prevents translation drift and establishes clear source of truth. This supports inclusive collaboration while maintaining professional documentation standards required for international deployment.
+
+---
 
 ### Version 1.6.0 - 2026-02-10
 **Type**: PATCH (Documentation clarity - production environment)
