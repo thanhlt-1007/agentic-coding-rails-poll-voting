@@ -1,44 +1,46 @@
 <!--
 SYNC IMPACT REPORT - Constitution Update
 ========================================
-Version Change: 1.8.0 → 1.9.0
-Type: MINOR (Error handling and validation UX principle)
+Version Change: 1.9.0 → 1.10.0
+Type: MINOR (RSpec testing framework standardization)
 
-Modified Principles: None
-Added Principles:
-  - VI. User-Centric Error Handling & Validation UX
+Modified Principles:
+  - II. Test-Driven Development - Added RSpec-specific requirements and generator configuration
 
 Added Requirements:
-  - Validation error display requirements (inline field errors, visual indicators, notifications)
-  - Tailwind Notifications pattern for form errors (fixed top-right position)
-  - Inline field error messages directly below invalid inputs
-  - Red border and icon highlighting for invalid fields
-  - Error text color constraints for Tailwind v4 compatibility
-  - Consistent error patterns across all forms
-  - Progressive enhancement requirement (errors work without JavaScript)
-  - Tailwind v4 color utility verification requirement
+  - RSpec as mandatory testing framework (replacing Minitest)
+  - Automatic RSpec spec generation when creating/updating code
+  - FactoryBot for test data fixtures
+  - Shoulda Matchers for Rails validation testing
+  - Database Cleaner for clean test state
+  - Rails generator configuration for automatic spec creation
+  - Comprehensive test coverage requirements (model, request, system specs)
+  - Test organization standards (spec/ directory structure)
 
 Rationale:
-  Recent user signup form improvements demonstrated need for standardized error handling
-  across all application forms. Inconsistent error feedback creates poor UX and increases
-  user frustration. This principle codifies the pattern: (1) top-right notification for
-  global error summary, (2) inline field errors for actionable feedback, (3) visual
-  indicators (red borders/icons) for immediate recognition. The pattern balances visibility
-  with usability, following Tailwind UI best practices. Tailwind v4's on-demand class
-  generation requires explicit color utility verification to prevent black-rendering bugs
-  (e.g., text-red-600 not generated, falls back to currentColor/black).
+  RSpec provides superior BDD-style testing with better readability and more expressive
+  matchers than Minitest. The "describe/context/it" structure creates self-documenting
+  tests that serve as executable specifications. FactoryBot reduces test data boilerplate,
+  Shoulda Matchers simplify Rails validation tests, and Database Cleaner ensures test
+  isolation. Generator configuration automates spec creation, ensuring tests are written
+  alongside code (not as an afterthought). This change codifies the testing infrastructure
+  already implemented in the project.
 
 Template Consistency Status:
-  ✅ plan-template.md - No changes required (form error handling not in planning phase)
-  ✅ spec-template.md - Will add validation UX requirements to UI section template
-  ✅ tasks-template.md - Will add error handling tasks to form implementation checklist
-  ⚠️  README.md - Consider adding UX standards section referencing constitution
-  ✅ .env.example - No changes required
+  ✅ plan-template.md - No changes required (testing framework not in planning phase)
+  ✅ spec-template.md - Will add RSpec test specification requirements
+  ✅ tasks-template.md - Will add RSpec test task template
+  ✅ README.md - Already updated with RSpec testing guide
+  ✅ config/application.rb - Already configured for RSpec generators
 
 Follow-up TODOs:
-  - TODO(spec-template): Add "Validation & Error Handling" subsection to UI Requirements
-  - TODO(tasks-template): Add "T0XX: Implement form validation with error feedback" task pattern
-  - TODO(README): Consider adding "UX Standards" section linking to constitution principle VI
+  - TODO(spec-template): Add RSpec test coverage requirements to acceptance criteria
+  - TODO(tasks-template): Add "T0XX: Write RSpec tests for [feature]" task pattern
+  - TODO(commands): Consider adding rspec command template for common test scenarios
+
+Previous Update (v1.9.0):
+  Added Principle VI for User-Centric Error Handling & Validation UX with Tailwind
+  Notifications pattern, inline field errors, and Tailwind v4 color constraints.
 -->
 
 # Rails Poll Voting Constitution
@@ -66,13 +68,128 @@ TDD is mandatory for all feature work. Red-Green-Refactor cycle strictly enforce
 4. Implement minimum code to pass
 5. Refactor while keeping tests green
 
-**Test coverage requirements**:
-- System tests for critical user journeys (voting flows, poll creation)
-- Request tests for all controller actions
-- Model tests for validations, associations, business logic
-- Minimum 90% coverage on models and services
+**Testing Framework: RSpec**
 
-**Rationale**: Tests are executable specifications. Writing them first ensures we build what's needed, not what's easy. Early validation prevents costly rewrites.
+This project uses **RSpec** as the primary testing framework. All tests MUST be written in RSpec format:
+
+**Test Types and Coverage Requirements**:
+- **Model specs** (`spec/models/`): Validations, associations, scopes, business logic methods
+  - MUST test all validations (presence, uniqueness, format, custom)
+  - MUST test all associations (belongs_to, has_many, has_one)
+  - MUST test public methods and class methods
+  - Use Shoulda Matchers for Rails validations (one-liner syntax)
+- **Request specs** (`spec/requests/`): Controller actions, HTTP responses, authentication/authorization
+  - MUST test all controller actions (GET, POST, PATCH, DELETE)
+  - MUST test success and failure scenarios
+  - MUST test authentication and authorization logic
+  - MUST verify HTTP status codes and redirects
+  - MUST test flash messages and error responses
+- **System specs** (`spec/system/`): End-to-end user journeys, critical flows
+  - MUST test critical user paths (sign-up, login, core features)
+  - Use Capybara for browser simulation
+  - Test JavaScript interactions when present
+
+**Automatic Spec Generation**:
+
+Rails generators MUST be configured to automatically create RSpec specs:
+- `rails generate model` → creates `spec/models/[model]_spec.rb` + `spec/factories/[model].rb`
+- `rails generate controller` → creates `spec/requests/[controller]_spec.rb`
+- `rails generate scaffold` → creates model, request, and factory specs
+
+Configuration in `config/application.rb`:
+```ruby
+config.generators do |g|
+  g.test_framework :rspec,
+    fixtures: false,
+    view_specs: false,
+    helper_specs: false,
+    routing_specs: false,
+    request_specs: true,
+    controller_specs: false
+  g.fixture_replacement :factory_bot, dir: 'spec/factories'
+end
+```
+
+**When Creating/Updating Code**:
+
+1. **New Models**: Write model spec FIRST before creating migration
+   ```bash
+   # Create spec file manually or via generator
+   rails generate model Poll title:string description:text
+   # This creates: spec/models/poll_spec.rb + spec/factories/polls.rb
+   ```
+
+2. **New Controllers/Features**: Write request spec FIRST before implementing action
+   ```bash
+   # Create request spec manually or via generator
+   rails generate controller Polls index show new create
+   # This creates: spec/requests/polls_spec.rb
+   ```
+
+3. **Updating Existing Code**: Update/add specs BEFORE changing implementation
+   - If adding validation: Add `it { should validate_presence_of(:field) }` first
+   - If adding method: Add `describe '#method_name'` with test cases first
+   - If changing behavior: Update specs to reflect new expected behavior first
+
+4. **Every Commit MUST Include**:
+   - Code changes AND corresponding spec updates
+   - All specs passing (`bundle exec rspec`)
+   - No decrease in test coverage
+
+**Test Data Management**:
+- **FactoryBot** for creating test objects (replaces fixtures)
+- **Faker** for realistic fake data (emails, names, text)
+- Factories MUST be defined in `spec/factories/` directory
+- Use `build(:model)` for in-memory objects (faster)
+- Use `create(:model)` only when database persistence needed
+- Use traits for variations: `create(:user, :admin)` or `create(:poll, :expired)`
+
+**Test Helpers and Support**:
+- **Shoulda Matchers**: One-liner matchers for Rails validations
+  ```ruby
+  it { should validate_presence_of(:email) }
+  it { should have_many(:polls) }
+  ```
+- **Database Cleaner**: Clean database state between tests
+- **Devise Test Helpers**: `sign_in user` for authentication in request/system specs
+
+**Minimum Coverage Requirements**:
+- Models: 95% coverage (validations, associations, methods)
+- Controllers/Requests: 90% coverage (all actions, edge cases)
+- System: Critical user journeys only (authentication, core features)
+- Overall project: minimum 90% coverage
+
+**Running Tests**:
+```bash
+# Run all specs
+bundle exec rspec
+
+# Run specific spec file
+bundle exec rspec spec/models/user_spec.rb
+
+# Run specific test by line number
+bundle exec rspec spec/models/user_spec.rb:25
+
+# Run with documentation format
+bundle exec rspec --format documentation
+```
+
+**Test Organization** (`spec/` directory):
+```
+spec/
+├── factories/          # FactoryBot factories for test data
+├── models/            # Model unit tests
+├── requests/          # Request specs (controller actions, APIs)
+├── system/            # End-to-end browser tests (Capybara)
+├── support/           # Shared test configuration
+│   ├── database_cleaner.rb
+│   ├── factory_bot.rb
+│   └── shoulda_matchers.rb
+├── rails_helper.rb    # Rails-specific RSpec configuration
+└── spec_helper.rb     # General RSpec configuration
+```
+
+**Rationale**: Tests are executable specifications. Writing them first ensures we build what's needed, not what's easy. Early validation prevents costly rewrites. RSpec's BDD-style syntax creates self-documenting tests that serve as living documentation. Automatic spec generation via Rails generators ensures tests are written alongside code, not as an afterthought. FactoryBot and Shoulda Matchers reduce boilerplate and improve test readability.
 
 ### III. SSR Performance & User Experience
 
@@ -197,11 +314,14 @@ All forms and user inputs MUST provide clear, actionable error feedback followin
 - Importmap for JavaScript dependencies (no build step unless unavoidable)
 
 **Testing**:
-- RSpec (system, request, model specs)
-- FactoryBot for test data
-- Faker for realistic fake data
-- Capybara for system tests
-- SimpleCov for coverage tracking
+- **RSpec** (system, request, model specs) - BDD testing framework
+- **FactoryBot** for test data generation (replaces fixtures)
+- **Faker** for realistic fake data generation
+- **Shoulda Matchers** for Rails validation testing (one-liner matchers)
+- **Database Cleaner** for clean database state between tests
+- **Capybara** for system/browser testing
+- **Selenium WebDriver** for JavaScript testing
+- **SimpleCov** for coverage tracking (minimum 90% required)
 
 **Development**:
 - Rubocop with Rails cops (style enforcement)
@@ -307,7 +427,26 @@ This constitution supersedes all ad-hoc practices. When in doubt, constitution r
 **Current Version**: 1.9.0 | **Ratified**: 2026-02-10 | **Last Amended**: 2026-02-10
 
 ---
+10.0 - 2026-02-10
+**Type**: MINOR (RSpec testing framework standardization)
 
+**Changes**:
+- Expanded Principle II (Test-Driven Development) with comprehensive RSpec requirements
+- Added Testing Framework section specifying RSpec as mandatory
+- Added Test Types and Coverage Requirements (model 95%, request 90%, system critical paths)
+- Added Automatic Spec Generation requirements via Rails generators
+- Added "When Creating/Updating Code" workflow mandating specs alongside code
+- Added Test Data Management section (FactoryBot, Faker, traits)
+- Added Test Helpers and Support section (Shoulda Matchers, Database Cleaner, Devise helpers)
+- Added Running Tests commands and Test Organization structure
+- Updated Technology Stack > Testing: Added Shoulda Matchers, Database Cleaner, Selenium WebDriver
+- Made "Every commit MUST include specs" explicit requirement
+
+**Rationale**: RSpec provides superior BDD-style testing with self-documenting "describe/context/it" structure. FactoryBot reduces test data boilerplate compared to fixtures. Shoulda Matchers simplify Rails validation tests. Automatic spec generation via Rails generators ensures tests are written alongside code, not as afterthought. This codifies existing testing infrastructure and prevents regression to Minitest or manual test creation.
+
+---
+
+### Version 1.
 ## Version History
 
 ### Version 1.9.0 - 2026-02-10
