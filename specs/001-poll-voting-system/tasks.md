@@ -89,27 +89,27 @@
 
 ### Tests for User Story 2 (TDD - Write First, Ensure FAIL)
 
-- [ ] T036 [P] [US2] Create model test `test/models/vote_test.rb` with test cases: should_prevent_duplicate_votes_from_same_participant, should_not_allow_voting_on_closed_poll, should_increment_counter_caches
-- [ ] T037 [P] [US2] Create controller test `test/controllers/votes_controller_test.rb` with test cases: should_create_vote_with_valid_params, should_prevent_duplicate_vote, should_redirect_after_vote, should_show_error_for_closed_poll
-- [ ] T038 [P] [US2] Create system test `test/system/vote_on_poll_test.rb` with scenarios: voting_on_active_poll, cannot_vote_twice_on_same_poll, shows_closed_message_after_deadline
-- [ ] T039 [US2] Run tests to verify all FAIL (red phase), commit failing tests
+- [X] T036 [P] [US2] Create model test `test/models/vote_test.rb` with test cases: should_prevent_duplicate_votes_from_same_participant, should_not_allow_voting_on_closed_poll, should_increment_counter_caches
+- [X] T037 [P] [US2] Create controller test `test/controllers/votes_controller_test.rb` with test cases: should_create_vote_with_valid_params, should_prevent_duplicate_vote, should_redirect_after_vote, should_show_error_for_closed_poll
+- [X] T038 [P] [US2] Create system test `test/system/vote_on_poll_test.rb` with scenarios: voting_on_active_poll, cannot_vote_twice_on_same_poll, shows_closed_message_after_deadline
+- [X] T039 [US2] Run tests to verify all FAIL (red phase), commit failing tests
 
 ### Implementation for User Story 2
 
-- [ ] T040 [P] [US2] Generate `VotesController` with action: create in `app/controllers/votes_controller.rb`
-- [ ] T041 [US2] Implement `before_action :set_poll` in VotesController to find poll by access_code from params
-- [ ] T042 [US2] Implement `before_action :check_duplicate_vote` in VotesController to prevent duplicate voting using participant fingerprint
-- [ ] T043 [US2] Implement `VotesController#create` to build vote, set participant_fingerprint, ip_hash, session_token, save vote, broadcast Turbo Stream, redirect with notice or show error
-- [ ] T044 [US2] Add private method `current_participant_fingerprint` in VotesController using `Digest::SHA256.hexdigest("#{request.remote_ip}-#{request.user_agent}-#{session.id}")`
-- [ ] T045 [US2] Implement `before_validation :set_voted_at, :generate_fingerprint` in Vote model
-- [ ] T046 [US2] Add custom validation `poll_must_be_active` and `deadline_not_passed` in Vote model
-- [ ] T047 [US2] Update `app/views/polls/show.html.erb` to check if `@participant_voted`, show "You have already voted" message or display vote form
-- [ ] T048 [P] [US2] Create vote form partial `app/views/votes/_form.html.erb` with radio buttons for choices, "Submit Vote" button wrapped in turbo_frame_tag
-- [ ] T049 [P] [US2] Create vote confirmation partial `app/views/votes/_confirmation.html.erb` with "Thank you for voting!" message
-- [ ] T050 [US2] Add counter_cache configuration to Vote associations: `belongs_to :poll, counter_cache: :total_votes` and `belongs_to :choice, counter_cache: :votes_count`
-- [ ] T051 [US2] Update poll show view to display participant's previous choice if already voted
-- [ ] T052 [US2] Run all tests for US2, verify they PASS (green phase)
-- [ ] T053 [US2] Refactor VotesController to extract participant identification to concern `app/controllers/concerns/participant_identification.rb`
+- [X] T040 [P] [US2] Generate `VotesController` with action: create in `app/controllers/votes_controller.rb`
+- [X] T041 [US2] Implement `before_action :set_poll` in VotesController to find poll by access_code from params
+- [X] T042 [US2] Implement `before_action :check_duplicate_vote` in VotesController to prevent duplicate voting using participant fingerprint
+- [X] T043 [US2] Implement `VotesController#create` to build vote, set participant_fingerprint, ip_hash, session_token, save vote, broadcast Turbo Stream, redirect with notice or show error
+- [X] T044 [US2] Add private method `current_participant_fingerprint` in VotesController using `Digest::SHA256.hexdigest("#{request.remote_ip}-#{request.user_agent}-#{session.id}")`
+- [X] T045 [US2] Implement `before_validation :set_voted_at, :generate_fingerprint` in Vote model
+- [X] T046 [US2] Add custom validation `poll_must_be_active` and `deadline_not_passed` in Vote model
+- [X] T047 [US2] Update `app/views/polls/show.html.erb` to check if `@participant_voted`, show "You have already voted" message or display vote form
+- [X] T048 [P] [US2] Create vote form partial `app/views/votes/_form.html.erb` with radio buttons for choices, "Submit Vote" button wrapped in turbo_frame_tag
+- [X] T049 [P] [US2] Create vote confirmation partial `app/views/votes/_confirmation.html.erb` with "Thank you for voting!" message
+- [X] T050 [US2] Add counter_cache configuration to Vote associations: `belongs_to :poll, counter_cache: :total_votes` and `belongs_to :choice, counter_cache: :votes_count`
+- [X] T051 [US2] Update poll show view to display participant's previous choice if already voted
+- [X] T052 [US2] Run all tests for US2, verify they PASS (green phase)
+- [X] T053 [US2] Refactor VotesController to extract participant identification to concern `app/controllers/concerns/participant_identification.rb`
 
 **Checkpoint**: Participant can vote once per poll, duplicate voting prevented, vote confirmation shown. Tests pass.
 

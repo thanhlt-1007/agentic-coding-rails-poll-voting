@@ -1,0 +1,20 @@
+<%= form_with(model: vote, url: poll_votes_path(poll.access_code), method: :post) do |f| %>
+  <div class="mb-6">
+    <p class="text-lg font-semibold mb-4">Cast your vote:</p>
+    
+    <div class="space-y-3">
+      <% poll.choices.each do |choice| %>
+        <div class="p-4 border-2 border-gray-200 rounded-lg hover:border-blue-400 transition cursor-pointer">
+          <label class="flex items-center cursor-pointer">
+            <%= f.radio_button :choice_id, choice.id, class: "h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300" %>
+            <span class="ml-3 text-base font-medium text-gray-900"><%= choice.text %></span>
+          </label>
+        </div>
+      <% end %>
+    </div>
+  </div>
+
+  <div class="flex gap-4">
+    <%= f.submit "Submit Vote", class: "px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition font-semibold cursor-pointer" %>
+  </div>
+<% end %>

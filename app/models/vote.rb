@@ -4,8 +4,6 @@ class Vote < ApplicationRecord
   belongs_to :choice, counter_cache: :votes_count
 
   # Validations
-  validates :poll_id, presence: true
-  validates :choice_id, presence: true
   validates :participant_fingerprint, presence: true, uniqueness: { scope: :poll_id }
   validates :voted_at, presence: true
   validate :poll_must_be_active
@@ -22,14 +20,14 @@ class Vote < ApplicationRecord
   end
 
   def poll_must_be_active
-    return unless poll.present? && !poll.active?
+    return unless poll.present? && poll.status != 'active'
     
-    errors.add(:poll, "must be active")
+    errors.add(:base, "Poll is not active")
   end
 
   def deadline_not_passed
     return unless poll.present? && poll.deadline <= Time.current
     
-    errors.add(:base, "Poll has closed")
+    errors.add(:base, "Voting deadline has passed")
   end
 end

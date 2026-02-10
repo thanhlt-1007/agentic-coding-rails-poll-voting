@@ -16,9 +16,17 @@ class PollsController < ApplicationController
 
   def show
     @poll = Poll.find_by!(access_code: params[:access_code])
+    @participant_voted = @poll.votes.exists?(participant_fingerprint: current_participant_fingerprint)
+    @vote = Vote.new(poll: @poll) unless @participant_voted
   end
 
   private
+
+  def current_participant_fingerprint
+    # Use cookies for stable session tracking across requests
+    cookies.signed[:participant_id] ||= SecureRandom.hex(32)
+    Digest::SHA256.hexdigest("#{request.remote_ip || '127.0.0.1'}-#{request.user_agent || 'test'}-#{cookies.signed[:participant_id]}")
+  end
 
   def poll_params
     params.require(:poll).permit(

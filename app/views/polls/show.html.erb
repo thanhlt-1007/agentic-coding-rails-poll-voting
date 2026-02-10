@@ -17,19 +17,19 @@
           <span class="ml-4"><span class="font-semibold">Deadline:</span> <%= @poll.deadline.strftime("%B %d, %Y at %I:%M %p") %></span>
         </p>
       </div>
+
+      <% if @participant_voted %>
+        <div class="mb-6 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
+          <p class="text-sm text-yellow-800 font-semibold">You have already voted on this poll</p>
+        </div>
+      <% else %>
+        <%= render "votes/form", poll: @poll, vote: @vote %>
+      <% end %>
     <% else %>
       <div class="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
         <p class="text-sm text-red-800 font-semibold">This poll is closed.</p>
       </div>
     <% end %>
-
-    <div class="space-y-3">
-      <% @poll.choices.each do |choice| %>
-        <div class="p-4 border border-gray-200 rounded-lg hover:border-blue-400 transition">
-          <p class="font-medium"><%= choice.text %></p>
-        </div>
-      <% end %>
-    </div>
 
     <div class="mt-8 flex gap-4">
       <%= link_to "Create Another Poll", new_poll_path, class: "px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition font-semibold" %>
