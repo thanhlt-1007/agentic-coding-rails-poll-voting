@@ -13,6 +13,8 @@ class UserAnswersController < ApplicationController
     else
       redirect_to poll_path(@poll), alert: t(".error", errors: @user_answer.errors.full_messages.to_sentence)
     end
+  rescue ActionController::ParameterMissing
+    redirect_to poll_path(@poll), alert: t(".errors.no_answer_selected")
   end
 
   private
