@@ -13,11 +13,17 @@
       <h2 class="text-lg font-semibold mb-3">Answer Options:</h2>
       <ul class="space-y-2">
         <% @poll.answers.order(:position).each do |answer| %>
-          <li class="flex items-center p-3 border border-gray-200 rounded-lg">
-            <span class="w-8 h-8 flex items-center justify-center bg-blue-100 text-blue-600 rounded-full mr-3 font-medium">
-              <%= answer.position %>
+          <% vote_count = answer.user_answers.count %>
+          <li class="flex items-center justify-between p-3 border border-gray-200 rounded-lg">
+            <div class="flex items-center">
+              <span class="w-8 h-8 flex items-center justify-center bg-blue-100 text-blue-600 rounded-full mr-3 font-medium">
+                <%= answer.position %>
+              </span>
+              <%= answer.text %>
+            </div>
+            <span class="ml-4 text-sm font-medium text-gray-600">
+              <%= vote_count %> <%= vote_count == 1 ? 'vote' : 'votes' %>
             </span>
-            <%= answer.text %>
           </li>
         <% end %>
       </ul>
