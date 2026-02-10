@@ -1,0 +1,7 @@
+<div>
+  <h3 class="block text-sm font-medium text-gray-700 mb-3"><%= t('.answers_header') %></h3>
+  
+  <%= form.fields_for :answers do |answer_form| %>
+    <%= render "me/polls/new/answer_field", answer_form: answer_form %>
+  <% end %>
+</div>

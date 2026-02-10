@@ -1,0 +1,7 @@
+en:
+  me:
+    polls:
+      new:
+        deadline_field:
+          deadline_label: "Deadline (optional)"
+          deadline_help: "Set a deadline for when this poll closes"

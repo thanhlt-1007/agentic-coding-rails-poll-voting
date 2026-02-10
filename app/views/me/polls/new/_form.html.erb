@@ -1,0 +1,10 @@
+<%= form_with model: @poll, url: me_polls_path, class: "space-y-6" do |form| %>
+  <%= render "me/polls/new/question_field", form: form %>
+  <%= render "me/polls/new/deadline_field", form: form %>
+  <%= render "me/polls/new/answers_section", form: form %>
+
+  <div class="flex gap-4">
+    <%= form.submit t('.submit_button'), 
+        class: "px-6 py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2" %>
+  </div>
+<% end %>

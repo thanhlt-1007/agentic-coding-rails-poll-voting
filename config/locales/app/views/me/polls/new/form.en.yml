@@ -1,0 +1,7 @@
+en:
+  me:
+    polls:
+      new:
+        form:
+          submit_button: "Create Poll"
+          cancel_link: "Cancel"
