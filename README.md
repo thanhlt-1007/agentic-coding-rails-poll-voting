@@ -146,26 +146,47 @@ DATABASE_URL=postgres://user:pass@host:5432/dbname  # Auto-provided, do NOT set 
 
 Rails automatically parses `DATABASE_URL` in production to create the primary database connection and derives cache/queue/cable database names from it.
 
-## 🧪 Running Tests
-
-### Run All Tests
+### Running Tests
 
 ```bash
-bin/rails test
+# Run all specs
+bundle exec rspec
+
+# Run specific spec file
+bundle exec rspec spec/models/user_spec.rb
+
+# Run specific test by line number
+bundle exec rspec spec/models/user_spec.rb:10
+
+# Run specs with documentation format
+bundle exec rspec --format documentation
+
+# Run specs with coverage report (always enabled by default)
+bundle exec rspec
 ```
 
-### Run Specific Test Files
+### Test Coverage
 
+SimpleCov automatically generates coverage reports on every test run:
+
+- **Coverage report location**: `coverage/index.html`
+- **Minimum coverage**: 90% (enforced by SimpleCov)
+- **Minimum per file**: 80%
+
+To view the coverage report:
 ```bash
-bin/rails test test/models/poll_test.rb
-bin/rails test test/controllers/polls_controller_test.rb
+# Run tests (generates coverage)
+bundle exec rspec
+
+# Open coverage report in browser
+open coverage/index.html  # macOS
+xdg-open coverage/index.html  # Linux
 ```
 
-### Run System Tests
-
-```bash
-bin/rails test:system
-```
+Coverage breakdown by type:
+- **Models**: Target 95% coverage
+- **Controllers/Requests**: Target 90% coverage
+- **Overall project**: Minimum 90% required
 
 ### Code Quality Checks
 
