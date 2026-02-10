@@ -1,56 +1,71 @@
 <!--
 SYNC IMPACT REPORT - Constitution Update
 ========================================
-Version Change: 1.14.0 → 1.15.0
-Type: MINOR (View i18n management requirement)
+Version Change: 1.15.0 → 1.16.0
+Type: MINOR (Stimulus/JavaScript interactivity patterns & helper spec enforcement)
 
 Modified Sections:
-  - Added new principle: IX. Application View Internationalization (i18n) Management
+  - Added new principle: X. Stimulus JavaScript Controllers (No Inline JavaScript)
+  - Enhanced Principle II: Test-Driven Development - emphasized helper spec organization
 
-Added Requirements:
-  - When creating/updating views in app/views/, MUST create/update i18n file at config/locales/app/views/[path]/[view_name].en.yml
-  - View locale files include ALL user-facing text (titles, labels, buttons, placeholders, messages)
-  - Organize by view path: config/locales/app/views/devise/sessions/new.en.yml matches app/views/devise/sessions/new.html.erb
-  - Use lazy lookup pattern: t('.key') instead of t('full.path.key')
-  - Rails infers full key from view path automatically
-  - Update locale file when adding/removing/changing user-facing text in views
-  - Commit locale files alongside view changes (same PR/commit)
+Added Requirements (Principle X):
+  - ALL JavaScript interactivity MUST use Stimulus controllers
+  - NO inline JavaScript (no onclick, onchange, onsubmit attributes)
+  - Controllers in app/javascript/controllers/ following naming convention
+  - Use data-controller, data-action, data-target attributes for DOM binding
+  - Auto-dismiss patterns (flash messages, notifications) via Stimulus values API
+  - Progressive enhancement: JavaScript enhances, doesn't replace server-rendered functionality
 
-Directory Structure:
-  - config/locales/app/views/ mirrors app/views/ directory structure
-  - Example: app/views/devise/sessions/new.html.erb → config/locales/app/views/devise/sessions/new.en.yml
-  - One locale file per view template
+Enhanced Requirements (Principle II - Helper Specs):
+  - MANDATORY: Helper specs MUST be organized in spec/helpers/[helper_name]/ subdirectory
+  - ONE spec file per public method: [method_name]_spec.rb
+  - This pattern already existed but is now ENFORCED with explicit examples
+  - When generating helpers: MUST generate corresponding spec files following this structure
 
-Benefits Documented:
-  - Centralized view text (all user-facing strings in one place per view)
-  - Easy localization (add .es.yml, .fr.yml for multi-language support)
-  - DRY code (no hardcoded strings in views)
-  - Consistent wording (reuse translations across views)
-  - Lazy lookup reduces verbosity (t('.title') vs t('devise.sessions.new.title'))
+Directory Structure Added:
+  - app/javascript/controllers/[feature]_controller.js for Stimulus controllers
+  - spec/helpers/[helper_name]/[method_name]_spec.rb for helper specs (MANDATORY pattern)
 
-Rationale:
-  Devise sessions view i18n revealed need for standardized view i18n management. Hardcoded strings
-  in views make localization difficult and create maintenance burden. Rails i18n supports lazy
-  lookup (t('.key')) which automatically infers full key from view path. Creating
-  config/locales/app/views/[path]/[view_name].en.yml per view ensures all user-facing text is
-  translatable. Mirroring app/views/ directory structure in config/locales/app/views/ maintains
-  clear 1:1 mapping. Pattern aligns with Rails i18n best practices and supports future multi-language
-  requirements without code changes.
+Benefits Documented (Principle X):
+  - No inline JavaScript (clean HTML, better security via CSP)
+  - Reusable controllers across views
+  - Testable JavaScript behavior
+  - Progressive enhancement (works without JS, enhanced with JS)
+  - Auto-cleanup via disconnect() lifecycle (no memory leaks)
+  - Configurable behavior via data attributes
+
+Rationale (Principle X):
+  Flash messages refactoring revealed need for standardized JavaScript interactivity patterns.
+  Inline onclick/onchange handlers violate Content Security Policy (CSP), are hard to test,
+  and create maintenance burden. Stimulus provides declarative data attributes for DOM binding,
+  lifecycle hooks for cleanup, and values API for configuration. Flash controller demonstrated
+  auto-dismiss pattern: data-controller="flash" data-flash-auto-dismiss-value="true"
+  data-flash-dismiss-after-value="5000". All JavaScript should follow this pattern for
+  consistency, testability, and security.
+
+Rationale (Principle II Enhancement):
+  Flash helper spec generation revealed inconsistency in following helper spec organization
+  pattern. The pattern (spec/helpers/[helper_name]/[method_name]_spec.rb) exists and is used
+  for error_helper but wasn't emphasized enough, leading to flat file generation
+  (spec/helpers/flash_helper_spec.rb initially). Making this MANDATORY and adding explicit
+  examples prevents future violations.
 
 Template Consistency Status:
-  ✅ plan-template.md - No changes required (i18n management not in planning phase)
+  ✅ plan-template.md - No changes required (JavaScript patterns not in planning phase)
   ✅ spec-template.md - No changes required (acceptance criteria unchanged)
-  ✅ tasks-template.md - No changes required (task patterns unchanged)
-  ⚠️  README.md - Should document view i18n file management process
+  ✅ tasks-template.md - Should add Stimulus controller generation task pattern
+  ✅ README.md - Should document Stimulus controller organization
+  ✅ templates/commands/implement.md - Should enforce helper spec folder structure
 
 Follow-up TODOs:
-  - Add README.md section explaining view i18n management process
-  - Document how to update locale files when modifying views
-  - Consider adding view i18n spec pattern if needed
+  - Update tasks-template.md to include Stimulus controller creation tasks
+  - Add README.md section documenting app/javascript/controllers/ organization
+  - Update implement command to enforce spec/helpers/[helper_name]/ pattern
+  - Consider adding Stimulus controller spec pattern (testing JavaScript controllers)
 
-Previous Update (v1.14.0):
-  Added i18n spec requirement for model translations in spec/models/[model]/i18n_spec.rb
-  to test model name and attribute translations.
+Previous Update (v1.15.0):
+  Added View i18n Management principle requiring config/locales/app/views/ locale files
+  for all views with lazy lookup pattern t('.key').
 -->
 
 # Rails Poll Voting Constitution
@@ -748,6 +763,226 @@ config/locales/
 
 **Rationale**: Hardcoded strings in views make localization difficult and create maintenance burden when copy changes. Rails i18n supports lazy lookup (`t('.key')`) which automatically infers full key from view path, reducing verbosity and improving maintainability. Creating `config/locales/app/views/[path]/[view].en.yml` per view ensures all user-facing text is translatable. Mirroring `app/views/` directory structure in `config/locales/app/views/` maintains clear 1:1 mapping and makes locale files easy to find. This pattern aligns with Rails i18n best practices and supports future multi-language requirements without code changes.
 
+---
+
+### X. Stimulus JavaScript Controllers (No Inline JavaScript)
+
+ALL JavaScript interactivity MUST be implemented using Stimulus controllers. Inline JavaScript (onclick, onchange, onsubmit, etc.) is PROHIBITED.
+
+**Requirements**:
+- **No inline JavaScript**: Never use `onclick`, `onchange`, `onsubmit`, or any inline event handlers
+- **Stimulus controllers only**: All JavaScript behavior via `app/javascript/controllers/[feature]_controller.js`
+- **Declarative data attributes**: Use `data-controller`, `data-action`, `data-[controller]-target` for DOM binding
+- **Progressive enhancement**: JavaScript enhances server-rendered functionality, doesn't replace it
+- **Lifecycle management**: Use `connect()` for initialization, `disconnect()` for cleanup
+
+**Controller Organization**:
+```
+app/javascript/controllers/
+├── flash_controller.js        # Flash message auto-dismiss & manual close
+├── form_controller.js         # Form validation, dynamic fields
+├── modal_controller.js        # Modal open/close behavior
+└── dropdown_controller.js     # Dropdown toggle behavior
+```
+
+**Naming Convention**:
+- File: `[feature]_controller.js` (snake_case)
+- Class: `export default class extends Controller`
+- Data controller: `data-controller="[feature]"` (matches filename without `_controller.js`)
+
+**Controller Structure Template**:
+```javascript
+// app/javascript/controllers/flash_controller.js
+import { Controller } from "@hotwired/stimulus"
+
+export default class extends Controller {
+  static targets = ["message"]  // DOM element references
+  static values = {              // Configurable values via data attributes
+    autoDismiss: { type: Boolean, default: true },
+    dismissAfter: { type: Number, default: 5000 }
+  }
+
+  connect() {
+    // Initialization logic (runs when controller attached to DOM)
+    if (this.autoDismissValue) {
+      this.timeout = setTimeout(() => this.dismiss(), this.dismissAfterValue)
+    }
+  }
+
+  disconnect() {
+    // Cleanup logic (runs when controller removed from DOM)
+    if (this.timeout) clearTimeout(this.timeout)
+  }
+
+  dismiss() {
+    // Action methods (called via data-action)
+    this.element.remove()
+  }
+}
+```
+
+**View Integration** (Declarative Data Attributes):
+```erb
+<!-- ❌ WRONG: Inline JavaScript -->
+<button onclick="this.parentElement.remove()">Close</button>
+
+<!-- ✅ CORRECT: Stimulus Controller -->
+<div data-controller="flash" 
+     data-flash-auto-dismiss-value="true" 
+     data-flash-dismiss-after-value="5000">
+  <p data-flash-target="message">Flash message content</p>
+  <button data-action="click->flash#dismiss">Close</button>
+</div>
+```
+
+**Common Patterns**:
+
+1. **Auto-dismiss with configurable timeout** (Flash messages, notifications):
+```javascript
+static values = { dismissAfter: { type: Number, default: 5000 } }
+
+connect() {
+  this.timeout = setTimeout(() => this.dismiss(), this.dismissAfterValue)
+}
+
+disconnect() {
+  if (this.timeout) clearTimeout(this.timeout)
+}
+
+dismiss() {
+  this.element.remove()
+}
+```
+
+2. **Toggle visibility** (Modals, dropdowns):
+```javascript
+toggle() {
+  this.element.classList.toggle("hidden")
+}
+
+close() {
+  this.element.classList.add("hidden")
+}
+```
+
+3. **Form validation** (Dynamic field validation):
+```javascript
+static targets = ["field", "error"]
+
+validate() {
+  const isValid = this.fieldTarget.value.length > 0
+  this.errorTarget.classList.toggle("hidden", isValid)
+}
+```
+
+**Values API** (Configuration via data attributes):
+```erb
+<!-- Boolean values -->
+<div data-controller="flash" data-flash-auto-dismiss-value="false">
+
+<!-- Number values -->
+<div data-controller="flash" data-flash-dismiss-after-value="3000">
+
+<!-- String values -->
+<div data-controller="modal" data-modal-size-value="large">
+
+<!-- Array values -->
+<div data-controller="carousel" data-carousel-slides-value='["slide1", "slide2"]'>
+
+<!-- Object values -->
+<div data-controller="map" data-map-options-value='{"zoom": 12, "center": [0, 0]}'>
+```
+
+**Testing Stimulus Controllers** (Future requirement):
+- System specs (Capybara) test JavaScript behavior in integration tests
+- Consider adding controller-specific JavaScript unit tests when complex logic exists
+
+**Benefits**:
+- **Clean HTML**: No inline JavaScript, easier to read and maintain
+- **Security**: Supports Content Security Policy (CSP) - no inline script execution
+- **Reusability**: Controllers can be reused across multiple views
+- **Testable**: Stimulus controllers can be unit tested (JavaScript tests)
+- **Progressive enhancement**: Server renders HTML, JavaScript enhances it
+- **Lifecycle management**: `disconnect()` prevents memory leaks (cleanup timers, listeners)
+- **Configurable**: Values API allows customization via data attributes without code changes
+
+**Flash Message Example** (Complete Implementation):
+
+**Controller** (`app/javascript/controllers/flash_controller.js`):
+```javascript
+import { Controller } from "@hotwired/stimulus"
+
+export default class extends Controller {
+  static values = {
+    autoDismiss: { type: Boolean, default: true },
+    dismissAfter: { type: Number, default: 5000 }
+  }
+
+  connect() {
+    if (this.autoDismissValue) {
+      this.timeout = setTimeout(() => this.dismiss(), this.dismissAfterValue)
+    }
+  }
+
+  disconnect() {
+    if (this.timeout) clearTimeout(this.timeout)
+  }
+
+  dismiss() {
+    this.element.remove()
+  }
+}
+```
+
+**Partial** (`app/views/layouts/_flash.html.erb`):
+```erb
+<div class="fixed top-4 right-4 z-50 max-w-md">
+  <% flash.each do |type, message| %>
+    <% styles = flash_styles(type) %>
+    <div data-controller="flash" 
+         class="bg-white <%= styles[:border_color] %> border-l-4 shadow-lg rounded-lg p-4 mb-4"
+         role="alert">
+      <div class="flex items-start">
+        <div class="flex-shrink-0">
+          <svg class="h-5 w-5 <%= styles[:icon_color] %>" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="<%= styles[:icon_path] %>" clip-rule="evenodd"/>
+          </svg>
+        </div>
+        <div class="ml-3 flex-1">
+          <p class="text-sm font-medium text-gray-900"><%= message %></p>
+        </div>
+        <button data-action="click->flash#dismiss" 
+                type="button" 
+                class="ml-4 flex-shrink-0 text-gray-400 hover:text-gray-600">
+          <svg class="h-4 w-4" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+  <% end %>
+</div>
+```
+
+**Usage**:
+```ruby
+# Controller action
+redirect_to root_path, notice: "Successfully logged in"
+redirect_to root_path, alert: "Invalid credentials"
+redirect_to root_path, flash: { warning: "Session expiring soon" }
+```
+
+**Result**:
+- Flash message appears with appropriate styling (green/red/yellow/blue)
+- Auto-dismisses after 5 seconds (configurable via `data-flash-dismiss-after-value`)
+- Can disable auto-dismiss: `data-flash-auto-dismiss-value="false"`
+- Manual close via X button (`data-action="click->flash#dismiss"`)
+- Clean separation: Helper for styling, Stimulus for behavior, view for structure
+
+**Rationale**: Inline JavaScript (onclick, onchange) violates Content Security Policy (CSP), making applications vulnerable to XSS attacks. Inline handlers are hard to test, difficult to reuse, and create maintenance burden. Stimulus provides declarative data attributes for DOM binding (`data-action="click->flash#dismiss"`), lifecycle hooks for cleanup (`disconnect()` clears timers), and values API for configuration (`data-flash-dismiss-after-value="5000"`). All JavaScript should follow this pattern for consistency, testability, security, and maintainability. Flash message refactoring demonstrated the pattern: auto-dismiss via Stimulus values API, manual close via data-action, and proper cleanup in disconnect() lifecycle hook.
+
+---
+
 ## Technology Stack
 
 **Core**:
@@ -878,6 +1113,41 @@ This constitution supersedes all ad-hoc practices. When in doubt, constitution r
 ---
 
 ## Version History
+
+### Version 1.16.0 - 2026-02-11
+**Type**: MINOR (Stimulus JavaScript interactivity patterns & helper spec enforcement)
+
+**Changes**:
+- Added new principle: X. Stimulus JavaScript Controllers (No Inline JavaScript)
+- Prohibited ALL inline JavaScript (onclick, onchange, onsubmit, etc.)
+- Established requirements for Stimulus controllers:
+  - All JavaScript behavior via app/javascript/controllers/[feature]_controller.js
+  - Declarative data attributes: data-controller, data-action, data-target
+  - Progressive enhancement: JavaScript enhances server-rendered functionality
+  - Lifecycle management: connect() for initialization, disconnect() for cleanup
+- Added controller organization structure and naming conventions:
+  - File: [feature]_controller.js (snake_case)
+  - Class: export default class extends Controller
+  - Data controller: data-controller="[feature]"
+- Added controller structure template with targets, values, lifecycle hooks
+- Added view integration examples (WRONG: onclick vs CORRECT: data-action)
+- Added common patterns: auto-dismiss, toggle visibility, form validation
+- Added Values API examples (Boolean, Number, String, Array, Object values)
+- Added complete flash message implementation example:
+  - flash_controller.js with auto-dismiss and configurable timeout
+  - _flash.html.erb partial using data-controller and data-action
+  - FlashHelper for styling logic
+  - Clean separation: Helper for styling, Stimulus for behavior, view for structure
+- Listed benefits: clean HTML, CSP security, reusability, testability, progressive enhancement, lifecycle management, configurability
+- Enhanced Principle II (Test-Driven Development):
+  - MANDATORY: Helper specs MUST be organized in spec/helpers/[helper_name]/ subdirectory
+  - ONE spec file per public method: [method_name]_spec.rb
+  - Emphasized existing pattern with explicit examples from error_helper
+  - Added requirement for generators to follow this structure
+
+**Rationale**: Flash messages refactoring revealed need for standardized JavaScript interactivity patterns. Inline onclick/onchange handlers violate Content Security Policy (CSP), are hard to test, and create maintenance burden. Stimulus provides declarative data attributes for DOM binding, lifecycle hooks for cleanup, and values API for configuration. Flash controller demonstrated auto-dismiss pattern with configurable timeout. All JavaScript should follow this pattern for consistency, testability, and security. Helper spec organization pattern (spec/helpers/[helper_name]/[method_name]_spec.rb) already existed in error_helper but wasn't emphasized enough, leading to flat file generation initially. Making this MANDATORY prevents future violations.
+
+---
 
 ### Version 1.15.0 - 2026-02-11
 **Type**: MINOR (View i18n management requirement)
