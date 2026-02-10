@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class Users::RegistrationsController < Devise::RegistrationsController
+  layout 'devise'
+
   # Set flash message when create action fails due to validation errors
   def create
     super do |resource|
