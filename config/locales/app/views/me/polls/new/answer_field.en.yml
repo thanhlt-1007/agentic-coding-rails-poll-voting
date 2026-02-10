@@ -1,0 +1,7 @@
+en:
+  me:
+    polls:
+      new:
+        answer_field:
+          answer_label: "Option"
+          answer_placeholder: "Enter an answer option"

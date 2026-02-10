@@ -1,0 +1,10 @@
+<div class="mb-6">
+  <h1 class="text-3xl font-bold mb-4"><%= t('.title') %></h1>
+  
+  <!-- Filter Tabs -->
+  <div class="flex space-x-2 border-b border-gray-200">
+    <%= link_to t('.filters.all'), me_polls_path(filter: 'all'), class: "px-4 py-2 font-medium #{@filter == 'all' ? 'text-blue-600 border-b-2 border-blue-600' : 'text-gray-500 hover:text-gray-700'}" %>
+    <%= link_to t('.filters.active'), me_polls_path(filter: 'active'), class: "px-4 py-2 font-medium #{@filter == 'active' ? 'text-blue-600 border-b-2 border-blue-600' : 'text-gray-500 hover:text-gray-700'}" %>
+    <%= link_to t('.filters.expired'), me_polls_path(filter: 'expired'), class: "px-4 py-2 font-medium #{@filter == 'expired' ? 'text-blue-600 border-b-2 border-blue-600' : 'text-gray-500 hover:text-gray-700'}" %>
+  </div>
+</div>

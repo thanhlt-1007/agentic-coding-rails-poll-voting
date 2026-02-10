@@ -1,0 +1,8 @@
+en:
+  layouts:
+    header:
+      user_dropdown_menu:
+        signed_in_as: "Signed in as"
+        my_polls: "My Polls"
+        create_new_poll: "Create New Poll"
+        logout: "Logout"

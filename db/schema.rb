@@ -10,9 +10,30 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_02_10_114449) do
+ActiveRecord::Schema[8.1].define(version: 2026_02_10_200139) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
+
+  create_table "answers", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.bigint "poll_id", null: false
+    t.integer "position", null: false
+    t.string "text", limit: 255, null: false
+    t.datetime "updated_at", null: false
+    t.index ["poll_id", "position"], name: "index_answers_on_poll_id_and_position", unique: true
+    t.index ["poll_id"], name: "index_answers_on_poll_id"
+  end
+
+  create_table "polls", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.datetime "deadline", null: false
+    t.text "question", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "user_id", null: false
+    t.index ["created_at"], name: "index_polls_on_created_at"
+    t.index ["deadline"], name: "index_polls_on_deadline"
+    t.index ["user_id"], name: "index_polls_on_user_id"
+  end
 
   create_table "users", force: :cascade do |t|
     t.datetime "created_at", null: false
@@ -21,4 +42,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_10_114449) do
     t.datetime "updated_at", null: false
     t.index ["email"], name: "index_users_on_email", unique: true
   end
+
+  add_foreign_key "answers", "polls"
+  add_foreign_key "polls", "users"
 end

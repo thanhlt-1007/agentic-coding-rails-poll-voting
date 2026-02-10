@@ -1,0 +1,6 @@
+en:
+  me:
+    polls:
+      show:
+        errors:
+          poll_not_found: "Poll not found"

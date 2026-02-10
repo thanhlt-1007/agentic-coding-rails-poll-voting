@@ -1,0 +1,7 @@
+en:
+  me:
+    polls:
+      new:
+        question_field:
+          question_label: "Question"
+          question_placeholder: "What would you like to ask?"

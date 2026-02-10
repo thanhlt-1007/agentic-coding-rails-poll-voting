@@ -1,0 +1,6 @@
+en:
+  me:
+    polls:
+      new:
+        answers_section:
+          answers_header: "Answer Options"

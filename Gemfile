@@ -25,6 +25,9 @@ gem "jbuilder"
 # Flexible authentication solution for Rails [https://github.com/heartcombo/devise]
 gem "devise", "~> 4.9"
 
+# Fast pagination for Rails [https://github.com/ddnexus/pagy]
+gem "pagy", "~> 9.0"
+
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
 gem "tzinfo-data", platforms: %i[ windows jruby ]
 

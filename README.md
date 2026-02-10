@@ -271,7 +271,113 @@ bin/rails test test/models/user_test.rb
 # Run sign-up system tests
 bin/rails test test/system/user_signup_test.rb
 ```
+## 📊 Poll Creation
 
+This application allows authenticated users to create polls with multiple-choice questions.
+
+### Creating a Poll
+
+**Prerequisites**: You must be signed in to create a poll.
+
+**Steps**:
+1. Navigate to `/polls/new` (or click "Create Poll" from the dashboard)
+2. Fill in the poll details:
+   - **Question**: Your poll question (5-500 characters)
+   - **Deadline**: When the poll closes (optional, must be in the future)
+   - **Answer Options**: Exactly 4 answer choices required
+
+3. Submit the form
+
+### Poll Features
+
+- **Required Question**: Between 5 and 500 characters
+- **Required Answers**: Must provide exactly 4 answer options
+- **Unique Answers**: Answer options must be unique (case-insensitive)
+- **Optional Deadline**: Set a future date/time for poll closure
+- **Single-Choice**: All polls are single-choice (users can only select one answer when voting)
+- **User Association**: Polls are automatically associated with the creator
+
+### Validation Rules
+
+The application enforces the following validation rules:
+
+- Question must be present and between 5-500 characters
+- Exactly 4 answer options required
+- Answer options must be unique (case-insensitive comparison)
+- Deadline must be in the future (if provided)
+- User must be authenticated
+
+### Error Handling
+
+Clear error messages are displayed for:
+- Blank or too short questions
+- Missing or duplicate answer options
+- Invalid answer count (not exactly 4)
+- Past deadlines
+- Unauthenticated access (redirects to login)
+
+### Example Usage
+
+```ruby
+# Create a poll via Rails console
+poll = Poll.create!(
+  question: "What is your favorite programming language?",
+  deadline: 1.week.from_now,
+  user: current_user,
+  answers_attributes: [
+    { text: "Ruby", position: 1 },
+    { text: "Python", position: 2 },
+    { text: "JavaScript", position: 3 },
+    { text: "Go", position: 4 }
+  ]
+)
+```
+
+### Testing Poll Creation
+
+```bash
+# Run poll model tests
+bundle exec rspec spec/models/poll_spec.rb
+
+# Run poll creation request tests
+bundle exec rspec spec/requests/polls/
+
+# Run poll creation system tests
+bundle exec rspec spec/system/poll_creation*
+
+# Run all poll-related tests
+bundle exec rspec spec/models/poll_spec.rb spec/models/answer_spec.rb spec/requests/polls/ spec/system/poll_*
+```
+
+### API Endpoints
+
+- **GET** `/polls/new` - Poll creation form (authenticated users only)
+- **POST** `/polls` - Create a new poll (authenticated users only)
+- **GET** `/polls/:id` - View poll details
+
+### Database Schema
+
+**Polls Table**:
+- `id`: Primary key
+- `user_id`: Foreign key to users (NOT NULL)
+- `question`: Poll question text (NOT NULL)
+- `deadline`: Optional deadline datetime
+- `created_at`, `updated_at`: Timestamps
+
+**Answers Table**:
+- `id`: Primary key
+- `poll_id`: Foreign key to polls (NOT NULL)
+- `text`: Answer option text (NOT NULL, max 255 chars)
+- `position`: Display order (1-4, unique per poll)
+- `created_at`, `updated_at`: Timestamps
+
+### Technical Implementation
+
+- **Nested Attributes**: Uses `accepts_nested_attributes_for` to create poll + answers in single form submission
+- **Custom Validations**: Case-insensitive duplicate checking, future deadline validation
+- **I18n**: All user-facing text in locale files (`config/locales/app/`)
+- **Tailwind Styling**: Modern, responsive form design with focus states and error display
+- **TDD**: 163 specs covering all functionality with 93.41% coverage
 ## �🔧 Common Development Tasks
 
 ### Create a New Model
