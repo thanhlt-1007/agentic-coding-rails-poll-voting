@@ -7,16 +7,16 @@ module Me
 
     def index
       @filter = params[:filter] || 'all'
-      @polls = current_user.polls
+      polls = current_user.polls
       
       case @filter
       when 'active'
-        @polls = @polls.active
+        polls = polls.active
       when 'expired'
-        @polls = @polls.expired
+        polls = polls.expired
       end
       
-      @polls = @polls.recent
+      @pagy, @polls = pagy(polls.recent, limit: 12)
     end
 
     def new
