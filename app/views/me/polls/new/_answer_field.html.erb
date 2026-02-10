@@ -2,6 +2,9 @@
   <%= answer_form.label :text, "#{t('.answer_label')} #{answer_form.index + 1}", class: "block text-sm font-medium text-gray-600 mb-1" %>
   <%= answer_form.text_field :text,
       placeholder: t('.answer_placeholder'),
-      class: "w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" %>
+      class: "w-full px-4 py-2 border rounded-lg focus:ring-2 #{answer_form.object.errors[:text].any? ? 'border-red-500 focus:ring-red-500 focus:border-red-500' : 'border-gray-300 focus:ring-blue-500 focus:border-blue-500'}" %>
+  <% if answer_form.object.errors[:text].any? %>
+    <p class="mt-1 text-sm text-red-600"><%= answer_form.object.errors[:text].first %></p>
+  <% end %>
   <%= answer_form.hidden_field :position, value: answer_form.index + 1 %>
 </div>

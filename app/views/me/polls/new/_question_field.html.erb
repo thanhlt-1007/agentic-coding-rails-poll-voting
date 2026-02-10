@@ -3,5 +3,8 @@
   <%= form.text_area :question, 
       rows: 3,
       placeholder: t('.question_placeholder'),
-      class: "w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" %>
+      class: "w-full px-4 py-2 border rounded-lg focus:ring-2 #{form.object.errors[:question].any? ? 'border-red-500 focus:ring-red-500 focus:border-red-500' : 'border-gray-300 focus:ring-blue-500 focus:border-blue-500'}" %>
+  <% if form.object.errors[:question].any? %>
+    <p class="mt-1 text-sm text-red-600"><%= form.object.errors[:question].first %></p>
+  <% end %>
 </div>
