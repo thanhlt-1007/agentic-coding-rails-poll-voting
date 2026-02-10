@@ -1,0 +1,23 @@
+<%= form_with url: poll_user_answers_path(poll), method: :post, local: true, scope: :user_answer do |f| %>
+  <div class="mt-6">
+    <h2 class="text-lg font-semibold mb-3">Answer Options:</h2>
+    <div class="space-y-3">
+      <% poll.answers.order(:position).each do |answer| %>
+        <%= render 'polls/show/answer_option', 
+                   f: f, 
+                   answer: answer, 
+                   has_answered: has_answered, 
+                   selected_answer_id: selected_answer_id, 
+                   is_expired: is_expired %>
+      <% end %>
+    </div>
+  </div>
+
+  <div class="mt-6 flex items-center justify-between">
+    <%= link_to "← Back to Polls", polls_path, class: "text-gray-600 hover:text-gray-900 font-medium" %>
+    
+    <%= f.submit "Submit Answer", 
+        disabled: (is_expired || has_answered),
+        class: "px-6 py-3 rounded-lg font-semibold transition-colors #{is_expired || has_answered ? 'bg-gray-300 text-gray-500 cursor-not-allowed' : 'bg-blue-600 text-white hover:bg-blue-700 cursor-pointer'}" %>
+  </div>
+<% end %>

@@ -1,30 +1,20 @@
+<%
+  is_expired = @poll.deadline <= Time.current
+  user_answer = current_user.user_answers.find_by(poll_id: @poll.id)
+  has_answered = user_answer.present?
+  selected_answer_id = user_answer&.answer_id
+%>
+
 <div class="max-w-2xl mx-auto px-4 py-8">
   <div class="bg-white rounded-lg shadow-md p-6">
-    <h1 class="text-2xl font-bold mb-4"><%= @poll.question %></h1>
+    <%= render 'polls/show/header', poll: @poll %>
     
-    <% if @poll.deadline.present? %>
-      <p class="text-gray-600 mb-4">
-        <span class="font-medium">Deadline:</span>
-        <%= @poll.deadline.strftime("%B %d, %Y at %I:%M %p") %>
-      </p>
-    <% end %>
+    <%= render 'polls/show/status_messages', is_expired: is_expired, has_answered: has_answered %>
 
-    <div class="mt-6">
-      <h2 class="text-lg font-semibold mb-3">Answer Options:</h2>
-      <ul class="space-y-2">
-        <% @poll.answers.order(:position).each do |answer| %>
-          <li class="flex items-center p-3 border border-gray-200 rounded-lg">
-            <span class="w-8 h-8 flex items-center justify-center bg-blue-100 text-blue-600 rounded-full mr-3 font-medium">
-              <%= answer.position %>
-            </span>
-            <%= answer.text %>
-          </li>
-        <% end %>
-      </ul>
-    </div>
-
-    <div class="mt-6 text-sm text-gray-500">
-      Created <%= time_ago_in_words(@poll.created_at) %> ago
-    </div>
+    <%= render 'polls/show/voting_form', 
+               poll: @poll, 
+               is_expired: is_expired, 
+               has_answered: has_answered, 
+               selected_answer_id: selected_answer_id %>
   </div>
 </div>

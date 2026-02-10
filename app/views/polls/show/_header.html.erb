@@ -1,0 +1,8 @@
+<h1 class="text-2xl font-bold mb-4"><%= poll.question %></h1>
+
+<% if poll.deadline.present? %>
+  <p class="text-gray-600 mb-4">
+    <span class="font-medium">Deadline:</span>
+    <%= poll.deadline.strftime("%B %d, %Y at %I:%M %p") %>
+  </p>
+<% end %>
