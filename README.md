@@ -8,6 +8,7 @@ Before you begin, ensure you have the following installed on your local machine:
 
 - **Ruby**: 4.0.1 or higher
 - **Rails**: 8.1.2 or higher
+- **Bundler**: 4.0.3 or higher
 - **PostgreSQL**: 15.0 or higher
 - **Redis**: 7.0 or higher (for caching, background jobs, and Action Cable)
 - **Node.js**: 18.0 or higher (for asset pipeline)
@@ -18,6 +19,7 @@ Before you begin, ensure you have the following installed on your local machine:
 ```bash
 ruby -v        # Should show Ruby 4.0+
 rails -v       # Should show Rails 8.1+
+bundle -v      # Should show Bundler 4.0.3+
 psql --version # Should show PostgreSQL 15+
 redis-server --version # Should show Redis 7+
 node -v        # Should show Node 18+
