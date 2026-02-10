@@ -3,10 +3,6 @@
 require "rails_helper"
 
 RSpec.describe Answer do
-  describe "associations" do
-    it { should belong_to(:poll) }
-  end
-
   describe "validations" do
     it { should validate_presence_of(:text) }
     it { should validate_length_of(:text).is_at_most(255) }
@@ -55,13 +51,6 @@ RSpec.describe Answer do
         expect(existing_answer).to be_valid
         expect(second_poll_answer).to be_valid
       end
-    end
-  end
-
-  describe "#to_s" do
-    it "returns the text attribute" do
-      answer = build(:answer, text: "Sample answer")
-      expect(answer.to_s).to eq("Sample answer")
     end
   end
 end
