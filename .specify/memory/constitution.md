@@ -1,46 +1,46 @@
 <!--
 SYNC IMPACT REPORT - Constitution Update
 ========================================
-Version Change: 1.9.0 → 1.10.0
-Type: MINOR (RSpec testing framework standardization)
+Version Change: 1.10.0 → 1.11.0
+Type: PATCH (Helper spec organization pattern)
 
-Modified Principles:
-  - II. Test-Driven Development - Added RSpec-specific requirements and generator configuration
+Modified Sections:
+  - II. Test-Driven Development > Test Organization - Added helper spec organization pattern
 
 Added Requirements:
-  - RSpec as mandatory testing framework (replacing Minitest)
-  - Automatic RSpec spec generation when creating/updating code
-  - FactoryBot for test data fixtures
-  - Shoulda Matchers for Rails validation testing
-  - Database Cleaner for clean test state
-  - Rails generator configuration for automatic spec creation
-  - Comprehensive test coverage requirements (model, request, system specs)
-  - Test organization standards (spec/ directory structure)
+  - Helper specs MUST be organized by helper module in subdirectories
+  - One spec file per public method (e.g., spec/helpers/error_helper/field_error_message_spec.rb)
+  - Each spec file tests ONE method only (focused, single responsibility)
+  - Updated spec/ directory structure example to show helper organization
+
+Benefits Documented:
+  - Easy to locate tests for specific helper method
+  - Faster test runs when working on single method (run one file)
+  - Clear 1:1 mapping between file and method
+  - Simplified pull requests (method changes affect single spec file)
+  - Better git history (method-specific commits touch only relevant spec file)
 
 Rationale:
-  RSpec provides superior BDD-style testing with better readability and more expressive
-  matchers than Minitest. The "describe/context/it" structure creates self-documenting
-  tests that serve as executable specifications. FactoryBot reduces test data boilerplate,
-  Shoulda Matchers simplify Rails validation tests, and Database Cleaner ensures test
-  isolation. Generator configuration automates spec creation, ensuring tests are written
-  alongside code (not as an afterthought). This change codifies the testing infrastructure
-  already implemented in the project.
+  ErrorHelper refactoring revealed need for standardized helper spec organization. Previously,
+  all helper methods tested in single file (error_helper_spec.rb with 13 examples). Splitting
+  into separate files (field_error_message_spec.rb, field_icon_color_spec.rb,
+  field_border_classes_spec.rb) improved maintainability and follows single responsibility
+  principle at file level. Pattern mirrors Rails convention of one concern per file and aligns
+  with spec/models/ organization (one model = one spec file). This standard prevents helper
+  spec files from becoming unwieldy as helper modules grow.
 
 Template Consistency Status:
-  ✅ plan-template.md - No changes required (testing framework not in planning phase)
-  ✅ spec-template.md - Will add RSpec test specification requirements
-  ✅ tasks-template.md - Will add RSpec test task template
-  ✅ README.md - Already updated with RSpec testing guide
-  ✅ config/application.rb - Already configured for RSpec generators
+  ✅ plan-template.md - No changes required (spec organization not in planning phase)
+  ✅ spec-template.md - No changes required (acceptance criteria unchanged)
+  ✅ tasks-template.md - No changes required (task patterns unchanged)
+  ✅ README.md - Already documents RSpec testing structure
 
 Follow-up TODOs:
-  - TODO(spec-template): Add RSpec test coverage requirements to acceptance criteria
-  - TODO(tasks-template): Add "T0XX: Write RSpec tests for [feature]" task pattern
-  - TODO(commands): Consider adding rspec command template for common test scenarios
+  - None (pattern already implemented in spec/helpers/error_helper/)
 
-Previous Update (v1.9.0):
-  Added Principle VI for User-Centric Error Handling & Validation UX with Tailwind
-  Notifications pattern, inline field errors, and Tailwind v4 color constraints.
+Previous Update (v1.10.0):
+  Added RSpec testing framework standardization with comprehensive requirements,
+  automatic spec generation, FactoryBot, Shoulda Matchers, and coverage requirements.
 -->
 
 # Rails Poll Voting Constitution
@@ -181,6 +181,12 @@ spec/
 ├── models/            # Model unit tests
 ├── requests/          # Request specs (controller actions, APIs)
 ├── system/            # End-to-end browser tests (Capybara)
+├── helpers/           # Helper method tests (organized by helper module)
+│   ├── error_helper/  # ErrorHelper method specs (one file per method)
+│   │   ├── field_error_message_spec.rb
+│   │   ├── field_icon_color_spec.rb
+│   │   └── field_border_classes_spec.rb
+│   └── application_helper/  # ApplicationHelper method specs
 ├── support/           # Shared test configuration
 │   ├── database_cleaner.rb
 │   ├── factory_bot.rb
@@ -189,7 +195,52 @@ spec/
 └── spec_helper.rb     # General RSpec configuration
 ```
 
-**Rationale**: Tests are executable specifications. Writing them first ensures we build what's needed, not what's easy. Early validation prevents costly rewrites. RSpec's BDD-style syntax creates self-documenting tests that serve as living documentation. Automatic spec generation via Rails generators ensures tests are written alongside code, not as an afterthought. FactoryBot and Shoulda Matchers reduce boilerplate and improve test readability.
+**Helper Spec Organization Pattern**:
+
+Helper specs MUST be organized by helper module with one spec file per public method:
+- Create subdirectory: `spec/helpers/[helper_name]/`
+- One spec file per public method: `[method_name]_spec.rb`
+- Each file tests ONE method only (focused, single responsibility)
+
+Example for `ErrorHelper` with 3 public methods:
+```
+spec/helpers/error_helper/
+├── field_error_message_spec.rb    # Tests #field_error_message only
+├── field_icon_color_spec.rb       # Tests #field_icon_color only
+└── field_border_classes_spec.rb   # Tests #field_border_classes only
+```
+
+Each spec file structure:
+```ruby
+# frozen_string_literal: true
+
+require 'rails_helper'
+
+RSpec.describe ErrorHelper, type: :helper do
+  describe '#method_name' do
+    let(:resource) { User.new }
+
+    context 'when [condition]' do
+      it 'returns [expected result]' do
+        # Test cases
+      end
+    end
+
+    context 'with different field names' do
+      # Test method works with various inputs
+    end
+  end
+end
+```
+
+**Benefits**:
+- Easy to locate tests for specific helper method
+- Faster test runs when working on single method (run one file)
+- Clear ownership: each file maps 1:1 with public method
+- Simplified pull requests: method changes affect single spec file
+- Better git history: method-specific commits touch only relevant spec file
+
+**Rationale**: Tests are executable specifications. Writing them first ensures we build what's needed, not what's easy. Early validation prevents costly rewrites. RSpec's BDD-style syntax creates self-documenting tests that serve as living documentation. Automatic spec generation via Rails generators ensures tests are written alongside code, not as an afterthought. FactoryBot and Shoulda Matchers reduce boilerplate and improve test readability. Organizing helper specs by method improves maintainability and follows single responsibility principle at the file level.
 
 ### III. SSR Performance & User Experience
 
@@ -424,10 +475,32 @@ This constitution supersedes all ad-hoc practices. When in doubt, constitution r
 - Template commands reference constitution for validation gates
 - Onboarding checklist includes constitution review
 
-**Current Version**: 1.9.0 | **Ratified**: 2026-02-10 | **Last Amended**: 2026-02-10
+**Current Version**: 1.11.0 | **Ratified**: 2026-02-10 | **Last Amended**: 2026-02-10
 
 ---
-10.0 - 2026-02-10
+
+## Version History
+
+### Version 1.11.0 - 2026-02-10
+**Type**: PATCH (Helper spec organization pattern)
+
+**Changes**:
+- Updated Principle II (Test-Driven Development) > Test Organization
+- Added Helper Spec Organization Pattern section with requirements:
+  - Helper specs organized by helper module in subdirectories (spec/helpers/[helper_name]/)
+  - One spec file per public method ([method_name]_spec.rb)
+  - Each file tests ONE method only (focused, single responsibility)
+- Updated spec/ directory structure example to show helper organization:
+  - Added spec/helpers/error_helper/ example with 3 method-specific spec files
+  - Added spec/helpers/application_helper/ example
+- Documented benefits: easy test location, faster test runs, 1:1 file-method mapping, simplified PRs, better git history
+- Provided code example showing spec file structure for helper methods
+
+**Rationale**: ErrorHelper refactoring revealed need for standardized helper spec organization. All helper methods were tested in single file (error_helper_spec.rb with 13 examples), making it harder to locate and run tests for specific methods. Splitting into separate files (field_error_message_spec.rb, field_icon_color_spec.rb, field_border_classes_spec.rb) improved maintainability and follows single responsibility principle at file level. Pattern aligns with Rails convention of one concern per file and mirrors spec/models/ organization (one model = one spec file). This prevents helper spec files from becoming unwieldy as helper modules grow.
+
+---
+
+### Version 1.10.0 - 2026-02-10
 **Type**: MINOR (RSpec testing framework standardization)
 
 **Changes**:
