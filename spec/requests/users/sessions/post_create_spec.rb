@@ -133,7 +133,7 @@ RSpec.describe 'User Sessions', type: :request do
     end
 
     context 'when user is already signed in' do
-      before { sign_in user }
+      before { sign_in user, scope: :user }
 
       let(:params) do
         {

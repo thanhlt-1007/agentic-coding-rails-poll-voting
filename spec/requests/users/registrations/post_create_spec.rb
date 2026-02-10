@@ -174,7 +174,7 @@ RSpec.describe 'User Registrations', type: :request do
         }
       end
 
-      before { sign_in user }
+      before { sign_in user, scope: :user }
 
       it 'does not create a new user' do
         expect {

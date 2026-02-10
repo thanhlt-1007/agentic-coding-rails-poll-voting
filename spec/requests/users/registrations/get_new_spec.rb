@@ -19,7 +19,7 @@ RSpec.describe 'User Registrations', type: :request do
     context 'when user is already signed in' do
       let(:user) { create(:user) }
 
-      before { sign_in user }
+      before { sign_in user, scope: :user }
 
       it 'redirects to root path' do
         get new_user_registration_path
