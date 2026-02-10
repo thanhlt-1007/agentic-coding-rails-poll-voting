@@ -8,14 +8,14 @@ module ErrorHelper
   end
 
   def field_icon_color(resource, field)
-    resource.errors[field].any? ? 'text-red-400' : 'text-gray-400'
+    resource.errors[field].any? ? "text-red-400" : "text-gray-400"
   end
 
   def field_border_classes(resource, field)
     if resource.errors[field].any?
-      'border-red-500 focus:border-red-500'
+      "border-red-500 focus:border-red-500"
     else
-      'border-gray-300 focus:ring-indigo-500 focus:border-transparent focus:ring-2'
+      "border-gray-300 focus:ring-indigo-500 focus:border-transparent focus:ring-2"
     end
   end
 end

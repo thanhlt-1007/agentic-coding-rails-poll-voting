@@ -26,9 +26,9 @@ module PollVoting
 
     # I18n configuration
     config.i18n.default_locale = :en
-    config.i18n.available_locales = [:en]
+    config.i18n.available_locales = [ :en ]
     config.i18n.fallbacks = true
-    config.i18n.load_path += Dir[Rails.root.join('config', 'locales', '**', '*.{rb,yml}')]
+    config.i18n.load_path += Dir[Rails.root.join("config", "locales", "**", "*.{rb,yml}")]
 
     # Configure generators to use RSpec and FactoryBot
     config.generators do |g|
@@ -39,7 +39,7 @@ module PollVoting
         routing_specs: false,
         request_specs: true,
         controller_specs: false
-      g.fixture_replacement :factory_bot, dir: 'spec/factories'
+      g.fixture_replacement :factory_bot, dir: "spec/factories"
     end
   end
 end

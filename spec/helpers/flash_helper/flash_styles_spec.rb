@@ -105,7 +105,7 @@ RSpec.describe FlashHelper, type: :helper do
       it "always returns a hash with required keys" do
         result = helper.flash_styles(:notice)
 
-        expect(result.keys).to match_array([:border_color, :icon_color, :icon_path])
+        expect(result.keys).to match_array([ :border_color, :icon_color, :icon_path ])
       end
 
       it "all values are strings" do

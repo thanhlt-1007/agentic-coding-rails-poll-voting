@@ -1,46 +1,55 @@
 <!--
 SYNC IMPACT REPORT - Constitution Update
 ========================================
-Version Change: 1.18.0 → 1.19.0
-Type: MINOR (View i18n 1:1 mapping pattern for partials)
+Version Change: 1.19.0 → 1.20.0
+Type: MINOR (RuboCop code style compliance principle)
 
-Modified Sections:
-  - Enhanced Principle IX (Application View Internationalization): Added 1:1 mapping pattern for partials
-  - Added partial locale file organization requirements
-  - Added refactoring workflow for splitting views into partials with corresponding locale files
+Added Sections:
+  - NEW Principle XII (RuboCop Code Style Compliance): Zero tolerance for RuboCop violations
 
-Changes to View i18n Principle:
-  - Added "1:1 Mapping Pattern" requirement: each .html.erb file has corresponding .en.yml file
-  - Documented partial locale file naming: app/views/path/_partial.html.erb → config/locales/app/views/path/partial.en.yml
-  - Added partial translation scoping: devise.sessions.new.[partial_name].[key]
-  - Added "Scope to partial" requirement: each partial's locale file contains ONLY translations for that partial
-  - Updated lazy lookup examples to show partial-scoped resolution
-  - Added complete example with multiple partial locale files
-  - Updated locale file organization structure to show partial subdirectory pattern
-  - Added refactoring workflow for splitting monolithic view locale files into partial-specific files
-  - Enhanced benefits list with partial-specific advantages (modular organization, scoped translations, 1:1 file mapping)
+Changes to Code Quality Requirements:
+  - Added "RuboCop Code Style Compliance (NON-NEGOTIABLE)" as Principle XII
+  - MANDATORY requirement: All code MUST pass RuboCop with zero offenses before committing
+  - Pre-commit workflow documented: tests → rubocop → fix violations → commit
+  - Common violations documented with examples (string literals, array spacing, trailing whitespace)
+  - RuboCop commands documented: bin/rubocop, bin/rubocop -a, bin/rubocop -f github
+  - Configuration: Project uses rubocop-rails-omakase (Rails default)
+  - Cop disabling policy: Requires approval (except generated/legacy code)
+  - CI integration requirement: GitHub Actions must run RuboCop, PR cannot merge if fails
+  - Benefits documented: consistency, readability, maintainability, automated enforcement
 
 Rationale:
-  Session login view refactoring revealed need for documenting partial i18n pattern. Project split
-  sessions/new.html.erb into partials (_header, _form_email, _form_password, _form_button_submit)
-  and correspondingly split new.en.yml into partial-specific locale files (header.en.yml,
-  form_email.en.yml, etc.). This 1:1 mapping between partial files and locale files improves
-  maintainability and makes it clear where to find/update translations for each UI component.
-  Rails lazy lookup automatically scopes partial translations under partial name, preventing key
-  collisions. Pattern was already implemented but not documented. Adding to constitution ensures
-  future view refactorings follow this pattern consistently. This is MINOR (new pattern requirement)
-  because it extends existing view i18n principle with partial-specific guidance.
+  Recent RuboCop violation fixes across 9 files (Gemfile, controllers, helpers, config, routes,
+  specs) demonstrated need for documented code style principle. Common violations included:
+  string literals (single vs double quotes), array bracket spacing, and trailing whitespace.
+  These violations occurred repeatedly during development, indicating developers needed clear
+  guidance on project style standards. RuboCop enforces Rails community conventions via
+  rubocop-rails-omakase, reducing cognitive load and eliminating style debates. Zero tolerance
+  policy prevents style drift. Running RuboCop before every commit catches violations early,
+  improving developer experience. This is MINOR (new principle requirement) because it adds
+  mandatory code quality gate that changes development workflow.
 
 Template Consistency Status:
-  ✅ plan-template.md - No changes required (i18n in implementation phase)
-  ✅ spec-template.md - No changes required (acceptance criteria unchanged)
-  ✅ tasks-template.md - Should add task for splitting locale files when creating partials
-  ✅ README.md - Should document 1:1 view/partial i18n mapping pattern
+  ✅ plan-template.md - Should add RuboCop check step in implementation phase
+  ✅ spec-template.md - Should add "Code passes RuboCop" to acceptance criteria
+  ✅ tasks-template.md - Should add "Run RuboCop and fix violations" task step
+  ✅ README.md - Should document RuboCop pre-commit workflow
 
 Follow-up TODOs:
-  - Update tasks-template.md to include "create partial locale file" step when creating partials
-  - Add README.md section explaining 1:1 view/partial i18n mapping
-  - Consider adding locale file organization checker in CI
+  - Add GitHub Actions workflow for RuboCop CI check
+  - Update README.md with RuboCop pre-commit workflow section
+  - Update plan-template.md to include RuboCop verification step
+  - Update spec-template.md acceptance criteria to require RuboCop compliance
+  - Update tasks-template.md to include RuboCop task step
+
+Migration Plan:
+  - Existing code: Already RuboCop compliant (52 files, no offenses)
+  - New code: Follow Principle XII before committing
+  - CI: Add RuboCop GitHub Actions check
+  - Documentation: Add to README developer workflow
+
+Previous Update (v1.19.0):
+  Enhanced Principle IX with 1:1 view/partial i18n mapping pattern.
 
 Previous Update (v1.18.0):
   Enhanced TDD principle with requirement to find existing specs before creating new ones.
@@ -1370,6 +1379,133 @@ redirect_to root_path, flash: { warning: "Session expiring soon" }
 
 ---
 
+### XII. RuboCop Code Style Compliance (NON-NEGOTIABLE)
+
+ALL code MUST pass RuboCop with ZERO offenses before committing. Code style consistency is mandatory across the entire codebase.
+
+**Requirements**:
+- **Zero tolerance**: No RuboCop offenses allowed in any commit
+- **Run before commit**: Execute `bin/rubocop` before every commit and ensure clean output
+- **Fix immediately**: Address all violations before pushing code
+- **No disabling cops**: Do NOT disable RuboCop cops with inline comments unless explicitly approved
+- **Configuration**: Project uses `rubocop-rails-omakase` configuration (Rails default)
+
+**Common Violations to Avoid**:
+
+1. **String Literals** (Style/StringLiterals):
+   ```ruby
+   # ❌ WRONG: Single quotes when double quotes preferred
+   layout 'devise'
+   t('.error')
+   require 'devise/orm/active_record'
+   
+   # ✅ CORRECT: Double quotes (project default)
+   layout "devise"
+   t(".error")
+   require "devise/orm/active_record"
+   ```
+
+2. **Array Bracket Spacing** (Layout/SpaceInsideArrayLiteralBrackets):
+   ```ruby
+   # ❌ WRONG: No spaces inside brackets
+   config.i18n.available_locales = [:en]
+   config.case_insensitive_keys = [:email]
+   
+   # ✅ CORRECT: Spaces inside brackets
+   config.i18n.available_locales = [ :en ]
+   config.case_insensitive_keys = [ :email ]
+   ```
+
+3. **Trailing Whitespace** (Layout/TrailingWhitespace):
+   ```ruby
+   # ❌ WRONG: Spaces/tabs at end of line
+   gem "rspec-rails"   
+   # Code here  
+   
+   # ✅ CORRECT: No trailing whitespace
+   gem "rspec-rails"
+   # Code here
+   ```
+
+4. **Line Length** (Layout/LineLength):
+   - Keep lines under 120 characters (omakase default)
+   - Break long method chains across lines
+   - Use heredocs or multi-line strings for long text
+
+5. **Method Length** (Metrics/MethodLength):
+   - Keep methods focused and under 10-15 lines
+   - Extract private methods when logic becomes complex
+   - Use service objects for multi-step business logic
+
+**Running RuboCop**:
+```bash
+# Check all files
+bin/rubocop
+
+# Check specific file
+bin/rubocop app/controllers/users/sessions_controller.rb
+
+# Auto-fix safe violations (use with caution)
+bin/rubocop -a
+
+# Auto-fix all violations including unsafe (review changes carefully)
+bin/rubocop -A
+
+# Output format for CI/GitHub Actions
+bin/rubocop -f github
+```
+
+**Pre-Commit Workflow**:
+1. Write/modify code
+2. Run tests: `bundle exec rspec`
+3. Run RuboCop: `bin/rubocop`
+4. Fix any violations reported
+5. Re-run RuboCop to confirm: `52 files inspected, no offenses detected`
+6. Commit only when both tests and RuboCop pass
+
+**Configuration** (`.rubocop.yml`):
+```yaml
+# Project uses Rails Omakase configuration
+inherit_gem: { rubocop-rails-omakase: rubocop.yml }
+
+# String literals: double quotes preferred (Rails default)
+# Array brackets: spaces inside brackets required
+# Line length: 120 characters maximum
+# Method length: 10-15 lines recommended
+```
+
+**When to Seek Approval for Cop Disabling**:
+- Performance-critical code that violates metrics (document why)
+- Generated code that cannot be modified (migrations, schemas)
+- Third-party integration requiring specific style
+- Legacy code being gradually refactored (temporary, with TODO)
+
+**Benefits**:
+- **Consistency**: Entire codebase follows same style conventions
+- **Readability**: Code is easier to read when style is uniform
+- **Maintainability**: Reduces cognitive load when switching between files
+- **Code Review**: Eliminates style bikeshedding in PR reviews
+- **Onboarding**: New developers have clear style guide to follow
+- **Automated**: CI enforces style, preventing style drift over time
+
+**Integration with CI**:
+- GitHub Actions MUST run RuboCop on every PR
+- PR cannot merge if RuboCop fails
+- Status check: "RuboCop / Code Style" must be green
+
+**Common Fixes After Code Generation**:
+
+When generating code via Rails generators or writing new files:
+1. **Controllers**: Check string literals (double quotes), layout directives
+2. **Routes**: Verify string literals in path names and controller references
+3. **Config files**: Ensure array bracket spacing, string literal style
+4. **Specs**: Check array spacing in matchers (`match_array([ :a, :b ])`)
+5. **Helpers**: Verify string literals in returned CSS classes
+
+**Rationale**: Code style consistency is critical for maintainability in team environments. RuboCop enforces Rails community conventions (via rubocop-rails-omakase), reducing cognitive load when reading code and eliminating style debates in code reviews. String literal consistency (double quotes), proper spacing, and no trailing whitespace are fundamental to clean code. Running RuboCop before every commit ensures violations are caught early, not during CI or code review. Zero tolerance policy prevents style drift and keeps codebase clean. Configuration inherits from rubocop-rails-omakase (Rails default), aligning with Rails ecosystem best practices. Recent experience fixing RuboCop violations (string literals, array spacing, trailing whitespace) demonstrated importance of running RuboCop before committing and documenting common violations to prevent recurrence.
+
+---
+
 ## Technology Stack
 
 **Core**:
@@ -1495,11 +1631,42 @@ This constitution supersedes all ad-hoc practices. When in doubt, constitution r
 - Template commands reference constitution for validation gates
 - Onboarding checklist includes constitution review
 
-**Current Version**: 1.19.0 | **Ratified**: 2026-02-10 | **Last Amended**: 2026-02-11
+**Current Version**: 1.20.0 | **Ratified**: 2026-02-10 | **Last Amended**: 2026-02-11
 
 ---
 
 ## Version History
+
+### Version 1.20.0 - 2026-02-11
+**Type**: MINOR (RuboCop code style compliance principle)
+
+**Changes**:
+- Added Principle XII (RuboCop Code Style Compliance):
+  - **Zero tolerance** requirement: All code MUST pass RuboCop with zero offenses before committing
+  - Mandatory pre-commit workflow: Run `bin/rubocop` before every commit
+  - Common violations documented with examples:
+    - String literals (Style/StringLiterals): Use double quotes (project default via rubocop-rails-omakase)
+    - Array bracket spacing (Layout/SpaceInsideArrayLiteralBrackets): Use spaces inside brackets `[ :en ]`
+    - Trailing whitespace (Layout/TrailingWhitespace): Remove all trailing spaces/tabs
+    - Line length (Layout/LineLength): Keep under 120 characters
+    - Method length (Metrics/MethodLength): Keep methods under 10-15 lines
+  - RuboCop commands documented: `bin/rubocop`, `bin/rubocop -a`, `bin/rubocop -f github`
+  - Pre-commit workflow: tests → rubocop → fix violations → commit
+  - Configuration: Project uses `rubocop-rails-omakase` (Rails default conventions)
+  - Cop disabling policy: Requires explicit approval except for generated/legacy code
+  - CI integration: GitHub Actions MUST run RuboCop, PR cannot merge if fails
+  - Common fixes after code generation documented (controllers, routes, config, specs, helpers)
+  - Benefits: consistency, readability, maintainability, eliminates style bikeshedding, automated enforcement
+
+**Rationale**: Code style consistency is critical for team maintainability. Recent RuboCop violation fixes (string literals from single to double quotes, array bracket spacing, trailing whitespace across 9 files) demonstrated need for documented code style principle. RuboCop enforces Rails community conventions via rubocop-rails-omakase configuration, reducing cognitive load and eliminating style debates in code reviews. Common violations (string literals, array spacing, trailing whitespace) were occurring repeatedly during development, indicating developers needed clear guidance on project style standards. Zero tolerance policy prevents style drift and ensures codebase remains clean. Running RuboCop before every commit catches violations early (not during CI or code review), improving developer experience. Documenting common violations with correct/incorrect examples provides reference for developers to avoid repeated mistakes. Configuration inherits from rubocop-rails-omakase, aligning with Rails ecosystem best practices. This is MINOR version (new principle) because it adds mandatory code quality requirement that changes development workflow (must run RuboCop before commit).
+
+**Migration Plan**:
+- Existing code: Already RuboCop compliant (52 files inspected, no offenses detected)
+- New code: Follow principle XII requirements before committing
+- CI: Add RuboCop check to GitHub Actions workflow
+- Developer setup: Document RuboCop pre-commit workflow in README
+
+---
 
 ### Version 1.19.0 - 2026-02-11
 **Type**: MINOR (View i18n 1:1 mapping pattern for partials)

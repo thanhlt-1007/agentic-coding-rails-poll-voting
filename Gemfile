@@ -76,11 +76,11 @@ group :test do
   # Use system testing [https://guides.rubyonrails.org/testing.html#system-testing]
   gem "capybara"
   gem "selenium-webdriver"
-  
+
   # RSpec matchers and helpers
   gem "shoulda-matchers", "~> 6.4"
   gem "database_cleaner-active_record", "~> 2.2"
-  
+
   # Code coverage analysis [https://github.com/simplecov-ruby/simplecov]
   gem "simplecov", "~> 0.22", require: false
 end
