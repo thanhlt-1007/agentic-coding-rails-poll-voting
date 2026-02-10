@@ -1,25 +1,26 @@
 <!--
 SYNC IMPACT REPORT - Constitution Update
 ========================================
-Version Change: 1.4.0 → 1.5.0
-Type: PATCH (Documentation completeness)
+Version Change: 1.5.0 → 1.6.0
+Type: PATCH (Documentation clarity - production environment)
 
 Modified Principles: None
 Modified Sections: None (documentation update only)
 
 Rationale: 
-  Environment variables POLL_VOTING_DATABASE_HOST and POLL_VOTING_DATABASE_PORT
-  were already present in .env.example and database.yml but missing from README.md
-  documentation. This update ensures README Quick Start section accurately reflects
-  all database configuration variables, fulfilling constitutional documentation
-  requirements.
+  DATABASE_URL environment variable was documented but lacked critical production-only
+  context, causing potential confusion for new developers. Developers might set
+  DATABASE_URL in local .env files, which overrides individual database variables
+  and breaks local development. This update adds explicit warnings in .env.example
+  and comprehensive production environment documentation in README.md to prevent
+  misconfiguration, fulfilling constitutional documentation accuracy requirements.
 
 Template Consistency Status:
   ✅ plan-template.md - No changes required
   ✅ spec-template.md - No changes required
   ✅ tasks-template.md - No changes required
-  ✅ README.md - Updated with complete database ENV variables
-  ✅ .env.example - Already complete (no changes)
+  ✅ README.md - Updated with production environment section and DATABASE_URL warnings
+  ✅ .env.example - Updated with PRODUCTION ONLY warning for DATABASE_URL
   ✅ config/database.yml - Already complete (no changes)
 
 Follow-up TODOs:
@@ -221,11 +222,26 @@ This constitution supersedes all ad-hoc practices. When in doubt, constitution r
 - Template commands reference constitution for validation gates
 - Onboarding checklist includes constitution review
 
-**Current Version**: 1.5.0 | **Ratified**: 2026-02-10 | **Last Amended**: 2026-02-10
+**Current Version**: 1.6.0 | **Ratified**: 2026-02-10 | **Last Amended**: 2026-02-10
 
 ---
 
 ## Version History
+
+### Version 1.6.0 - 2026-02-10
+**Type**: PATCH (Documentation clarity - production environment)
+
+**Changes**:
+- Updated .env.example to add "⚠️ PRODUCTION ONLY" warning for DATABASE_URL
+- Added comprehensive "Production Environment (Render.com Only)" section to README.md
+- Documented DATABASE_URL auto-provisioning and override behavior
+- Added local vs production database configuration comparison
+- Updated production section in Environment Configuration to reference detailed production docs
+- Clarified that DATABASE_URL should never be set in local .env files
+
+**Rationale**: Previous documentation mentioned DATABASE_URL but lacked critical context about production-only usage. Developers could mistakenly set DATABASE_URL in local .env files, which overrides individual database variables (POLL_VOTING_DATABASE_HOST, PORT, USERNAME, PASSWORD) and breaks local development. Explicit warnings and detailed production environment documentation prevent misconfiguration and improve new developer onboarding experience.
+
+---
 
 ### Version 1.5.0 - 2026-02-10
 **Type**: PATCH (Documentation completeness)

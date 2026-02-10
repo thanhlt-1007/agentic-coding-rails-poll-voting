@@ -98,6 +98,52 @@ bin/dev
 
 The application will be available at **http://localhost:3000**
 
+## 🚀 Production Environment (Render.com Only)
+
+### Automatic Environment Variables
+
+When deploying to Render.com, the following environment variables are **automatically provided** by the platform. You do NOT need to set them manually:
+
+#### `DATABASE_URL`
+- **Auto-provided**: Yes (Render.com managed PostgreSQL)
+- **Format**: `postgres://username:password@host:port/database`
+- **Usage**: Production database connection (primary, cache, queue, cable)
+- **⚠️ IMPORTANT**: Do NOT set `DATABASE_URL` in your local `.env` file!
+  - Setting it locally will **override** all individual database variables (`POLL_VOTING_DATABASE_HOST`, `POLL_VOTING_DATABASE_PORT`, etc.)
+  - This will break your local development setup
+  - `DATABASE_URL` is only needed in production where Render.com provides it automatically
+
+#### `REDIS_URL`
+- **Auto-provided**: Yes (Render.com managed Redis)
+- **Format**: `redis://hostname:port`
+- **Usage**: Caching, background jobs, Action Cable
+
+#### Manual Configuration Required
+
+You must manually configure these variables in the Render.com dashboard:
+
+- `RAILS_MASTER_KEY` - Copy from `config/master.key` (never commit this file!)
+- `RAILS_ENV=production`
+- `RAILS_LOG_LEVEL=info` (recommended)
+- `RAILS_FORCE_SSL=true`
+
+### Local vs Production Database Configuration
+
+**Local Development** (uses individual variables from `.env`):
+```env
+POLL_VOTING_DATABASE_HOST=localhost
+POLL_VOTING_DATABASE_PORT=5432
+POLL_VOTING_DATABASE_USERNAME=postgres
+POLL_VOTING_DATABASE_PASSWORD=your_password
+```
+
+**Production** (uses single `DATABASE_URL` from Render.com):
+```env
+DATABASE_URL=postgres://user:pass@host:5432/dbname  # Auto-provided, do NOT set manually
+```
+
+Rails automatically parses `DATABASE_URL` in production to create the primary database connection and derives cache/queue/cable database names from it.
+
 ## 🧪 Running Tests
 
 ### Run All Tests
@@ -235,11 +281,9 @@ Test environment can override settings via `.env.test` file.
 
 ### Production
 
-Production uses environment variables provided by Render.com:
+Production environment variables are automatically provided by Render.com. See the **Production Environment (Render.com Only)** section above for complete details on `DATABASE_URL`, `REDIS_URL`, and manual configuration requirements.
 
-- `DATABASE_URL` - Managed PostgreSQL connection
-- `REDIS_URL` - Managed Redis connection
-- `RAILS_MASTER_KEY` - For encrypted credentials
+**Key Point**: Never set `DATABASE_URL` in local `.env` - it will override your local database configuration!
 
 ## 🐛 Troubleshooting
 
