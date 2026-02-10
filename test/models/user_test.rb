@@ -51,7 +51,7 @@ class UserTest < ActiveSupport::TestCase
 
   test "accepts very long passwords" do
     long_password = "a" * 128
-    user = User.new(email: "test@example.com", password: long_password, password_confirmation: long_password")
+    user = User.new(email: "test@example.com", password: long_password, password_confirmation: long_password)
     assert user.valid?
   end
 
