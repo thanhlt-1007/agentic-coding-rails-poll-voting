@@ -1,46 +1,50 @@
 <!--
 SYNC IMPACT REPORT - Constitution Update
 ========================================
-Version Change: 1.10.0 → 1.11.0
-Type: PATCH (Helper spec organization pattern)
+Version Change: 1.11.0 → 1.12.0
+Type: MINOR (Gem i18n management principle)
 
 Modified Sections:
-  - II. Test-Driven Development > Test Organization - Added helper spec organization pattern
+  - Added new principle: VII. Gem Internationalization (i18n) Management
 
 Added Requirements:
-  - Helper specs MUST be organized by helper module in subdirectories
-  - One spec file per public method (e.g., spec/helpers/error_helper/field_error_message_spec.rb)
-  - Each spec file tests ONE method only (focused, single responsibility)
-  - Updated spec/ directory structure example to show helper organization
+  - When installing gems with i18n files, MUST copy locale files from GitHub to config/locales/gems/[gem_name]/
+  - Organize gems by directory: config/locales/gems/rails/, config/locales/gems/devise/, etc.
+  - Use official source: GitHub repository at tagged version matching installed gem
+  - Download ALL locale files for the gem (en.yml minimum, additional languages optional)
+  - Rails core components use separate files: actionview.en.yml, activemodel.en.yml, activerecord.en.yml, activesupport.en.yml
+  - Update .gitignore to track locale files (NOT ignored)
+  - Document process in README.md for gem upgrades
 
 Benefits Documented:
-  - Easy to locate tests for specific helper method
-  - Faster test runs when working on single method (run one file)
-  - Clear 1:1 mapping between file and method
-  - Simplified pull requests (method changes affect single spec file)
-  - Better git history (method-specific commits touch only relevant spec file)
+  - Version control over i18n files (track changes, review diffs)
+  - Customization capability (modify translations without monkey-patching)
+  - Offline development (no runtime dependency on gem load paths)
+  - Explicit visibility (know exactly what translations are available)
+  - Consistency across environments (production uses exact translations as dev/test)
 
 Rationale:
-  ErrorHelper refactoring revealed need for standardized helper spec organization. Previously,
-  all helper methods tested in single file (error_helper_spec.rb with 13 examples). Splitting
-  into separate files (field_error_message_spec.rb, field_icon_color_spec.rb,
-  field_border_classes_spec.rb) improved maintainability and follows single responsibility
-  principle at file level. Pattern mirrors Rails convention of one concern per file and aligns
-  with spec/models/ organization (one model = one spec file). This standard prevents helper
-  spec files from becoming unwieldy as helper modules grow.
+  Rails 8.1.2 i18n setup revealed that gems include locale files in their load paths, but these
+  aren't tracked in version control or easily customizable. Copying from GitHub to config/locales/gems/
+  ensures we have explicit control over all user-facing text. This supports i18n configuration
+  with recursive locale loading (config.i18n.load_path += Dir[Rails.root.join('config', 'locales', '**', '*.{rb,yml}')]).
+  Pattern applies to Rails core (actionview, activemodel, activerecord, activesupport) and third-party
+  gems (Devise, Pundit, etc.). Directory organization (config/locales/gems/rails/, config/locales/gems/devise/)
+  keeps locale files separate from application-specific translations.
 
 Template Consistency Status:
-  ✅ plan-template.md - No changes required (spec organization not in planning phase)
+  ✅ plan-template.md - No changes required (i18n management not in planning phase)
   ✅ spec-template.md - No changes required (acceptance criteria unchanged)
   ✅ tasks-template.md - No changes required (task patterns unchanged)
-  ✅ README.md - Already documents RSpec testing structure
+  ⚠️  README.md - Should add section on gem i18n management for future gem installations
 
 Follow-up TODOs:
-  - None (pattern already implemented in spec/helpers/error_helper/)
+  - Add README.md section explaining gem i18n management process
+  - Document how to update locale files when upgrading gems
 
-Previous Update (v1.10.0):
-  Added RSpec testing framework standardization with comprehensive requirements,
-  automatic spec generation, FactoryBot, Shoulda Matchers, and coverage requirements.
+Previous Update (v1.11.0):
+  Added Helper Spec Organization Pattern mandating one spec file per helper method
+  for improved maintainability and single responsibility at file level.
 -->
 
 # Rails Poll Voting Constitution
@@ -350,6 +354,97 @@ All forms and user inputs MUST provide clear, actionable error feedback followin
 
 **Rationale**: Consistent, clear error feedback reduces user frustration and form abandonment. Inline field errors provide immediate, actionable guidance at the point of error. Top-right notifications give global context without blocking form content. This pattern balances visibility with usability, following established UX best practices from Tailwind UI and modern web applications. Tailwind v4's on-demand class generation requires explicit verification of color utility availability to prevent styling bugs.
 
+### VII. Gem Internationalization (i18n) Management
+
+When installing gems that include internationalization (i18n) files, locale files MUST be copied from the gem's GitHub repository to the project's `config/locales/gems/` directory for version control and customization.
+
+**Requirements**:
+- **Directory organization**: `config/locales/gems/[gem_name]/`
+  - Rails core: `config/locales/gems/rails/` (actionview, activemodel, activerecord, activesupport)
+  - Third-party gems: `config/locales/gems/devise/`, `config/locales/gems/pundit/`, etc.
+- **Source**: Official GitHub repository at tagged version matching installed gem
+  - Example: Rails 8.1.2 → `https://raw.githubusercontent.com/rails/rails/v8.1.2/[component]/lib/[component]/locale/en.yml`
+  - Example: Devise 4.9.0 → `https://raw.githubusercontent.com/heartcombo/devise/v4.9.0/config/locales/en.yml`
+- **Files**: Download ALL locale files for the gem
+  - Minimum: `en.yml` (English)
+  - Optional: Additional languages if project supports them (`es.yml`, `fr.yml`, etc.)
+- **Rails core components**: Use separate files for each component
+  - `actionview.en.yml` - Form helpers, datetime formatting, distance_in_words
+  - `activemodel.en.yml` - Model validation error messages
+  - `activerecord.en.yml` - ActiveRecord-specific error messages
+  - `activesupport.en.yml` - Date/time formatting, number formatting, array helpers
+- **Version control**: Locale files MUST be committed to git (NOT ignored)
+- **Documentation**: Update README.md with process for updating locale files during gem upgrades
+
+**Implementation Process**:
+```bash
+# Create directory for gem locale files
+mkdir -p config/locales/gems/rails
+
+# Download Rails 8.1.2 locale files from GitHub
+curl -o config/locales/gems/rails/actionview.en.yml \
+  https://raw.githubusercontent.com/rails/rails/v8.1.2/actionview/lib/action_view/locale/en.yml
+
+curl -o config/locales/gems/rails/activemodel.en.yml \
+  https://raw.githubusercontent.com/rails/rails/v8.1.2/activemodel/lib/active_model/locale/en.yml
+
+curl -o config/locales/gems/rails/activerecord.en.yml \
+  https://raw.githubusercontent.com/rails/rails/v8.1.2/activerecord/lib/active_record/locale/en.yml
+
+curl -o config/locales/gems/rails/activesupport.en.yml \
+  https://raw.githubusercontent.com/rails/rails/v8.1.2/activesupport/lib/active_support/locale/en.yml
+
+# For third-party gems (e.g., Devise)
+mkdir -p config/locales/gems/devise
+curl -o config/locales/gems/devise/en.yml \
+  https://raw.githubusercontent.com/heartcombo/devise/v4.9.0/config/locales/en.yml
+```
+
+**Configuration Requirements**:
+
+Rails i18n configuration MUST include recursive locale loading to load gem files:
+```ruby
+# config/application.rb
+config.i18n.default_locale = :en
+config.i18n.available_locales = [:en]
+config.i18n.fallbacks = true
+config.i18n.load_path += Dir[Rails.root.join('config', 'locales', '**', '*.{rb,yml}')]
+```
+
+**Locale File Organization**:
+```
+config/locales/
+├── en.yml                          # Application-specific translations
+├── devise.en.yml                   # Devise overrides (optional)
+└── gems/
+    ├── rails/                      # Rails core locale files
+    │   ├── actionview.en.yml
+    │   ├── activemodel.en.yml
+    │   ├── activerecord.en.yml
+    │   └── activesupport.en.yml
+    ├── devise/                     # Devise locale files
+    │   └── en.yml
+    └── [other_gems]/               # Additional gem locale files
+```
+
+**Benefits**:
+- **Version control**: Track changes to i18n files across gem upgrades
+- **Customization**: Modify translations without monkey-patching gem internals
+- **Offline development**: No runtime dependency on gem load paths
+- **Explicit visibility**: Know exactly what translations are available
+- **Consistency**: Production uses exact translations as dev/test environments
+- **Review process**: Locale changes visible in git diffs during gem upgrades
+- **Debugging**: Easy to locate translation keys and values
+
+**Gem Upgrade Process**:
+1. Check gem version in `Gemfile.lock` after `bundle update [gem_name]`
+2. Download new locale files from GitHub at matching tag/version
+3. Review diff (`git diff config/locales/gems/[gem_name]/`) for translation changes
+4. Test application to ensure translations work correctly
+5. Commit locale file updates with gem version bump
+
+**Rationale**: Gems include locale files in their load paths, but these aren't tracked in version control or easily customizable. Copying from GitHub to `config/locales/gems/` ensures explicit control over all user-facing text and supports i18n best practices. This pattern applies to Rails core components (actionview, activemodel, activerecord, activesupport) and third-party gems (Devise, Pundit, etc.). Directory organization keeps gem locale files separate from application-specific translations (`config/locales/en.yml`), improving maintainability and reducing merge conflicts during gem upgrades.
+
 ## Technology Stack
 
 **Core**:
@@ -475,11 +570,33 @@ This constitution supersedes all ad-hoc practices. When in doubt, constitution r
 - Template commands reference constitution for validation gates
 - Onboarding checklist includes constitution review
 
-**Current Version**: 1.11.0 | **Ratified**: 2026-02-10 | **Last Amended**: 2026-02-10
+**Current Version**: 1.12.0 | **Ratified**: 2026-02-10 | **Last Amended**: 2026-02-11
 
 ---
 
 ## Version History
+
+### Version 1.12.0 - 2026-02-11
+**Type**: MINOR (Gem i18n management principle)
+
+**Changes**:
+- Added new principle: VII. Gem Internationalization (i18n) Management
+- Established requirements for managing gem locale files:
+  - Copy locale files from gem GitHub repos to config/locales/gems/[gem_name]/
+  - Directory organization: rails/, devise/, etc.
+  - Use official GitHub source at tagged version matching installed gem
+  - Download ALL locale files (minimum en.yml)
+  - Rails core uses separate files: actionview.en.yml, activemodel.en.yml, activerecord.en.yml, activesupport.en.yml
+  - Commit locale files to version control (NOT ignored)
+- Added implementation process with curl examples for Rails 8.1.2 and Devise
+- Added configuration requirements: recursive locale loading via config.i18n.load_path
+- Added locale file organization structure showing gems/ directory hierarchy
+- Documented gem upgrade process (check version, download new files, review diff, test, commit)
+- Listed benefits: version control, customization, offline development, explicit visibility, consistency, review process, debugging
+
+**Rationale**: Rails 8.1.2 i18n setup revealed that gems include locale files in their load paths, but these aren't tracked in version control or easily customizable. Copying from GitHub to config/locales/gems/ ensures explicit control over all user-facing text and supports i18n best practices with recursive locale loading. This pattern applies to Rails core components (actionview, activemodel, activerecord, activesupport) and third-party gems (Devise, Pundit, etc.). Directory organization keeps gem locale files separate from application-specific translations, improving maintainability and reducing merge conflicts during gem upgrades.
+
+---
 
 ### Version 1.11.0 - 2026-02-10
 **Type**: PATCH (Helper spec organization pattern)
