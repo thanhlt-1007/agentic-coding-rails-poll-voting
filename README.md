@@ -308,7 +308,7 @@ bin/rails solid_queue:start
 - **Real-time**: Solid Cable (WebSockets)
 - **Frontend**: Hotwire (Turbo + Stimulus)
 - **Styling**: Tailwind CSS 4
-- **Testing**: Minitest + Capybara
+- **Testing**: RSpec + FactoryBot + Capybara
 - **Deployment**: Render.com
 
 ## 🌍 Environment Configuration

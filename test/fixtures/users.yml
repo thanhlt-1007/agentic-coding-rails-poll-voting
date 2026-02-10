@@ -1,5 +1,0 @@
-# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
-
-# No default fixtures - tests create their own users
-# This prevents unique constraint violations when running tests
-
