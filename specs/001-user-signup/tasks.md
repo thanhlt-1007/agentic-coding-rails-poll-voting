@@ -86,17 +86,17 @@
 
 ### Implementation for User Story 2
 
-- [ ] T025 [US2] Add error message display in app/views/devise/registrations/new.html.erb
-- [ ] T026 [US2] Style error messages with Tailwind CSS (red background, clear text)
-- [ ] T027 [US2] Verify email uniqueness validation in User model
-- [ ] T028 [US2] Verify email format validation in User model
-- [ ] T029 [US2] Verify password minimum length validation (6 characters)
-- [ ] T030 [US2] Verify password confirmation matching validation
-- [ ] T031 [US2] Test duplicate email error: "Email has already been taken"
-- [ ] T032 [US2] Test weak password error: password too short message
-- [ ] T033 [US2] Test blank fields error: appropriate messages for missing required fields
-- [ ] T034 [US2] Test invalid email format error: "Email is invalid"
-- [ ] T035 [US2] Verify form preserves user input on validation failure (except password fields)
+- [X] T025 [US2] Add error message display in app/views/devise/registrations/new.html.erb
+- [X] T026 [US2] Style error messages with Tailwind CSS (red background, clear text)
+- [X] T027 [US2] Verify email uniqueness validation in User model
+- [X] T028 [US2] Verify email format validation in User model
+- [X] T029 [US2] Verify password minimum length validation (6 characters)
+- [X] T030 [US2] Verify password confirmation matching validation
+- [X] T031 [US2] Test duplicate email error: "Email has already been taken"
+- [X] T032 [US2] Test weak password error: password too short message
+- [X] T033 [US2] Test blank fields error: appropriate messages for missing required fields
+- [X] T034 [US2] Test invalid email format error: "Email is invalid"
+- [X] T035 [US2] Verify form preserves user input on validation failure (except password fields)
 
 **Checkpoint**: At this point, User Stories 1 AND 2 should both work - account creation with proper validation
 
@@ -110,14 +110,14 @@
 
 ### Implementation for User Story 3
 
-- [ ] T036 [P] [US3] Verify /sign_up route is properly configured in config/routes.rb
-- [ ] T037 [P] [US3] Add "Sign up" link to login page (app/views/devise/sessions/new.html.erb)
-- [ ] T038 [US3] Test direct access to /sign_up URL loads registration form
-- [ ] T039 [US3] Verify form displays email label clearly
-- [ ] T040 [US3] Verify form displays password label clearly
-- [ ] T041 [US3] Verify form displays password_confirmation label clearly
-- [ ] T042 [US3] Test responsive design on mobile viewport
-- [ ] T043 [US3] Add navigation link to sign-up in main layout (if applicable)
+- [X] T036 [P] [US3] Verify /sign_up route is properly configured in config/routes.rb
+- [X] T037 [P] [US3] Add "Sign up" link to login page (app/views/devise/sessions/new.html.erb)
+- [X] T038 [US3] Test direct access to /sign_up URL loads registration form
+- [X] T039 [US3] Verify form displays email label clearly
+- [X] T040 [US3] Verify form displays password label clearly
+- [X] T041 [US3] Verify form displays password_confirmation label clearly
+- [X] T042 [US3] Test responsive design on mobile viewport
+- [X] T043 [US3] Add navigation link to sign-up in main layout (if applicable)
 
 **Checkpoint**: All access points to sign-up page are working
 
@@ -131,11 +131,11 @@
 
 ### Implementation for User Story 4
 
-- [ ] T044 [US4] Verify password_confirmation field exists in form (already added in T018)
-- [ ] T045 [US4] Verify Devise validates password confirmation matches
-- [ ] T046 [US4] Test successful sign-up with matching passwords
-- [ ] T047 [US4] Test failed sign-up with mismatched passwords
-- [ ] T048 [US4] Verify error message: "Password confirmation doesn't match Password"
+- [X] T044 [US4] Verify password_confirmation field exists in form (already added in T018)
+- [X] T045 [US4] Verify Devise validates password confirmation matches
+- [X] T046 [US4] Test successful sign-up with matching passwords
+- [X] T047 [US4] Test failed sign-up with mismatched passwords
+- [X] T048 [US4] Verify error message: "Password confirmation doesn't match Password"
 
 **Checkpoint**: Password confirmation working correctly
 
@@ -149,11 +149,11 @@
 
 ### Implementation for User Story 5
 
-- [ ] T049 [US5] Add "Already have an account?" text to app/views/devise/registrations/new.html.erb
-- [ ] T050 [US5] Add "Sign in" link pointing to login page (new_user_session_path)
-- [ ] T051 [US5] Style the link with Tailwind CSS
-- [ ] T052 [US5] Test clicking the link redirects to login page
-- [ ] T053 [US5] Verify link is visible and properly positioned on the page
+- [X] T049 [US5] Add "Already have an account?" text to app/views/devise/registrations/new.html.erb
+- [X] T050 [US5] Add "Sign in" link pointing to login page (new_user_session_path)
+- [X] T051 [US5] Style the link with Tailwind CSS
+- [X] T052 [US5] Test clicking the link redirects to login page
+- [X] T053 [US5] Verify link is visible and properly positioned on the page
 
 **Checkpoint**: All user stories should now be independently functional
 
@@ -163,23 +163,23 @@
 
 **Purpose**: Comprehensive testing and edge case handling
 
-- [ ] T054 [P] Write User model test in test/models/user_test.rb
-- [ ] T055 [P] Test email uniqueness (case-insensitive) in user_test.rb
-- [ ] T056 [P] Test email format validation in user_test.rb
-- [ ] T057 [P] Test password minimum length validation in user_test.rb
-- [ ] T058 [P] Write system test in test/system/user_signup_test.rb
-- [ ] T059 [P] System test: successful sign-up flow
-- [ ] T060 [P] System test: duplicate email error
-- [ ] T061 [P] System test: weak password error
-- [ ] T062 [P] System test: blank fields error
-- [ ] T063 [P] System test: password confirmation mismatch error
-- [ ] T064 [P] System test: navigation from sign-up to login
-- [ ] T065 Test edge case: email with different case (User@Example.com vs user@example.com)
-- [ ] T066 Test edge case: very long email address (255+ characters)
-- [ ] T067 Test edge case: very long password (100+ characters)
-- [ ] T068 Test edge case: special characters in email
-- [ ] T069 Test edge case: already authenticated user accessing /sign_up
-- [ ] T070 Handle already-signed-in user by redirecting or showing message
+- [X] T054 [P] Write User model test in test/models/user_test.rb
+- [X] T055 [P] Test email uniqueness (case-insensitive) in user_test.rb
+- [X] T056 [P] Test email format validation in user_test.rb
+- [X] T057 [P] Test password minimum length validation in user_test.rb
+- [X] T058 [P] Write system test in test/system/user_signup_test.rb
+- [X] T059 [P] System test: successful sign-up flow
+- [X] T060 [P] System test: duplicate email error
+- [X] T061 [P] System test: weak password error
+- [X] T062 [P] System test: blank fields error
+- [X] T063 [P] System test: password confirmation mismatch error
+- [X] T064 [P] System test: navigation from sign-up to login
+- [X] T065 Test edge case: email with different case (User@Example.com vs user@example.com)
+- [X] T066 Test edge case: very long email address (255+ characters)
+- [X] T067 Test edge case: very long password (100+ characters)
+- [X] T068 Test edge case: special characters in email
+- [X] T069 Test edge case: already authenticated user accessing /sign_up
+- [X] T070 Handle already-signed-in user by redirecting or showing message
 
 ---
 
@@ -187,19 +187,19 @@
 
 **Purpose**: Security, documentation, and final improvements
 
-- [ ] T071 [P] Verify passwords are encrypted with bcrypt (check database)
-- [ ] T072 [P] Verify no plain-text passwords in database
-- [ ] T073 [P] Verify CSRF protection is enabled (Rails default)
-- [ ] T074 [P] Add client-side form validation to prevent double-submission
-- [ ] T075 [P] Test form submission multiple times in quick succession
-- [ ] T076 [P] Update README.md with authentication setup instructions
-- [ ] T077 [P] Document Devise configuration in README or docs/
-- [ ] T078 [P] Verify HTTPS requirement for production environment
-- [ ] T079 Code review: Check all Devise security best practices
-- [ ] T080 Final manual testing of all user stories end-to-end
-- [ ] T081 Run full Rails test suite: rails test or rspec
-- [ ] T082 Performance test: measure page load time (target < 500ms)
-- [ ] T083 Performance test: measure form submission time (target < 1s)
+- [X] T071 [P] Verify passwords are encrypted with bcrypt (check database)
+- [X] T072 [P] Verify no plain-text passwords in database
+- [X] T073 [P] Verify CSRF protection is enabled (Rails default)
+- [X] T074 [P] Add client-side form validation to prevent double-submission
+- [X] T075 [P] Test form submission multiple times in quick succession
+- [X] T076 [P] Update README.md with authentication setup instructions
+- [X] T077 [P] Document Devise configuration in README or docs/
+- [X] T078 [P] Verify HTTPS requirement for production environment
+- [X] T079 Code review: Check all Devise security best practices
+- [X] T080 Final manual testing of all user stories end-to-end
+- [X] T081 Run full Rails test suite: rails test or rspec
+- [X] T082 Performance test: measure page load time (target < 500ms)
+- [X] T083 Performance test: measure form submission time (target < 1s)
 
 ---
 
