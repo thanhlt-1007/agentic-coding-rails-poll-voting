@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe ApplicationHelper, type: :helper do
+RSpec.describe ErrorHelper, type: :helper do
   describe '#field_error_message' do
     let(:user) { User.new }
 
