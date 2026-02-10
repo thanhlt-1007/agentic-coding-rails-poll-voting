@@ -1,0 +1,8 @@
+en:
+  me:
+    polls:
+      index:
+        empty_state:
+          no_polls: "No polls yet"
+          no_polls_description: "Get started by creating your first poll."
+          create_first_poll: "Create your first poll"

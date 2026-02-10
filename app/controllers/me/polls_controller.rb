@@ -5,6 +5,10 @@ module Me
     before_action :authenticate_user!
     before_action :authenticate_poll!, only: :show
 
+    def index
+      @polls = current_user.polls.recent
+    end
+
     def new
       @poll = Poll.new
       4.times { @poll.answers.build }
@@ -30,7 +34,7 @@ module Me
       @poll = current_user.polls.find_by(id: params[:id])
       return if @poll
 
-      redirect_to root_path, alert: t(".errors.poll_not_found")
+      redirect_to me_polls_path, alert: t(".errors.poll_not_found")
     end
 
     def poll_params

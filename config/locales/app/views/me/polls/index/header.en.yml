@@ -1,0 +1,7 @@
+en:
+  me:
+    polls:
+      index:
+        header:
+          title: "My Polls"
+          create_new: "Create New Poll"

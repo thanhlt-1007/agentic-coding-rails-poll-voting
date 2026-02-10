@@ -1,0 +1,32 @@
+<div data-dropdown-target="menu" 
+     class="hidden absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-lg border border-gray-200 py-1 z-50">
+  <!-- User Email -->
+  <div class="px-4 py-3 border-b border-gray-200">
+    <p class="text-sm text-gray-500"><%= t('.signed_in_as') %></p>
+    <p class="text-sm font-medium text-gray-900 truncate"><%= current_user.email %></p>
+  </div>
+
+  <!-- Menu Items -->
+  <%= link_to me_polls_path, class: "block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center space-x-2" do %>
+    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+    </svg>
+    <span><%= t('.my_polls') %></span>
+  <% end %>
+
+  <%= link_to new_me_poll_path, class: "block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center space-x-2" do %>
+    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+    </svg>
+    <span><%= t('.create_new_poll') %></span>
+  <% end %>
+
+  <div class="border-t border-gray-200 my-1"></div>
+
+  <%= button_to destroy_user_session_path, method: :delete, class: "w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 flex items-center space-x-2" do %>
+    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
+    </svg>
+    <span><%= t('.logout') %></span>
+  <% end %>
+</div>

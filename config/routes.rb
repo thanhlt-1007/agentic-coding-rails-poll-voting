@@ -9,7 +9,7 @@ Rails.application.routes.draw do
   }
 
   namespace :me do
-    resources :polls, only: [ :new, :create, :show ]
+    resources :polls, only: [ :index, :new, :create, :show ]
   end
 
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html

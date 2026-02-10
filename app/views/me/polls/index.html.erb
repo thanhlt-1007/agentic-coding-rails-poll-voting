@@ -1,0 +1,9 @@
+<div class="max-w-7xl mx-auto px-4 py-8">
+  <%= render "me/polls/index/header" %>
+
+  <% if @polls.any? %>
+    <%= render "me/polls/index/polls_grid", polls: @polls %>
+  <% else %>
+    <%= render "me/polls/index/empty_state" %>
+  <% end %>
+</div>
