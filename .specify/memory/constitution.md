@@ -1,56 +1,56 @@
 <!--
 SYNC IMPACT REPORT - Constitution Update
 ========================================
-Version Change: 1.13.0 → 1.14.0
-Type: PATCH (Model i18n spec requirement)
+Version Change: 1.14.0 → 1.15.0
+Type: MINOR (View i18n management requirement)
 
 Modified Sections:
-  - Updated Principle VIII: Application Model i18n Management
-  - Added spec requirement for i18n translations
+  - Added new principle: IX. Application View Internationalization (i18n) Management
 
 Added Requirements:
-  - When creating/updating models, MUST create/update spec/models/[model]/i18n_spec.rb
-  - i18n spec MUST test model name translations (singular and plural)
-  - i18n spec MUST test ALL attribute name translations
-  - Tests verify User.model_name.human and User.human_attribute_name(:attribute)
-  - Update i18n spec when adding/removing/renaming model attributes
-  - Commit i18n spec alongside model and locale file changes
+  - When creating/updating views in app/views/, MUST create/update i18n file at config/locales/app/views/[path]/[view_name].en.yml
+  - View locale files include ALL user-facing text (titles, labels, buttons, placeholders, messages)
+  - Organize by view path: config/locales/app/views/devise/sessions/new.en.yml matches app/views/devise/sessions/new.html.erb
+  - Use lazy lookup pattern: t('.key') instead of t('full.path.key')
+  - Rails infers full key from view path automatically
+  - Update locale file when adding/removing/changing user-facing text in views
+  - Commit locale files alongside view changes (same PR/commit)
 
-Spec File Structure:
-  - Location: spec/models/[model]/i18n_spec.rb (follows model spec organization pattern)
-  - Two describe blocks: 'model name' and 'attribute names'
-  - Test model name singular and plural forms
-  - One test per attribute to verify translation
+Directory Structure:
+  - config/locales/app/views/ mirrors app/views/ directory structure
+  - Example: app/views/devise/sessions/new.html.erb → config/locales/app/views/devise/sessions/new.en.yml
+  - One locale file per view template
 
 Benefits Documented:
-  - Ensures i18n translations are defined and correct
-  - Catches missing translations during test runs
-  - Documents expected attribute labels
-  - Prevents breaking changes to user-facing text
-  - Validates Rails i18n integration
+  - Centralized view text (all user-facing strings in one place per view)
+  - Easy localization (add .es.yml, .fr.yml for multi-language support)
+  - DRY code (no hardcoded strings in views)
+  - Consistent wording (reuse translations across views)
+  - Lazy lookup reduces verbosity (t('.title') vs t('devise.sessions.new.title'))
 
 Rationale:
-  User model i18n setup revealed need for testing i18n translations. Without tests, missing or
-  incorrect translations aren't caught until runtime, potentially showing technical attribute
-  names (e.g., "email" instead of "Email") to users. Testing User.model_name.human and
-  User.human_attribute_name ensures locale files are properly configured and loaded. Following
-  model spec organization pattern (spec/models/user/i18n_spec.rb), this creates one focused
-  spec file per concern. Tests serve as documentation for expected attribute labels and catch
-  regressions during locale file updates.
+  Devise sessions view i18n revealed need for standardized view i18n management. Hardcoded strings
+  in views make localization difficult and create maintenance burden. Rails i18n supports lazy
+  lookup (t('.key')) which automatically infers full key from view path. Creating
+  config/locales/app/views/[path]/[view_name].en.yml per view ensures all user-facing text is
+  translatable. Mirroring app/views/ directory structure in config/locales/app/views/ maintains
+  clear 1:1 mapping. Pattern aligns with Rails i18n best practices and supports future multi-language
+  requirements without code changes.
 
 Template Consistency Status:
-  ✅ plan-template.md - No changes required (i18n testing not in planning phase)
+  ✅ plan-template.md - No changes required (i18n management not in planning phase)
   ✅ spec-template.md - No changes required (acceptance criteria unchanged)
   ✅ tasks-template.md - No changes required (task patterns unchanged)
-  ⚠️  README.md - Should document model i18n spec generation
+  ⚠️  README.md - Should document view i18n file management process
 
 Follow-up TODOs:
-  - Update README.md with i18n spec generation process
-  - Document how to update i18n specs when modifying models
+  - Add README.md section explaining view i18n management process
+  - Document how to update locale files when modifying views
+  - Consider adding view i18n spec pattern if needed
 
-Previous Update (v1.13.0):
-  Added Principle VIII: Application Model i18n Management with requirements for creating
-  config/locales/app/models/xxx.en.yml per model with model names and attribute translations.
+Previous Update (v1.14.0):
+  Added i18n spec requirement for model translations in spec/models/[model]/i18n_spec.rb
+  to test model name and attribute translations.
 -->
 
 # Rails Poll Voting Constitution
@@ -635,6 +635,119 @@ end
 
 **Rationale**: Rails i18n supports model and attribute name translation via `activerecord.models` and `activerecord.attributes`, but requires explicit locale files. Creating `config/locales/app/models/xxx.en.yml` per model ensures all attribute names are translatable, improving user-facing error messages and form labels. Adding `spec/models/xxx/i18n_spec.rb` ensures translations are defined correctly and prevents runtime errors from missing translations. Tests serve as documentation for expected attribute labels and catch regressions during locale file updates. Separating application-specific (`app/`) from gem-specific (`gems/`) locale files improves organization and prevents mixing concerns. This pattern aligns with Rails i18n best practices and supports future multi-language requirements without code changes.
 
+### IX. Application View Internationalization (i18n) Management
+
+When creating or updating views in `app/views/`, corresponding i18n locale files MUST be created/updated in `config/locales/app/views/` to provide translations for all user-facing text.
+
+**Requirements**:
+- **Directory organization**: `config/locales/app/views/[path]/[view_name].en.yml`
+  - Mirrors `app/views/` directory structure
+  - Example: `app/views/devise/sessions/new.html.erb` → `config/locales/app/views/devise/sessions/new.en.yml`
+  - Example: `app/views/polls/index.html.erb` → `config/locales/app/views/polls/index.en.yml`
+- **Content**: Include ALL user-facing text
+  - Page titles and headings
+  - Button labels and link text
+  - Form labels and placeholders
+  - Helper text and instructions
+  - Success/error messages specific to the view
+- **Lazy lookup pattern**: Use `t('.key')` instead of full path
+  - Rails automatically infers full key from view path
+  - Example: In `app/views/devise/sessions/new.html.erb`, `t('.title')` resolves to `devise.sessions.new.title`
+  - Shorter, more maintainable than `t('devise.sessions.new.title')`
+- **Synchronization**: Update locale file when adding/removing/changing user-facing text in views
+- **Commit together**: View changes and locale file updates in same PR/commit
+- **Version control**: Locale files MUST be committed to git
+
+**Implementation Process**:
+```bash
+# When creating devise/sessions/new.html.erb
+# Immediately create corresponding locale file
+mkdir -p config/locales/app/views/devise/sessions
+touch config/locales/app/views/devise/sessions/new.en.yml
+
+# Add all user-facing text translations
+```
+
+**View Locale File Template**:
+```yaml
+en:
+  [controller]:
+    [action]:
+      [view_name]:
+        title: "[Page Title]"
+        subtitle: "[Subtitle or Description]"
+        button_name: "[Button Text]"
+        field_placeholder: "[Placeholder Text]"
+        # Add all user-facing strings
+```
+
+**Example - Devise Sessions New View**:
+```yaml
+# config/locales/app/views/devise/sessions/new.en.yml
+en:
+  devise:
+    sessions:
+      new:
+        title: "Welcome Back"
+        subtitle: "Sign in to continue to your account"
+        submit_button: "Log in"
+        email_placeholder: "you@example.com"
+        password_placeholder: "••••••••"
+```
+
+**Usage in Views** (Lazy Lookup):
+```erb
+<!-- app/views/devise/sessions/new.html.erb -->
+<h2><%= t('.title') %></h2>
+<p><%= t('.subtitle') %></p>
+<%= f.submit t('.submit_button') %>
+<%= f.email_field :email, placeholder: t('.email_placeholder') %>
+```
+
+**Locale File Organization**:
+```
+config/locales/
+├── en.yml                          # Global application translations
+├── app/
+│   ├── models/                     # Model translations
+│   │   ├── user.en.yml
+│   │   └── poll.en.yml
+│   └── views/                      # View translations (mirrors app/views/)
+│       ├── devise/
+│       │   ├── sessions/
+│       │   │   └── new.en.yml
+│       │   └── registrations/
+│       │       ├── new.en.yml
+│       │       └── edit.en.yml
+│       └── polls/
+│           ├── index.en.yml
+│           ├── show.en.yml
+│           └── new.en.yml
+└── gems/                           # Gem locale files
+    ├── rails/
+    └── devise/
+```
+
+**Benefits**:
+- **Centralized view text**: All user-facing strings in one place per view
+- **Easy localization**: Add `.es.yml`, `.fr.yml` files for multi-language support
+- **DRY code**: No hardcoded strings in views
+- **Consistent wording**: Reuse translations across views via shared keys
+- **Lazy lookup**: Reduces verbosity (`t('.title')` vs `t('devise.sessions.new.title')`)
+- **Maintainability**: Clear 1:1 mapping between views and their translations
+- **Refactoring safety**: Change wording without touching view code
+- **Designer-friendly**: Non-technical team members can update copy in YAML files
+
+**Maintenance Workflow**:
+1. Add/modify text in view template
+2. Update `config/locales/app/views/[path]/[view].en.yml` with new/changed translations
+3. Use lazy lookup `t('.key')` in view
+4. Verify translation displays correctly
+5. Commit view and locale file together
+6. Review: ensure no hardcoded strings remain in view
+
+**Rationale**: Hardcoded strings in views make localization difficult and create maintenance burden when copy changes. Rails i18n supports lazy lookup (`t('.key')`) which automatically infers full key from view path, reducing verbosity and improving maintainability. Creating `config/locales/app/views/[path]/[view].en.yml` per view ensures all user-facing text is translatable. Mirroring `app/views/` directory structure in `config/locales/app/views/` maintains clear 1:1 mapping and makes locale files easy to find. This pattern aligns with Rails i18n best practices and supports future multi-language requirements without code changes.
+
 ## Technology Stack
 
 **Core**:
@@ -760,11 +873,38 @@ This constitution supersedes all ad-hoc practices. When in doubt, constitution r
 - Template commands reference constitution for validation gates
 - Onboarding checklist includes constitution review
 
-**Current Version**: 1.14.0 | **Ratified**: 2026-02-10 | **Last Amended**: 2026-02-11
+**Current Version**: 1.15.0 | **Ratified**: 2026-02-10 | **Last Amended**: 2026-02-11
 
 ---
 
 ## Version History
+
+### Version 1.15.0 - 2026-02-11
+**Type**: MINOR (View i18n management requirement)
+
+**Changes**:
+- Added new principle: IX. Application View Internationalization (i18n) Management
+- Established requirements for view locale files:
+  - Create/update config/locales/app/views/[path]/[view_name].en.yml when creating/updating views
+  - Mirror app/views/ directory structure in config/locales/app/views/
+  - Include ALL user-facing text (titles, labels, buttons, placeholders, messages)
+  - Use lazy lookup pattern: t('.key') instead of t('full.path.key')
+  - Rails infers full key from view path automatically
+  - Update locale file when adding/removing/changing user-facing text
+  - Commit locale files alongside view changes (same PR/commit)
+- Added implementation process with view locale file template
+- Added example for Devise sessions new view showing all text elements
+- Added usage examples demonstrating lazy lookup: t('.title'), t('.submit_button')
+- Updated locale file organization structure:
+  - Added config/locales/app/views/ mirroring app/views/ directory structure
+  - Example paths: devise/sessions/new.en.yml, polls/index.en.yml
+  - One locale file per view template
+- Added maintenance workflow (modify view text → update locale → use t('.key') → commit together)
+- Listed benefits: centralized view text, easy localization, DRY code, consistent wording, lazy lookup reduces verbosity, maintainability, refactoring safety, designer-friendly
+
+**Rationale**: Devise sessions view i18n revealed need for standardized view i18n management. Hardcoded strings in views make localization difficult and create maintenance burden when copy changes. Rails i18n supports lazy lookup (t('.key')) which automatically infers full key from view path, reducing verbosity and improving maintainability. Creating config/locales/app/views/[path]/[view].en.yml per view ensures all user-facing text is translatable. Mirroring app/views/ directory structure in config/locales/app/views/ maintains clear 1:1 mapping and makes locale files easy to find. Pattern aligns with Rails i18n best practices and supports future multi-language requirements without code changes.
+
+---
 
 ### Version 1.14.0 - 2026-02-11
 **Type**: PATCH (Model i18n spec requirement)

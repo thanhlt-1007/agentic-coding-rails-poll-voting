@@ -8,10 +8,10 @@
         </svg>
       </div>
       <h2 class="text-3xl font-bold text-gray-900">
-        Welcome Back
+        <%= t('.title') %>
       </h2>
       <p class="mt-2 text-sm text-gray-600">
-        Sign in to continue to your account
+        <%= t('.subtitle') %>
       </p>
     </div>
 
@@ -32,7 +32,7 @@
                   autofocus: true, 
                   autocomplete: "email",
                   class: "block w-full pl-10 pr-3 py-2.5 border border-gray-300 rounded-lg text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition duration-150 ease-in-out sm:text-sm",
-                  placeholder: "you@example.com" %>
+                  placeholder: t('.email_placeholder') %>
             </div>
           </div>
 
@@ -47,7 +47,7 @@
               <%= f.password_field :password, 
                   autocomplete: "current-password",
                   class: "block w-full pl-10 pr-3 py-2.5 border border-gray-300 rounded-lg text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition duration-150 ease-in-out sm:text-sm",
-                  placeholder: "••••••••" %>
+                  placeholder: t('.password_placeholder') %>
             </div>
           </div>
 
@@ -60,7 +60,7 @@
         </div>
 
         <div class="pt-2">
-          <%= f.submit "Log in", 
+          <%= f.submit t('.submit_button'), 
               class: "w-full flex justify-center items-center py-3 px-4 border border-transparent text-sm font-semibold rounded-lg text-white bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 shadow-md hover:shadow-lg transform hover:-translate-y-0.5 transition-all duration-150 cursor-pointer" %>
         </div>
       <% end %>

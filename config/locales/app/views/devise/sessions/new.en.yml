@@ -1,0 +1,9 @@
+en:
+  devise:
+    sessions:
+      new:
+        title: "Welcome Back"
+        subtitle: "Sign in to continue to your account"
+        submit_button: "Log in"
+        email_placeholder: "you@example.com"
+        password_placeholder: "••••••••"
