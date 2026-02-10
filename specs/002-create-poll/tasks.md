@@ -33,10 +33,10 @@ Rails MVC structure:
 
 **Purpose**: Project initialization and database setup
 
-- [ ] T001 Create database migrations for polls and answers tables per data-model.md
-- [ ] T002 Run migrations and verify schema in db/schema.rb
-- [ ] T003 [P] Create FactoryBot factory for Poll in spec/factories/polls.rb
-- [ ] T004 [P] Create FactoryBot factory for Answer in spec/factories/answers.rb
+- [X] T001 Create database migrations for polls and answers tables per data-model.md
+- [X] T002 Run migrations and verify schema in db/schema.rb
+- [X] T003 [P] Create FactoryBot factory for Poll in spec/factories/polls.rb
+- [X] T004 [P] Create FactoryBot factory for Answer in spec/factories/answers.rb
 
 ---
 
@@ -48,26 +48,26 @@ Rails MVC structure:
 
 ### Poll Model Foundation
 
-- [ ] T005 Write Poll model spec in spec/models/poll_spec.rb (associations, validations, nested attributes)
-- [ ] T006 Run Poll model spec - verify it FAILS (Red phase of TDD)
-- [ ] T007 Implement Poll model in app/models/poll.rb (belongs_to :user, has_many :answers, accepts_nested_attributes_for :answers)
-- [ ] T008 Add Poll validations in app/models/poll.rb (question presence/length, answers length: 4)
-- [ ] T009 Add custom validation in app/models/poll.rb (answers_must_be_unique method)
-- [ ] T010 Add custom validation in app/models/poll.rb (deadline_must_be_in_future method)
-- [ ] T011 Add Poll scopes in app/models/poll.rb (recent, active, expired)
-- [ ] T012 Run Poll model spec - verify it PASSES (Green phase of TDD)
-- [ ] T013 Run RuboCop on app/models/poll.rb - fix all offenses
+- [X] T005 Write Poll model spec in spec/models/poll_spec.rb (associations, validations, nested attributes)
+- [X] T006 Run Poll model spec - verify it FAILS (Red phase of TDD)
+- [X] T007 Implement Poll model in app/models/poll.rb (belongs_to :user, has_many :answers, accepts_nested_attributes_for :answers)
+- [X] T008 Add Poll validations in app/models/poll.rb (question presence/length, answers length: 4)
+- [X] T009 Add custom validation in app/models/poll.rb (answers_must_be_unique method)
+- [X] T010 Add custom validation in app/models/poll.rb (deadline_must_be_in_future method)
+- [X] T011 Add Poll scopes in app/models/poll.rb (recent, active, expired)
+- [X] T012 Run Poll model spec - verify it PASSES (Green phase of TDD)
+- [X] T013 Run RuboCop on app/models/poll.rb - fix all offenses
 
 ### Answer Model Foundation
 
-- [ ] T014 Write Answer model spec in spec/models/answer_spec.rb (associations, validations, uniqueness)
-- [ ] T015 Run Answer model spec - verify it FAILS (Red phase of TDD)
-- [ ] T016 Implement Answer model in app/models/answer.rb (belongs_to :poll)
-- [ ] T017 Add Answer validations in app/models/answer.rb (text presence/length, position presence/numericality, position uniqueness scoped to poll_id)
-- [ ] T018 Add Answer scope in app/models/answer.rb (ordered by position)
-- [ ] T019 Add Answer to_s method in app/models/answer.rb
-- [ ] T020 Run Answer model spec - verify it PASSES (Green phase of TDD)
-- [ ] T021 Run RuboCop on app/models/answer.rb - fix all offenses
+- [X] T014 Write Answer model spec in spec/models/answer_spec.rb (associations, validations, uniqueness)
+- [X] T015 Run Answer model spec - verify it FAILS (Red phase of TDD)
+- [X] T016 Implement Answer model in app/models/answer.rb (belongs_to :poll)
+- [X] T017 Add Answer validations in app/models/answer.rb (text presence/length, position presence/numericality, position uniqueness scoped to poll_id)
+- [X] T018 Add Answer scope in app/models/answer.rb (ordered by position)
+- [X] T019 Add Answer to_s method in app/models/answer.rb
+- [X] T020 Run Answer model spec - verify it PASSES (Green phase of TDD)
+- [X] T021 Run RuboCop on app/models/answer.rb - fix all offenses
 
 **Checkpoint**: Foundation ready - Poll and Answer models fully tested with 100% spec coverage
 
@@ -81,37 +81,37 @@ Rails MVC structure:
 
 ### Request Specs for User Story 1 (TDD - Write Tests FIRST)
 
-- [ ] T022 [P] [US1] Write GET /polls/new request spec in spec/requests/polls/get_new_spec.rb (authenticated user sees form)
-- [ ] T023 [P] [US1] Write POST /polls request spec in spec/requests/polls/post_create_spec.rb (successful poll creation with nested answers)
-- [ ] T024 [US1] Run request specs - verify they FAIL (Red phase of TDD)
+- [X] T022 [P] [US1] Write GET /polls/new request spec in spec/requests/polls/get_new_spec.rb (authenticated user sees form)
+- [X] T023 [P] [US1] Write POST /polls request spec in spec/requests/polls/post_create_spec.rb (successful poll creation with nested answers)
+- [X] T024 [US1] Run request specs - verify they FAIL (Red phase of TDD)
 
 ### Controller Implementation for User Story 1
 
-- [ ] T025 [US1] Generate PollsController with new, create, show actions (rails generate controller Polls new create show)
-- [ ] T026 [US1] Add before_action :authenticate_user! in app/controllers/polls_controller.rb
-- [ ] T027 [US1] Implement new action in app/controllers/polls_controller.rb (@poll = Poll.new; 4.times { @poll.answers.build })
-- [ ] T028 [US1] Implement create action in app/controllers/polls_controller.rb (current_user.polls.build, save with redirect or re-render)
-- [ ] T029 [US1] Implement show action in app/controllers/polls_controller.rb (Poll.find)
-- [ ] T030 [US1] Add poll_params private method in app/controllers/polls_controller.rb (permit :question, :deadline, answers_attributes: [:text, :position])
-- [ ] T031 [US1] Add polls resources route in config/routes.rb (resources :polls, only: [:new, :create, :show])
-- [ ] T032 [US1] Run request specs - verify they PASS (Green phase of TDD)
-- [ ] T033 [US1] Run RuboCop on app/controllers/polls_controller.rb - fix all offenses
+- [X] T025 [US1] Generate PollsController with new, create, show actions (rails generate controller Polls new create show)
+- [X] T026 [US1] Add before_action :authenticate_user! in app/controllers/polls_controller.rb
+- [X] T027 [US1] Implement new action in app/controllers/polls_controller.rb (@poll = Poll.new; 4.times { @poll.answers.build })
+- [X] T028 [US1] Implement create action in app/controllers/polls_controller.rb (current_user.polls.build, save with redirect or re-render)
+- [X] T029 [US1] Implement show action in app/controllers/polls_controller.rb (Poll.find)
+- [X] T030 [US1] Add poll_params private method in app/controllers/polls_controller.rb (permit :question, :deadline, answers_attributes: [:text, :position])
+- [X] T031 [US1] Add polls resources route in config/routes.rb (resources :polls, only: [:new, :create, :show])
+- [X] T032 [US1] Run request specs - verify they PASS (Green phase of TDD)
+- [X] T033 [US1] Run RuboCop on app/controllers/polls_controller.rb - fix all offenses
 
 ### Views for User Story 1
 
-- [ ] T034 [US1] Create poll creation form in app/views/polls/new.html.erb (form_with model: @poll, text_area :question, datetime_local_field :deadline)
-- [ ] T035 [US1] Add fields_for :answers in app/views/polls/new.html.erb (4 answer text_field inputs with hidden position field)
-- [ ] T036 [US1] Add error display in app/views/polls/new.html.erb (@poll.errors.full_messages with Tailwind styling)
-- [ ] T037 [US1] Create poll confirmation view in app/views/polls/show.html.erb (display question, deadline, answers.ordered)
-- [ ] T038 [US1] Run system spec manually (login → create poll → verify success) - verify form renders and submission works
+- [X] T034 [US1] Create poll creation form in app/views/polls/new.html.erb (form_with model: @poll, text_area :question, datetime_local_field :deadline)
+- [X] T035 [US1] Add fields_for :answers in app/views/polls/new.html.erb (4 answer text_field inputs with hidden position field)
+- [X] T036 [US1] Add error display in app/views/polls/new.html.erb (@poll.errors.full_messages with Tailwind styling)
+- [X] T037 [US1] Create poll confirmation view in app/views/polls/show.html.erb (display question, deadline, answers.ordered)
+- [X] T038 [US1] Run system spec manually (login → create poll → verify success) - verify form renders and submission works
 
 ### I18n for User Story 1
 
-- [ ] T039 [P] [US1] Create controller i18n file config/locales/app/controllers/polls/create.en.yml (success, error messages)
-- [ ] T040 [P] [US1] Create view i18n file config/locales/app/views/polls/new.en.yml (title, labels, placeholders, help text)
-- [ ] T041 [US1] Update new.html.erb to use t('.title'), t('.question_label'), etc. with lazy lookup
-- [ ] T042 [US1] Update create action to use t('.success') and t('.error') for flash messages
-- [ ] T043 [US1] Verify i18n keys load correctly (restart server, check for missing translation errors)
+- [X] T039 [P] [US1] Create controller i18n file config/locales/app/controllers/polls/create.en.yml (success, error messages)
+- [X] T040 [P] [US1] Create view i18n file config/locales/app/views/polls/new.en.yml (title, labels, placeholders, help text)
+- [X] T041 [US1] Update new.html.erb to use t('.title'), t('.question_label'), etc. with lazy lookup
+- [X] T042 [US1] Update create action to use t('.success') and t('.error') for flash messages
+- [X] T043 [US1] Verify i18n keys load correctly (restart server, check for missing translation errors)
 
 **Checkpoint**: User Story 1 complete - authenticated users can create polls via form, all tests passing
 
@@ -125,15 +125,15 @@ Rails MVC structure:
 
 ### Request Specs for User Story 2 (TDD - Write Tests FIRST)
 
-- [ ] T044 [US2] Add unauthenticated context to spec/requests/polls/get_new_spec.rb (test redirect to new_user_session_path)
-- [ ] T045 [US2] Add unauthenticated context to spec/requests/polls/post_create_spec.rb (test redirect to new_user_session_path)
-- [ ] T046 [US2] Run request specs - verify unauthenticated tests PASS (before_action :authenticate_user! already in place from T026)
+- [X] T044 [US2] Add unauthenticated context to spec/requests/polls/get_new_spec.rb (test redirect to new_user_session_path)
+- [X] T045 [US2] Add unauthenticated context to spec/requests/polls/post_create_spec.rb (test redirect to new_user_session_path)
+- [X] T046 [US2] Run request specs - verify unauthenticated tests PASS (before_action :authenticate_user! already in place from T026)
 
 ### System Spec for User Story 2
 
-- [ ] T047 [US2] Create system spec in spec/system/poll_creation_authentication_spec.rb (test unauthenticated redirect, login redirect back)
-- [ ] T048 [US2] Run system spec - verify it PASSES
-- [ ] T049 [US2] Run RuboCop on spec/system/poll_creation_authentication_spec.rb - fix all offenses
+- [X] T047 [US2] Create system spec in spec/system/poll_creation_authentication_spec.rb (test unauthenticated redirect, login redirect back)
+- [X] T048 [US2] Run system spec - verify it PASSES
+- [X] T049 [US2] Run RuboCop on spec/system/poll_creation_authentication_spec.rb - fix all offenses
 
 **Checkpoint**: User Story 2 complete - authentication enforced, unauthenticated users cannot create polls
 
@@ -147,22 +147,22 @@ Rails MVC structure:
 
 ### Request Specs for User Story 3 (TDD - Write Tests FIRST)
 
-- [ ] T050 [US3] Add validation failure contexts to spec/requests/polls/post_create_spec.rb (blank question, fewer than 4 answers, blank answers, duplicate answers)
-- [ ] T051 [US3] Test that validation failures return status :unprocessable_entity in spec/requests/polls/post_create_spec.rb
-- [ ] T052 [US3] Test that validation failures render :new template in spec/requests/polls/post_create_spec.rb
-- [ ] T053 [US3] Test that validation failures set flash.now[:alert] in spec/requests/polls/post_create_spec.rb
-- [ ] T054 [US3] Run request specs - verify validation tests PASS (validations already in Poll model from T008-T010)
+- [X] T050 [US3] Add validation failure contexts to spec/requests/polls/post_create_spec.rb (blank question, fewer than 4 answers, blank answers, duplicate answers)
+- [X] T051 [US3] Test that validation failures return status :unprocessable_entity in spec/requests/polls/post_create_spec.rb
+- [X] T052 [US3] Test that validation failures render :new template in spec/requests/polls/post_create_spec.rb
+- [X] T053 [US3] Test that validation failures set flash.now[:alert] in spec/requests/polls/post_create_spec.rb
+- [X] T054 [US3] Run request specs - verify validation tests PASS (validations already in Poll model from T008-T010)
 
 ### View Error Display for User Story 3
 
-- [ ] T055 [US3] Verify error messages display in app/views/polls/new.html.erb (error partial already added in T036)
-- [ ] T056 [US3] Test error display with manual form submission (blank fields, duplicates) - verify Tailwind error styling renders
+- [X] T055 [US3] Verify error messages display in app/views/polls/new.html.erb (error partial already added in T036)
+- [X] T056 [US3] Test error display with manual form submission (blank fields, duplicates) - verify Tailwind error styling renders
 
 ### System Spec for User Story 3
 
-- [ ] T057 [US3] Create validation system spec in spec/system/poll_creation_validation_spec.rb (test blank question error, duplicate answers error)
-- [ ] T058 [US3] Run validation system spec - verify it PASSES
-- [ ] T059 [US3] Run RuboCop on spec/system/poll_creation_validation_spec.rb - fix all offenses
+- [X] T057 [US3] Create validation system spec in spec/system/poll_creation_validation_spec.rb (test blank question error, duplicate answers error)
+- [X] T058 [US3] Run validation system spec - verify it PASSES
+- [X] T059 [US3] Run RuboCop on spec/system/poll_creation_validation_spec.rb - fix all offenses
 
 **Checkpoint**: User Story 3 complete - validation errors display clearly, poll creation prevented on invalid input
 
@@ -176,21 +176,21 @@ Rails MVC structure:
 
 ### Request Specs for User Story 4 (TDD - Write Tests FIRST)
 
-- [ ] T060 [US4] Add form content expectations to spec/requests/polls/get_new_spec.rb (verify response body includes form elements)
-- [ ] T061 [US4] Run request spec - verify form content tests PASS (form already created in T034-T035)
+- [X] T060 [US4] Add form content expectations to spec/requests/polls/get_new_spec.rb (verify response body includes form elements)
+- [X] T061 [US4] Run request spec - verify form content tests PASS (form already created in T034-T035)
 
 ### View Enhancements for User Story 4
 
-- [ ] T062 [US4] Review app/views/polls/new.html.erb - ensure all fields have clear labels from i18n
-- [ ] T063 [US4] Verify Tailwind styling for form (spacing, borders, focus states)
-- [ ] T064 [US4] Add submit button styling in app/views/polls/new.html.erb (Tailwind primary button classes)
-- [ ] T065 [US4] Manual test: login → navigate to /polls/new → verify form is visually clear and accessible
+- [X] T062 [US4] Review app/views/polls/new.html.erb - ensure all fields have clear labels from i18n
+- [X] T063 [US4] Verify Tailwind styling for form (spacing, borders, focus states)
+- [X] T064 [US4] Add submit button styling in app/views/polls/new.html.erb (Tailwind primary button classes)
+- [X] T065 [US4] Manual test: login → navigate to /polls/new → verify form is visually clear and accessible
 
 ### System Spec for User Story 4
 
-- [ ] T066 [US4] Create form display system spec in spec/system/poll_creation_form_display_spec.rb (test all form fields present, labels visible)
-- [ ] T067 [US4] Run form display system spec - verify it PASSES
-- [ ] T068 [US4] Run RuboCop on spec/system/poll_creation_form_display_spec.rb - fix all offenses
+- [X] T066 [US4] Create form display system spec in spec/system/poll_creation_form_display_spec.rb (test all form fields present, labels visible)
+- [X] T067 [US4] Run form display system spec - verify it PASSES
+- [X] T068 [US4] Run RuboCop on spec/system/poll_creation_form_display_spec.rb - fix all offenses
 
 **Checkpoint**: User Story 4 complete - poll creation form is clear, accessible, and properly labeled
 
@@ -206,18 +206,18 @@ Rails MVC structure:
 
 ### Model Specs for User Story 5 (TDD - Write Tests FIRST)
 
-- [ ] T069 [US5] Add test to spec/models/poll_spec.rb (verify poll has single-choice selection type - could be default value or explicit field)
-- [ ] T070 [US5] Run Poll model spec - verify single-choice test FAILS or PASSES depending on implementation approach
+- [X] T069 [US5] Add test to spec/models/poll_spec.rb (verify poll has single-choice selection type - could be default value or explicit field)
+- [X] T070 [US5] Run Poll model spec - verify single-choice test FAILS or PASSES depending on implementation approach
 
 ### Model Implementation for User Story 5
 
-- [ ] T071 [US5] Decide implementation: add `selection_type` enum field OR document single-choice as default behavior in Poll model comments
-- [ ] T072 [US5] If adding field: create migration for selection_type with default 'single_choice'
-- [ ] T073 [US5] If adding field: run migration and verify in db/schema.rb
-- [ ] T074 [US5] If adding field: add enum to Poll model in app/models/poll.rb (enum selection_type: { single_choice: 0 })
-- [ ] T075 [US5] If documenting: add comment in app/models/poll.rb explaining single-choice constraint
-- [ ] T076 [US5] Run Poll model spec - verify single-choice test PASSES
-- [ ] T077 [US5] Run RuboCop on app/models/poll.rb - fix all offenses
+- [X] T071 [US5] Decide implementation: add `selection_type` enum field OR document single-choice as default behavior in Poll model comments
+- [X] T072 [US5] If adding field: create migration for selection_type with default 'single_choice'
+- [X] T073 [US5] If adding field: run migration and verify in db/schema.rb
+- [X] T074 [US5] If adding field: add enum to Poll model in app/models/poll.rb (enum selection_type: { single_choice: 0 })
+- [X] T075 [US5] If documenting: add comment in app/models/poll.rb explaining single-choice constraint
+- [X] T076 [US5] Run Poll model spec - verify single-choice test PASSES
+- [X] T077 [US5] Run RuboCop on app/models/poll.rb - fix all offenses
 
 **Checkpoint**: User Story 5 complete - polls are explicitly single-choice selection type
 
@@ -233,21 +233,21 @@ Rails MVC structure:
 
 ### Request Specs for User Story 6 (TDD - already mostly covered, add edge cases)
 
-- [ ] T078 [US6] Add deadline test contexts to spec/requests/polls/post_create_spec.rb (future deadline succeeds, no deadline succeeds, past deadline fails)
-- [ ] T079 [US6] Test deadline validation error message in spec/requests/polls/post_create_spec.rb
-- [ ] T080 [US6] Run request specs - verify deadline tests PASS (deadline validation already in Poll model from T010)
+- [X] T078 [US6] Add deadline test contexts to spec/requests/polls/post_create_spec.rb (future deadline succeeds, no deadline succeeds, past deadline fails)
+- [X] T079 [US6] Test deadline validation error message in spec/requests/polls/post_create_spec.rb
+- [X] T080 [US6] Run request specs - verify deadline tests PASS (deadline validation already in Poll model from T010)
 
 ### View Verification for User Story 6
 
-- [ ] T081 [US6] Verify datetime_local_field for deadline in app/views/polls/new.html.erb (already added in T034)
-- [ ] T082 [US6] Verify deadline displays in app/views/polls/show.html.erb (already added in T037)
-- [ ] T083 [US6] Verify deadline i18n labels in config/locales/app/views/polls/new.en.yml (already added in T040)
+- [X] T081 [US6] Verify datetime_local_field for deadline in app/views/polls/new.html.erb (already added in T034)
+- [X] T082 [US6] Verify deadline displays in app/views/polls/show.html.erb (already added in T037)
+- [X] T083 [US6] Verify deadline i18n labels in config/locales/app/views/polls/new.en.yml (already added in T040)
 
 ### System Spec for User Story 6
 
-- [ ] T084 [US6] Create deadline system spec in spec/system/poll_creation_deadline_spec.rb (test creating poll with future deadline, test validation error for past deadline)
-- [ ] T085 [US6] Run deadline system spec - verify it PASSES
-- [ ] T086 [US6] Run RuboCop on spec/system/poll_creation_deadline_spec.rb - fix all offenses
+- [X] T084 [US6] Create deadline system spec in spec/system/poll_creation_deadline_spec.rb (test creating poll with future deadline, test validation error for past deadline)
+- [X] T085 [US6] Run deadline system spec - verify it PASSES
+- [X] T086 [US6] Run RuboCop on spec/system/poll_creation_deadline_spec.rb - fix all offenses
 
 **Checkpoint**: User Story 6 complete - deadline feature fully tested, optional deadline with future validation working
 
@@ -257,16 +257,16 @@ Rails MVC structure:
 
 **Purpose**: Final quality checks and documentation
 
-- [ ] T087 Run full test suite (bundle exec rspec) - verify all 100+ tests pass
-- [ ] T088 Check test coverage - verify 90%+ coverage for Poll, Answer, PollsController
-- [ ] T089 Run RuboCop on all feature files (bin/rubocop app/models/poll.rb app/models/answer.rb app/controllers/polls_controller.rb app/views/polls/) - fix all offenses
-- [ ] T090 [P] Update README.md with poll creation feature usage instructions
-- [ ] T091 [P] Verify quickstart.md instructions work (follow dev setup steps, verify they're accurate)
-- [ ] T092 Manual smoke test: sign up → login → create poll with all fields → verify success → check database record
-- [ ] T093 Manual smoke test: create poll with validation errors → verify error messages display correctly
-- [ ] T094 Manual smoke test: attempt to access /polls/new while logged out → verify redirect to login
-- [ ] T095 Run db:migrate in development and test environments - verify no migration issues
-- [ ] T096 Final RuboCop check on entire project (bin/rubocop) - verify 0 offenses
+- [X] T087 Run full test suite (bundle exec rspec) - verify all 100+ tests pass
+- [X] T088 Check test coverage - verify 90%+ coverage for Poll, Answer, PollsController
+- [X] T089 Run RuboCop on all feature files (bin/rubocop app/models/poll.rb app/models/answer.rb app/controllers/polls_controller.rb app/views/polls/) - fix all offenses
+- [X] T090 [P] Update README.md with poll creation feature usage instructions
+- [X] T091 [P] Verify quickstart.md instructions work (follow dev setup steps, verify they're accurate)
+- [X] T092 Manual smoke test: sign up → login → create poll with all fields → verify success → check database record
+- [X] T093 Manual smoke test: create poll with validation errors → verify error messages display correctly
+- [X] T094 Manual smoke test: attempt to access /polls/new while logged out → verify redirect to login
+- [X] T095 Run db:migrate in development and test environments - verify no migration issues
+- [X] T096 Final RuboCop check on entire project (bin/rubocop) - verify 0 offenses
 
 **Checkpoint**: Feature complete and production-ready - all tests passing, RuboCop clean, manual testing passed
 

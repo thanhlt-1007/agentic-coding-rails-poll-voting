@@ -1,0 +1,13 @@
+en:
+  polls:
+    new:
+      title: "Create a New Poll"
+      question_label: "Question"
+      question_placeholder: "What would you like to ask?"
+      deadline_label: "Deadline (optional)"
+      deadline_help: "Set a deadline for when this poll closes"
+      answers_header: "Answer Options"
+      answer_label: "Option"
+      answer_placeholder: "Enter an answer option"
+      submit_button: "Create Poll"
+      cancel_link: "Cancel"

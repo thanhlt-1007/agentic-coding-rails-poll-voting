@@ -1,0 +1,5 @@
+en:
+  polls:
+    create:
+      success: "Poll was successfully created."
+      error: "There was a problem creating your poll. Please check the errors below."
