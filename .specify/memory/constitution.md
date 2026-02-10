@@ -1,32 +1,32 @@
 <!--
 SYNC IMPACT REPORT - Constitution Update
 ========================================
-Version Change: 1.5.0 → 1.6.0
-Type: PATCH (Documentation clarity - production environment)
+Version Change: 1.7.0 → 1.8.0
+Type: MINOR (Commit message format - spec and task number prefixes)
 
 Modified Principles: None
-Modified Sections: None (documentation update only)
+Modified Sections: 
+  - Workflow section (Development Standards): Added commit message prefix requirement
+
+Added Requirements:
+  - Commit messages MUST include [specs#xxx][tasks#yyy] prefix for spec-related work
 
 Rationale: 
-  DATABASE_URL environment variable was documented but lacked critical production-only
-  context, causing potential confusion for new developers. Developers might set
-  DATABASE_URL in local .env files, which overrides individual database variables
-  and breaks local development. This update adds explicit warnings in .env.example
-  and comprehensive production environment documentation in README.md to prevent
-  misconfiguration, fulfilling constitutional documentation accuracy requirements.
+  Standardized commit message prefixes enable automated tooling to track which commits
+  correspond to specific spec tasks. The format [specs#xxx][tasks#yyy] creates explicit
+  traceability between commits and their corresponding specifications/tasks, improving
+  git history readability, enabling automated spec-completion verification, and facilitating
+  audit trails for feature implementation. This complements existing conventional commit
+  format requirements while adding spec/task context.
 
 Template Consistency Status:
   ✅ plan-template.md - No changes required
   ✅ spec-template.md - No changes required
-  ✅ tasks-template.md - No changes required
-  ✅ README.md - Updated with production environment section and DATABASE_URL warnings
-  ✅ .env.example - Updated with PRODUCTION ONLY warning for DATABASE_URL
-  ✅ config/database.yml - Already complete (no changes)
+  ✅ tasks-template.md - No changes required (task-based workflow already implicit)
+  ✅ README.md - No changes required
+  ✅ .env.example - No changes required
 
-Follow-up TODOs:
-  - Configure render.yaml for service definitions
-  - Set up environment variables in Render dashboard
-  - Configure database connection pooling for Render PostgreSQL
+Follow-up TODOs: None
 -->
 
 # Rails Poll Voting Constitution
@@ -126,7 +126,7 @@ Start with the simplest solution that works. Complexity requires explicit justif
 
 **Frontend**:
 - Hotwire (Turbo + Stimulus) for SPA-like interactions
-- Tailwind CSS 4+ for styling
+- Tailwind CSS 4+ for styling (MUST use official patterns from https://tailwindcss.com/)
 - ViewComponent for reusable UI components
 - Importmap for JavaScript dependencies (no build step unless unavoidable)
 
@@ -160,7 +160,12 @@ Start with the simplest solution that works. Complexity requires explicit justif
 
 **Workflow**:
 - Feature branches: `###-feature-name` (issue number prefix)
-- Commits: conventional commits format (`feat:`, `fix:`, `refactor:`, `test:`, `docs:`)
+- Commits: MUST follow format `[specs#xxx][tasks#yyy] type: description`
+  - `xxx`: Spec number (e.g., 001 for specs/001-user-signup/)
+  - `yyy`: Task number (e.g., 054 for T054)
+  - `type`: Conventional commit type (`feat`, `fix`, `refactor`, `test`, `docs`)
+  - Example: `[specs#001][tasks#054] test: add User model validation tests`
+  - Exception: Infrastructure/non-spec commits use conventional format only
 - PRs: include spec reference, test coverage, migration plan if applicable
 - Database migrations: reversible, tested in Render preview environments before production
 - Deployment: Automatic on merge to `main` (via Render.com GitHub integration)
@@ -198,6 +203,17 @@ Start with the simplest solution that works. Complexity requires explicit justif
 - Database schema maintained (schema.rb automatically tracked)
 - .env.example updated when new environment variables introduced
 
+**UI Standards**:
+- All screens MUST use official Tailwind CSS patterns from https://tailwindcss.com/
+- Reference Tailwind documentation for forms, layouts, and components
+- Prohibited: Custom gradients, animations, or utility classes not in official Tailwind CSS
+- Prefer semantic Tailwind utilities: `ring-*` for focus states, `leading-*` for spacing
+- Follow mobile-first responsive design with Tailwind breakpoints (`sm:`, `md:`, `lg:`, `xl:`)
+- Form validation styling MUST use Tailwind's alert/error patterns
+- Authentication pages (login, signup, password reset) MUST follow official form examples
+
+**Rationale**: Official Tailwind patterns are community-tested for accessibility, responsive design, and browser compatibility. Custom implementations create maintenance debt and design inconsistencies. The tailwindcss.com documentation provides battle-tested components that align with modern UI/UX best practices.
+
 ## Governance
 
 This constitution supersedes all ad-hoc practices. When in doubt, constitution rules.
@@ -222,11 +238,44 @@ This constitution supersedes all ad-hoc practices. When in doubt, constitution r
 - Template commands reference constitution for validation gates
 - Onboarding checklist includes constitution review
 
-**Current Version**: 1.6.0 | **Ratified**: 2026-02-10 | **Last Amended**: 2026-02-10
+**Current Version**: 1.8.0 | **Ratified**: 2026-02-10 | **Last Amended**: 2026-02-10
 
 ---
 
 ## Version History
+
+### Version 1.8.0 - 2026-02-10
+**Type**: MINOR (Commit message format - spec and task number prefixes)
+
+**Changes**:
+- Updated Development Standards > Workflow: Added mandatory commit message prefix format
+- Commit messages for spec-related work MUST include `[specs#xxx][tasks#yyy]` prefix
+- Added format specification: `[specs#xxx][tasks#yyy] type: description`
+  - xxx = spec number (zero-padded, e.g., 001)
+  - yyy = task number (zero-padded, e.g., 054)
+  - type = conventional commit type (feat, fix, refactor, test, docs)
+- Example: `[specs#001][tasks#054] test: add User model validation tests`
+- Exception documented for infrastructure/non-spec commits
+
+**Rationale**: Standardized commit prefixes enable traceability between commits and specification tasks. The format creates explicit links in git history, facilitating automated verification of spec completion, improving audit trails for feature implementation, and enabling tooling to track task-to-commit mappings. This enhances existing conventional commit format with spec/task context without replacing it.
+
+---
+
+### Version 1.7.0 - 2026-02-10
+**Type**: MINOR (UI standards - Tailwind CSS official patterns requirement)
+
+**Changes**:
+- Updated Technology Stack > Frontend: Added requirement to use official Tailwind CSS patterns from https://tailwindcss.com/
+- Added "UI Standards" subsection to Development Standards with specific Tailwind CSS usage requirements:
+  - Mandates using official tailwindcss.com patterns for all screens
+  - Prohibits custom gradients, animations, or non-standard utility classes
+  - Requires semantic Tailwind utilities (`ring-*` for focus, `leading-*` for spacing)
+  - Enforces mobile-first responsive design with standard breakpoints
+  - Specifies form validation and authentication pages must follow official examples
+
+**Rationale**: Recent UI refactoring demonstrated benefits of migrating from custom designs to official Tailwind CSS patterns. Official patterns are community-tested for accessibility, responsive design, and cross-browser compatibility. This constitutional requirement prevents future custom implementations that diverge from Tailwind's design system, ensuring consistency across all screens. Forms, authentication pages, and component layouts leveraging tailwindcss.com examples reduce maintenance overhead and inherit best practices from the Tailwind community.
+
+---
 
 ### Version 1.6.0 - 2026-02-10
 **Type**: PATCH (Documentation clarity - production environment)
