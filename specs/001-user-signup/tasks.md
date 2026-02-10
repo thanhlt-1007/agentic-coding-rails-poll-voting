@@ -30,8 +30,8 @@
 - [X] T001 Add devise gem to Gemfile (~> 4.9)
 - [X] T002 Run bundle install to install dependencies
 - [X] T003 Run devise installation generator: rails generate devise:install
-- [ ] T004 Review and configure config/initializers/devise.rb settings
-- [ ] T005 [P] Configure default URL options in config/environments/development.rb
+- [X] T004 Review and configure config/initializers/devise.rb settings
+- [X] T005 [P] Configure default URL options in config/environments/development.rb
 - [ ] T006 [P] Verify root route exists or create placeholder in config/routes.rb
 
 ---
