@@ -19,7 +19,7 @@ RSpec.describe 'GET /polls', type: :request do
       poll1 = create(:poll, :with_answers, user: user1, question: "My Own Poll?")
       poll2 = create(:poll, :with_answers, user: user2, question: "User 2 Poll?")
       poll3 = create(:poll, :with_answers, user: user3, question: "User 3 Poll?")
-      
+
       get polls_path
       expect(response.body).not_to include("User 3 Poll?")
       expect(response.body).to include("My Own Poll?")
@@ -106,7 +106,7 @@ RSpec.describe 'GET /polls', type: :request do
           poll = build(:poll, :with_answers, user: user, question: "Active Poll #{i + 1}?", deadline: 2.days.from_now)
           poll.save(validate: false)
         end
-        
+
         10.times do |i|
           user = i.even? ? user1 : user2
           poll = build(:poll, :with_answers, user: user, question: "Expired Poll #{i + 1}?", deadline: 2.days.ago)

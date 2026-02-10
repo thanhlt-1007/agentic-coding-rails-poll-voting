@@ -158,4 +158,3 @@ RSpec.describe 'POST /polls/:poll_id/user_answers', type: :request do
     end
   end
 end
-

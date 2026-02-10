@@ -22,7 +22,7 @@ RSpec.describe UserAnswer, type: :model do
     it 'prevents user from answering the same poll twice' do
       UserAnswer.create!(user: user, poll: poll, answer: answer)
       duplicate = UserAnswer.new(user: user, poll: poll, answer: poll.answers.second)
-      
+
       expect(duplicate).not_to be_valid
       expect(duplicate.errors[:user_id]).to include("has already answered this poll")
     end
@@ -31,7 +31,7 @@ RSpec.describe UserAnswer, type: :model do
       user2 = create(:user)
       UserAnswer.create!(user: user, poll: poll, answer: answer)
       user_answer2 = UserAnswer.new(user: user2, poll: poll, answer: answer)
-      
+
       expect(user_answer2).to be_valid
     end
 
@@ -39,7 +39,7 @@ RSpec.describe UserAnswer, type: :model do
       poll2 = create(:poll, :with_answers)
       UserAnswer.create!(user: user, poll: poll, answer: answer)
       user_answer2 = UserAnswer.new(user: user, poll: poll2, answer: poll2.answers.first)
-      
+
       expect(user_answer2).to be_valid
     end
 
@@ -47,7 +47,7 @@ RSpec.describe UserAnswer, type: :model do
       other_poll = create(:poll, :with_answers)
       other_answer = other_poll.answers.first
       user_answer = UserAnswer.new(user: user, poll: poll, answer: other_answer)
-      
+
       expect(user_answer).not_to be_valid
       expect(user_answer.errors[:answer]).to include("must belong to the specified poll")
     end
@@ -60,7 +60,7 @@ RSpec.describe UserAnswer, type: :model do
 
     it 'enforces unique index on user_id and poll_id' do
       UserAnswer.create!(user: user, poll: poll, answer: answer)
-      
+
       duplicate = UserAnswer.new(user: user, poll: poll, answer: poll.answers.second)
       expect {
         duplicate.save(validate: false)

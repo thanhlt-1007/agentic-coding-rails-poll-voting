@@ -22,20 +22,20 @@ class UserAnswersController < ApplicationController
   def authenticate_poll!
     # Find poll that belongs to other users only
     @poll = Poll.where.not(user_id: current_user.id).find_by(id: params[:poll_id])
-    
+
     unless @poll
       redirect_to polls_path, alert: t("user_answers.create.errors.poll_not_found")
       return
     end
-    
+
     if @poll.deadline <= Time.current
       redirect_to polls_path, alert: t("user_answers.create.errors.poll_expired")
       return
     end
-    
+
     if current_user.user_answers.exists?(poll_id: @poll.id)
       redirect_to poll_path(@poll), alert: t("user_answers.create.errors.poll_answered")
-      return
+      nil
     end
   end
 

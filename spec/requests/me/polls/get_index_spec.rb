@@ -95,7 +95,7 @@ RSpec.describe "GET /me/polls", type: :request do
           poll = build(:poll, :with_answers, user: user, question: "Active Poll #{i + 1}?", deadline: 2.days.from_now)
           poll.save(validate: false)
         end
-        
+
         10.times do |i|
           poll = build(:poll, :with_answers, user: user, question: "Expired Poll #{i + 1}?", deadline: 2.days.ago)
           poll.save(validate: false)
