@@ -1,56 +1,56 @@
 <!--
 SYNC IMPACT REPORT - Constitution Update
 ========================================
-Version Change: 1.12.0 → 1.13.0
-Type: MINOR (Application model i18n management requirement)
+Version Change: 1.13.0 → 1.14.0
+Type: PATCH (Model i18n spec requirement)
 
 Modified Sections:
-  - Updated Principle VII: Gem Internationalization (i18n) Management
-  - Added new section: Application Model i18n Management
+  - Updated Principle VIII: Application Model i18n Management
+  - Added spec requirement for i18n translations
 
 Added Requirements:
-  - When creating/updating models in app/models/xxx.rb, MUST create/update i18n file at config/locales/app/models/xxx.en.yml
-  - Model locale files include: model name (singular/plural), all attributes with human-readable labels
-  - Organize by model: config/locales/app/models/user.en.yml, config/locales/app/models/poll.en.yml, etc.
-  - Use activerecord.models and activerecord.attributes namespaces per Rails i18n conventions
-  - Include database columns AND virtual attributes (password, password_confirmation, etc.)
-  - Update locale file when adding/removing/renaming model attributes
-  - Commit locale files alongside model changes (same PR/commit)
+  - When creating/updating models, MUST create/update spec/models/[model]/i18n_spec.rb
+  - i18n spec MUST test model name translations (singular and plural)
+  - i18n spec MUST test ALL attribute name translations
+  - Tests verify User.model_name.human and User.human_attribute_name(:attribute)
+  - Update i18n spec when adding/removing/renaming model attributes
+  - Commit i18n spec alongside model and locale file changes
 
-Updated Locale File Organization:
-  - Added config/locales/app/ directory for application-specific translations
-  - Separated app-specific (config/locales/app/) from gem-specific (config/locales/gems/)
-  - Maintained config/locales/en.yml for global application translations
+Spec File Structure:
+  - Location: spec/models/[model]/i18n_spec.rb (follows model spec organization pattern)
+  - Two describe blocks: 'model name' and 'attribute names'
+  - Test model name singular and plural forms
+  - One test per attribute to verify translation
 
 Benefits Documented:
-  - Centralized model attribute translations (used in forms, labels, error messages)
-  - Human-readable attribute names in validation errors
-  - Consistent terminology across views and forms
-  - Easy customization without modifying view code
-  - Multi-language support preparation (add es.yml, fr.yml later)
+  - Ensures i18n translations are defined and correct
+  - Catches missing translations during test runs
+  - Documents expected attribute labels
+  - Prevents breaking changes to user-facing text
+  - Validates Rails i18n integration
 
 Rationale:
-  User model creation revealed need for standardized model i18n management. Rails i18n supports
-  model/attribute name translation via activerecord.models and activerecord.attributes, but requires
-  explicit locale files. Creating config/locales/app/models/xxx.en.yml per model ensures all
-  attribute names are translatable and maintainable. Separating app-specific (app/) from gem-specific
-  (gems/) locale files improves organization and prevents mixing concerns. Pattern aligns with
-  Rails i18n best practices (User.model_name.human, User.human_attribute_name(:email)) and
-  supports future multi-language requirements.
+  User model i18n setup revealed need for testing i18n translations. Without tests, missing or
+  incorrect translations aren't caught until runtime, potentially showing technical attribute
+  names (e.g., "email" instead of "Email") to users. Testing User.model_name.human and
+  User.human_attribute_name ensures locale files are properly configured and loaded. Following
+  model spec organization pattern (spec/models/user/i18n_spec.rb), this creates one focused
+  spec file per concern. Tests serve as documentation for expected attribute labels and catch
+  regressions during locale file updates.
 
 Template Consistency Status:
-  ✅ plan-template.md - No changes required (i18n management not in planning phase)
+  ✅ plan-template.md - No changes required (i18n testing not in planning phase)
   ✅ spec-template.md - No changes required (acceptance criteria unchanged)
   ✅ tasks-template.md - No changes required (task patterns unchanged)
-  ⚠️  README.md - Should document model i18n file management process
+  ⚠️  README.md - Should document model i18n spec generation
 
 Follow-up TODOs:
-  - Add README.md section explaining model i18n management process
-  - Document how to update locale files when modifying models
+  - Update README.md with i18n spec generation process
+  - Document how to update i18n specs when modifying models
 
-Previous Update (v1.12.0):
-  Added Principle VII: Gem Internationalization Management with requirements for copying
-  gem locale files from GitHub to config/locales/gems/ for version control and customization.
+Previous Update (v1.13.0):
+  Added Principle VIII: Application Model i18n Management with requirements for creating
+  config/locales/app/models/xxx.en.yml per model with model names and attribute translations.
 -->
 
 # Rails Poll Voting Constitution
@@ -478,9 +478,14 @@ When creating or updating models in `app/models/`, corresponding i18n locale fil
           email: Email
           password: Password
   ```
-- **Synchronization**: Update locale file when adding/removing/renaming model attributes
-- **Commit together**: Model changes and locale file updates in same PR/commit
-- **Version control**: Locale files MUST be committed to git
+- **i18n Spec Requirement**: Create/update `spec/models/[model_name]/i18n_spec.rb`
+  - Test model name translations (singular and plural)
+  - Test ALL attribute name translations
+  - One test per attribute verifying `Model.human_attribute_name(:attribute)`
+  - Follows model spec organization pattern (one file per concern)
+- **Synchronization**: Update locale file AND i18n spec when adding/removing/renaming model attributes
+- **Commit together**: Model changes, locale file updates, and i18n spec in same PR/commit
+- **Version control**: Locale files and specs MUST be committed to git
 
 **Implementation Process**:
 ```bash
@@ -492,6 +497,11 @@ mkdir -p config/locales/app/models
 touch config/locales/app/models/user.en.yml
 
 # Add translations for model name and all attributes
+
+# Create i18n spec
+touch spec/models/user/i18n_spec.rb
+
+# Add tests for model name and attribute translations
 ```
 
 **Model Locale File Template**:
@@ -567,6 +577,41 @@ config/locales/
     │   └── activesupport.en.yml
     └── devise/                     # Third-party gems
         └── en.yml
+
+spec/models/
+└── [model_name]/
+    ├── i18n_spec.rb                # i18n translation tests
+    ├── validations_spec.rb
+    └── ...
+```
+
+**i18n Spec Template**:
+```ruby
+# frozen_string_literal: true
+
+require 'rails_helper'
+
+RSpec.describe User, type: :model do
+  describe 'i18n translations' do
+    describe 'model name' do
+      it 'returns translated singular model name' do
+        expect(User.model_name.human).to eq('User')
+      end
+
+      it 'returns translated plural model name' do
+        expect(User.model_name.human.pluralize).to eq('Users')
+      end
+    end
+
+    describe 'attribute names' do
+      it 'returns translated email attribute' do
+        expect(User.human_attribute_name(:email)).to eq('Email')
+      end
+
+      # Add one test per attribute
+    end
+  end
+end
 ```
 
 **Benefits**:
@@ -577,14 +622,18 @@ config/locales/
 - **Multi-language ready**: Add es.yml, fr.yml files later for internationalization
 - **Rails integration**: Automatic usage in form labels, error messages, and model helpers
 - **Maintainability**: Clear mapping between models and their translations
+- **Test coverage**: i18n specs ensure translations are defined and correct
+- **Prevent regressions**: Tests catch missing/incorrect translations before runtime
 
 **Maintenance Workflow**:
 1. Add new attribute to model (migration + model file)
 2. Update `config/locales/app/models/[model].en.yml` with new attribute translation
-3. Commit model changes and locale file together
-4. Review: ensure all attributes have human-readable labels
+3. Update `spec/models/[model]/i18n_spec.rb` with new attribute test
+4. Run specs to verify translation works
+5. Commit model changes, locale file, and i18n spec together
+6. Review: ensure all attributes have human-readable labels and passing tests
 
-**Rationale**: Rails i18n supports model and attribute name translation via `activerecord.models` and `activerecord.attributes`, but requires explicit locale files. Creating `config/locales/app/models/xxx.en.yml` per model ensures all attribute names are translatable, improving user-facing error messages and form labels. Separating application-specific (`app/`) from gem-specific (`gems/`) locale files improves organization and prevents mixing concerns. This pattern aligns with Rails i18n best practices and supports future multi-language requirements without code changes.
+**Rationale**: Rails i18n supports model and attribute name translation via `activerecord.models` and `activerecord.attributes`, but requires explicit locale files. Creating `config/locales/app/models/xxx.en.yml` per model ensures all attribute names are translatable, improving user-facing error messages and form labels. Adding `spec/models/xxx/i18n_spec.rb` ensures translations are defined correctly and prevents runtime errors from missing translations. Tests serve as documentation for expected attribute labels and catch regressions during locale file updates. Separating application-specific (`app/`) from gem-specific (`gems/`) locale files improves organization and prevents mixing concerns. This pattern aligns with Rails i18n best practices and supports future multi-language requirements without code changes.
 
 ## Technology Stack
 
@@ -711,11 +760,33 @@ This constitution supersedes all ad-hoc practices. When in doubt, constitution r
 - Template commands reference constitution for validation gates
 - Onboarding checklist includes constitution review
 
-**Current Version**: 1.13.0 | **Ratified**: 2026-02-10 | **Last Amended**: 2026-02-11
+**Current Version**: 1.14.0 | **Ratified**: 2026-02-10 | **Last Amended**: 2026-02-11
 
 ---
 
 ## Version History
+
+### Version 1.14.0 - 2026-02-11
+**Type**: PATCH (Model i18n spec requirement)
+
+**Changes**:
+- Updated Principle VIII: Application Model i18n Management
+- Added i18n spec requirement for model translations:
+  - Create/update spec/models/[model]/i18n_spec.rb when creating/updating models
+  - Test model name translations (singular and plural)
+  - Test ALL attribute name translations (one test per attribute)
+  - Tests verify Model.model_name.human and Model.human_attribute_name(:attribute)
+  - Update i18n spec when adding/removing/renaming attributes
+  - Commit i18n spec alongside model and locale file changes
+- Added i18n spec template with example structure
+- Updated implementation process to include i18n spec creation
+- Updated maintenance workflow to include i18n spec updates and test runs
+- Updated benefits list: added test coverage, prevent regressions
+- Updated directory structure diagram to show spec/models/[model]/i18n_spec.rb
+
+**Rationale**: User model i18n setup revealed need for testing i18n translations. Without tests, missing or incorrect translations aren't caught until runtime, potentially showing technical attribute names (e.g., "email" instead of "Email") to users. Testing Model.model_name.human and Model.human_attribute_name ensures locale files are properly configured and loaded. Following model spec organization pattern (spec/models/user/i18n_spec.rb), this creates one focused spec file per concern. Tests serve as documentation for expected attribute labels and catch regressions during locale file updates.
+
+---
 
 ### Version 1.13.0 - 2026-02-11
 **Type**: MINOR (Application model i18n management requirement)
