@@ -8,7 +8,9 @@ Rails.application.routes.draw do
     sessions: "users/sessions"
   }
 
-  resources :polls, only: [ :new, :create, :show ]
+  namespace :me do
+    resources :polls, only: [ :new, :create, :show ]
+  end
 
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 

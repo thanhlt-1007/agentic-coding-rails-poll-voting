@@ -16,7 +16,7 @@ RSpec.describe "Poll Creation Deadline", type: :system do
 
   describe "deadline field" do
     it "allows creating a poll with a future deadline" do
-      visit new_poll_path
+      visit new_me_poll_path
 
       fill_in "Question", with: "What is your favorite color?"
       fill_in "poll_deadline", with: 1.week.from_now.strftime("%Y-%m-%dT%H:%M")
@@ -36,7 +36,7 @@ RSpec.describe "Poll Creation Deadline", type: :system do
     end
 
     it "displays validation error for past deadline" do
-      visit new_poll_path
+      visit new_me_poll_path
 
       fill_in "Question", with: "What is your favorite programming language?"
       fill_in "poll_deadline", with: 1.day.ago.strftime("%Y-%m-%dT%H:%M")
@@ -55,7 +55,7 @@ RSpec.describe "Poll Creation Deadline", type: :system do
 
     it "displays the deadline on the poll show page" do
       future_time = 1.week.from_now
-      visit new_poll_path
+      visit new_me_poll_path
 
       fill_in "Question", with: "What is your favorite framework?"
       fill_in "poll_deadline", with: future_time.strftime("%Y-%m-%dT%H:%M")

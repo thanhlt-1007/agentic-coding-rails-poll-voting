@@ -11,7 +11,7 @@ RSpec.describe "Poll Creation Authentication", type: :system do
 
   describe "unauthenticated access" do
     it "redirects to login when accessing new poll page" do
-      visit new_poll_path
+      visit new_me_poll_path
       expect(page).to have_current_path(new_user_session_path)
     end
   end
@@ -26,13 +26,13 @@ RSpec.describe "Poll Creation Authentication", type: :system do
     end
 
     it "allows access to poll creation page" do
-      visit new_poll_path
-      expect(page).to have_current_path(new_poll_path)
+      visit new_me_poll_path
+      expect(page).to have_current_path(new_me_poll_path)
       expect(page).to have_content("Create a New Poll")
     end
 
     it "allows poll creation" do
-      visit new_poll_path
+      visit new_me_poll_path
 
       fill_in "Question", with: "What is your favorite color?"
       fill_in "poll_deadline", with: 1.week.from_now.strftime("%Y-%m-%dT%H:%M")

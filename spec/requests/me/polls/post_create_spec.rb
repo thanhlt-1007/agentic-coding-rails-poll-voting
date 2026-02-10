@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-RSpec.describe "POST /polls" do
+RSpec.describe "POST /me/polls" do
   let(:user) { create(:user) }
 
   context "when user is authenticated" do
@@ -28,30 +28,30 @@ RSpec.describe "POST /polls" do
 
       it "creates a new poll" do
         expect {
-          post polls_path, params: valid_params
+          post me_polls_path, params: valid_params
         }.to change(Poll, :count).by(1)
       end
 
       it "creates 4 answers" do
         expect {
-          post polls_path, params: valid_params
+          post me_polls_path, params: valid_params
         }.to change(Answer, :count).by(4)
       end
 
       it "associates the poll with the current user" do
-        post polls_path, params: valid_params
+        post me_polls_path, params: valid_params
         poll = Poll.last
         expect(poll.user).to eq(user)
       end
 
       it "redirects to the poll show page" do
-        post polls_path, params: valid_params
+        post me_polls_path, params: valid_params
         poll = Poll.last
-        expect(response).to redirect_to(poll_path(poll))
+        expect(response).to redirect_to(me_poll_path(poll))
       end
 
       it "sets a success flash message" do
-        post polls_path, params: valid_params
+        post me_polls_path, params: valid_params
         follow_redirect!
         expect(response.body).to include("Poll was successfully created")
       end
@@ -76,17 +76,17 @@ RSpec.describe "POST /polls" do
 
         it "does not create a poll" do
           expect {
-            post polls_path, params: invalid_params
+            post me_polls_path, params: invalid_params
           }.not_to change(Poll, :count)
         end
 
         it "returns unprocessable entity status" do
-          post polls_path, params: invalid_params
+          post me_polls_path, params: invalid_params
           expect(response).to have_http_status(:unprocessable_entity)
         end
 
         it "displays error messages" do
-          post polls_path, params: invalid_params
+          post me_polls_path, params: invalid_params
           expect(response.body).to include("error")
         end
       end
@@ -108,12 +108,12 @@ RSpec.describe "POST /polls" do
 
         it "does not create a poll" do
           expect {
-            post polls_path, params: invalid_params
+            post me_polls_path, params: invalid_params
           }.not_to change(Poll, :count)
         end
 
         it "returns unprocessable entity status" do
-          post polls_path, params: invalid_params
+          post me_polls_path, params: invalid_params
           expect(response).to have_http_status(:unprocessable_entity)
         end
       end
@@ -136,12 +136,12 @@ RSpec.describe "POST /polls" do
 
         it "does not create a poll" do
           expect {
-            post polls_path, params: invalid_params
+            post me_polls_path, params: invalid_params
           }.not_to change(Poll, :count)
         end
 
         it "returns unprocessable entity status" do
-          post polls_path, params: invalid_params
+          post me_polls_path, params: invalid_params
           expect(response).to have_http_status(:unprocessable_entity)
         end
       end
@@ -164,12 +164,12 @@ RSpec.describe "POST /polls" do
 
         it "does not create a poll" do
           expect {
-            post polls_path, params: invalid_params
+            post me_polls_path, params: invalid_params
           }.not_to change(Poll, :count)
         end
 
         it "returns unprocessable entity status" do
-          post polls_path, params: invalid_params
+          post me_polls_path, params: invalid_params
           expect(response).to have_http_status(:unprocessable_entity)
         end
       end
@@ -193,13 +193,13 @@ RSpec.describe "POST /polls" do
     end
 
     it "redirects to login page" do
-      post polls_path, params: params
+      post me_polls_path, params: params
       expect(response).to redirect_to(new_user_session_path)
     end
 
     it "does not create a poll" do
       expect {
-        post polls_path, params: params
+        post me_polls_path, params: params
       }.not_to change(Poll, :count)
     end
   end

@@ -16,7 +16,7 @@ RSpec.describe "Poll Creation Validation", type: :system do
 
   describe "validation errors" do
     it "displays error for blank question" do
-      visit new_poll_path
+      visit new_me_poll_path
 
       fill_in "Question", with: ""
       fill_in "poll_deadline", with: 1.week.from_now.strftime("%Y-%m-%dT%H:%M")
@@ -29,12 +29,12 @@ RSpec.describe "Poll Creation Validation", type: :system do
       click_button "Create Poll"
 
       expect(page).to have_content("error")
-      expect(page).to have_current_path(polls_path)
+      expect(page).to have_current_path(me_polls_path)
       expect(Poll.count).to eq(0)
     end
 
     it "displays error for duplicate answers" do
-      visit new_poll_path
+      visit new_me_poll_path
 
       fill_in "Question", with: "What is your favorite color?"
       fill_in "poll_deadline", with: 1.week.from_now.strftime("%Y-%m-%dT%H:%M")
@@ -48,12 +48,12 @@ RSpec.describe "Poll Creation Validation", type: :system do
 
       expect(page).to have_content("error")
       expect(page).to have_content("Answer options must be unique")
-      expect(page).to have_current_path(polls_path)
+      expect(page).to have_current_path(me_polls_path)
       expect(Poll.count).to eq(0)
     end
 
     it "displays error for question too short" do
-      visit new_poll_path
+      visit new_me_poll_path
 
       fill_in "Question", with: "Hi?"
       fill_in "poll_deadline", with: 1.week.from_now.strftime("%Y-%m-%dT%H:%M")
@@ -67,12 +67,12 @@ RSpec.describe "Poll Creation Validation", type: :system do
 
       expect(page).to have_content("error")
       expect(page).to have_content("too short")
-      expect(page).to have_current_path(polls_path)
+      expect(page).to have_current_path(me_polls_path)
       expect(Poll.count).to eq(0)
     end
 
     it "displays error for past deadline" do
-      visit new_poll_path
+      visit new_me_poll_path
 
       fill_in "Question", with: "What is your favorite programming language?"
       fill_in "poll_deadline", with: 1.day.ago.strftime("%Y-%m-%dT%H:%M")
@@ -86,7 +86,7 @@ RSpec.describe "Poll Creation Validation", type: :system do
 
       expect(page).to have_content("error")
       expect(page).to have_content("must be in the future")
-      expect(page).to have_current_path(polls_path)
+      expect(page).to have_current_path(me_polls_path)
       expect(Poll.count).to eq(0)
     end
   end

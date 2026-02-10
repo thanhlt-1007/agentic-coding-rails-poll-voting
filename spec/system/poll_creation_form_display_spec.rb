@@ -16,7 +16,7 @@ RSpec.describe "Poll Creation Form Display", type: :system do
 
   describe "form elements" do
     before do
-      visit new_poll_path
+      visit new_me_poll_path
     end
 
     it "displays the form title" do
@@ -67,7 +67,7 @@ RSpec.describe "Poll Creation Form Display", type: :system do
 
   describe "form styling" do
     before do
-      visit new_poll_path
+      visit new_me_poll_path
     end
 
     it "applies Tailwind classes to question field" do
