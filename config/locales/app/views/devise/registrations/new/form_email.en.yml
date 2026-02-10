@@ -1,0 +1,6 @@
+en:
+  devise:
+    registrations:
+      new:
+        form_email:
+          email_placeholder: "you@example.com"

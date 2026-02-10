@@ -1,0 +1,6 @@
+en:
+  devise:
+    registrations:
+      new:
+        form_button_submit:
+          submit_button: "Sign up"
