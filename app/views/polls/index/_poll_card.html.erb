@@ -1,0 +1,37 @@
+<%= link_to poll_path(poll), class: "block bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow p-6" do %>
+  <h3 class="text-lg font-semibold text-gray-900 mb-2"><%= poll.question %></h3>
+  
+  <div class="flex items-center text-sm text-gray-500 space-x-4 mb-3">
+    <div class="flex items-center">
+      <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+      </svg>
+      <%= t('.answers_count', count: poll.answers.count) %>
+    </div>
+
+    <div class="flex items-center">
+      <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+      </svg>
+      <%= l(poll.deadline, format: :short) %>
+    </div>
+  </div>
+
+  <div class="text-xs text-gray-400">
+    <%= t('.created_at', time: time_ago_in_words(poll.created_at)) %>
+  </div>
+
+  <% if poll.deadline < Time.current %>
+    <div class="mt-2">
+      <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800">
+        <%= t('.expired') %>
+      </span>
+    </div>
+  <% else %>
+    <div class="mt-2">
+      <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
+        <%= t('.active') %>
+      </span>
+    </div>
+  <% end %>
+<% end %>

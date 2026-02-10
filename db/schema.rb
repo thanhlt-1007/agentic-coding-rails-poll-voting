@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_02_10_200139) do
+ActiveRecord::Schema[8.1].define(version: 2026_02_10_223707) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -35,6 +35,18 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_10_200139) do
     t.index ["user_id"], name: "index_polls_on_user_id"
   end
 
+  create_table "user_answers", force: :cascade do |t|
+    t.bigint "answer_id", null: false
+    t.datetime "created_at", null: false
+    t.bigint "poll_id", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "user_id", null: false
+    t.index ["answer_id"], name: "index_user_answers_on_answer_id"
+    t.index ["poll_id"], name: "index_user_answers_on_poll_id"
+    t.index ["user_id", "poll_id"], name: "index_user_answers_on_user_id_and_poll_id", unique: true
+    t.index ["user_id"], name: "index_user_answers_on_user_id"
+  end
+
   create_table "users", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.string "email", default: "", null: false
@@ -45,4 +57,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_10_200139) do
 
   add_foreign_key "answers", "polls"
   add_foreign_key "polls", "users"
+  add_foreign_key "user_answers", "answers"
+  add_foreign_key "user_answers", "polls"
+  add_foreign_key "user_answers", "users"
 end

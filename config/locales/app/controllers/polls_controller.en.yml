@@ -1,0 +1,5 @@
+en:
+  polls_controller:
+    show:
+      errors:
+        poll_not_found: "Poll not found or you don't have access to view it."

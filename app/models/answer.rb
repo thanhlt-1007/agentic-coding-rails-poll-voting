@@ -2,6 +2,7 @@
 
 class Answer < ApplicationRecord
   belongs_to :poll
+  has_many :user_answers, dependent: :destroy
 
   validates :text, presence: true, length: { maximum: 255 }
   validates :position, presence: true,

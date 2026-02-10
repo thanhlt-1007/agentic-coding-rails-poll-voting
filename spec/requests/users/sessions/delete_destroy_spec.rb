@@ -25,8 +25,7 @@ RSpec.describe 'User Sessions', type: :request do
 
       it 'sets a success flash message' do
         delete destroy_user_session_path
-        follow_redirect!
-        expect(response.body).to include('Signed out successfully.')
+        expect(flash[:notice]).to eq('Signed out successfully.')
       end
 
       it 'clears the session' do

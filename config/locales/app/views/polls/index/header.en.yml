@@ -1,0 +1,9 @@
+en:
+  polls:
+    index:
+      header:
+        title: "All Polls"
+        filters:
+          all: "All"
+          active: "Active"
+          expired: "Expired"

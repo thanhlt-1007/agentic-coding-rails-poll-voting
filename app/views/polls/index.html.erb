@@ -1,0 +1,14 @@
+<div class="max-w-7xl mx-auto px-4 py-8">
+  <%= render "polls/index/header" %>
+
+  <% if @polls.any? %>
+    <%= render "polls/index/polls_grid", polls: @polls %>
+    
+    <!-- Pagination -->
+    <% if @pagy.pages > 1 %>
+      <%= render "polls/index/pagination", pagy: @pagy %>
+    <% end %>
+  <% else %>
+    <%= render "polls/index/empty_state" %>
+  <% end %>
+</div>

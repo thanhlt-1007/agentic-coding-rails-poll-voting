@@ -1,0 +1,5 @@
+en:
+  user_answers:
+    create:
+      success: "Your answer has been saved successfully."
+      error: "Failed to save your answer: %{errors}"

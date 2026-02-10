@@ -7,6 +7,7 @@ class Poll < ApplicationRecord
   # Associations
   belongs_to :user
   has_many :answers, dependent: :destroy
+  has_many :user_answers, dependent: :destroy
 
   # Nested attributes
   accepts_nested_attributes_for :answers, reject_if: :all_blank, allow_destroy: false

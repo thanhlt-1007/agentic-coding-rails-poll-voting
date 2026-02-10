@@ -1,0 +1,10 @@
+en:
+  polls:
+    index:
+      poll_card:
+        answers_count:
+          one: "%{count} answer"
+          other: "%{count} answers"
+        created_at: "Created %{time} ago"
+        expired: "Expired"
+        active: "Active"

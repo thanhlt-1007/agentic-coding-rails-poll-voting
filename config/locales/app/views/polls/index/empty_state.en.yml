@@ -1,0 +1,6 @@
+en:
+  polls:
+    index:
+      empty_state:
+        no_polls: "No polls available"
+        no_polls_description: "There are no polls to display at the moment."
