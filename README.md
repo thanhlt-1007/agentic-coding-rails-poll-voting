@@ -203,7 +203,53 @@ bundle exec bundle-audit check --update
 └── README.md             # This file
 ```
 
-## 🔧 Common Development Tasks
+## � Authentication
+
+This application uses [Devise](https://github.com/heartcombo/devise) for user authentication.
+
+### User Registration
+
+Users can sign up at `/sign_up` with:
+- Email address (unique, case-insensitive)
+- Password (minimum 6 characters)
+- Password confirmation
+
+### Features
+
+- **Secure password storage**: Passwords are encrypted using bcrypt
+- **Email validation**: Standard email format required
+- **Password requirements**: Minimum 6 characters
+- **Password confirmation**: Prevents typing errors
+- **Auto sign-in**: Users are automatically signed in after successful registration
+- **Error messages**: Clear, actionable feedback for validation errors
+
+### Devise Configuration
+
+Configured modules in `app/models/user.rb`:
+- `:database_authenticatable` - Email/password login
+- `:registerable` - User registration
+- `:recoverable` - Password reset
+- `:rememberable` - Remember me cookie
+- `:validatable` - Email and password validations
+
+### Custom Routes
+
+Authentication routes are available at:
+- Sign up: `/sign_up`
+- Login: `/login`
+- Logout: `/logout`
+
+### Testing Authentication
+
+```bash
+# Run user model tests
+bin/rails test test/models/user_test.rb
+
+# Run sign-up system tests
+bin/rails test test/system/user_signup_test.rb
+```
+
+## �🔧 Common Development Tasks
 
 ### Create a New Model
 
