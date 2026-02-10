@@ -1,24 +1,26 @@
 <!--
 SYNC IMPACT REPORT - Constitution Update
 ========================================
-Version Change: 1.1.0 → 1.2.0
-Type: MINOR (Environment configuration documentation)
+Version Change: 1.3.0 → 1.4.0
+Type: MINOR (Version history tracking)
 
 Modified Principles: None
 Modified Sections:
-  - Development Standards: Added Environment Configuration section
-  - Documentation Requirements: Added .env.example maintenance requirement
+  - Governance > Amendment Process: Added version history update requirement
+  - Added new "Version History" section at end of document
 
 Rationale: 
-  Explicit environment variable documentation ensures consistent configuration
-  across development, staging, and production. .env.example serves as canonical
-  reference for required and optional environment variables.
+  Version history provides audit trail of constitutional changes over time.
+  Instead of losing historical context when version updates, all amendments
+  are preserved in chronological order. This supports transparency, enables
+  teams to understand evolution of governance, and provides reference for
+  future amendment discussions.
 
 Template Consistency Status:
   ✅ plan-template.md - No changes required
   ✅ spec-template.md - No changes required
   ✅ tasks-template.md - No changes required
-  ✅ .env.example - Updated with constitutional requirements
+  ✅ README.md - No changes required
 
 Follow-up TODOs:
   - Configure render.yaml for service definitions
@@ -165,6 +167,11 @@ Start with the simplest solution that works. Complexity requires explicit justif
 **Environment Configuration**:
 - All configuration via environment variables (12-factor app)
 - .env.example MUST be kept up-to-date with all required/optional variables
+- README.md MUST be updated whenever:
+  - New environment variables added that affect local development
+  - Third-party services integrated (Redis, PostgreSQL, APIs, etc.)
+  - Configuration steps change for local setup
+  - Prerequisites change (Ruby version, system dependencies)
 - Secrets NEVER committed to source control (use Rails credentials or ENV)
 - Required variables for production:
   - DATABASE_URL (Render.com auto-provided)
@@ -178,6 +185,12 @@ Start with the simplest solution that works. Complexity requires explicit justif
 - Feature-specific variables documented in .env.example
 
 **Documentation Requirements**:
+- README.md MUST be updated (NON-NEGOTIABLE):
+  - When environment variables added/changed (.env.example + README Quick Start)
+  - When third-party services integrated (add to Prerequisites, Troubleshooting)
+  - When setup steps change (database, Redis, background jobs)
+  - When new dependencies require local installation
+  - All updates MUST maintain accuracy of Quick Start section
 - README updated for new user-facing features
 - Inline comments for non-obvious business logic
 - API documentation via RDoc for public methods
@@ -194,7 +207,8 @@ This constitution supersedes all ad-hoc practices. When in doubt, constitution r
 3. Approval requires consensus (all maintainers agree or no blocking objections)
 4. Update constitution version (semantic versioning)
 5. Update dependent templates/docs within same PR
-6. Announce change in team channel with migration timeline
+6. Add entry to Version History section with date, version, changes, and rationale
+7. Announce change in team channel with migration timeline
 
 **Compliance**:
 - All PRs reviewed for constitutional alignment
@@ -207,4 +221,80 @@ This constitution supersedes all ad-hoc practices. When in doubt, constitution r
 - Template commands reference constitution for validation gates
 - Onboarding checklist includes constitution review
 
-**Version**: 1.2.0 | **Ratified**: 2026-02-10 | **Last Amended**: 2026-02-10
+**Current Version**: 1.4.0 | **Ratified**: 2026-02-10 | **Last Amended**: 2026-02-10
+
+---
+
+## Version History
+
+### Version 1.4.0 - 2026-02-10
+**Type**: MINOR (Version history tracking)
+
+**Changes**:
+- Added Version History section to track all constitutional amendments
+- Updated Amendment Process to require history entry for each change
+- Replaced single version line with reference to history section
+
+**Rationale**: Provides audit trail of governance evolution. Transparency and historical context support better decision-making for future amendments.
+
+---
+
+### Version 1.3.0 - 2026-02-10
+**Type**: MINOR (README.md synchronization requirement)
+
+**Changes**:
+- Added README.md synchronization mandate to Documentation Requirements
+- Specified README update triggers in Environment Configuration:
+  - New environment variables affecting local development
+  - Third-party service integrations
+  - Configuration step changes
+  - Prerequisite changes
+- Made README Quick Start accuracy a NON-NEGOTIABLE requirement
+
+**Rationale**: New developers rely on README.md for local setup. Outdated setup instructions break developer onboarding experience. Mandatory README updates ensure documentation stays synchronized with configuration changes.
+
+---
+
+### Version 1.2.0 - 2026-02-10
+**Type**: MINOR (Environment configuration documentation)
+
+**Changes**:
+- Added Environment Configuration section to Development Standards
+- Added .env.example maintenance requirement to Documentation Requirements
+- Specified required production variables (DATABASE_URL, REDIS_URL, RAILS_MASTER_KEY)
+- Defined security variables (RAILS_FORCE_SSL, RACK_ATTACK configuration)
+
+**Rationale**: Explicit environment variable documentation ensures consistent configuration across development, staging, and production. .env.example serves as canonical reference for required and optional environment variables.
+
+---
+
+### Version 1.1.0 - 2026-02-10
+**Type**: MINOR (Deployment target change)
+
+**Changes**:
+- Updated Technology Stack > Deployment: Kamal 2.0 → Render.com
+- Updated Development Standards > Workflow: Added Render.com deployment notes
+- Changed from Docker/Kamal to Render.com native buildpacks
+- Added GitHub integration for automatic deployments
+- Updated workflow: Database migrations tested in Render preview environments
+
+**Rationale**: Render.com provides managed PostgreSQL, Redis, and automatic deployments from Git, reducing infrastructure complexity and maintenance overhead. No Docker containerization needed - Render uses native buildpacks.
+
+---
+
+### Version 1.0.0 - 2026-02-10
+**Type**: MAJOR (Initial ratification)
+
+**Changes**:
+- Initial constitution ratified
+- Established 5 core principles:
+  - I. Rails-First Architecture
+  - II. Test-Driven Development (NON-NEGOTIABLE)
+  - III. SSR Performance & User Experience
+  - IV. Security by Default
+  - V. Simplicity & Maintainability
+- Defined Technology Stack (Ruby 4, Rails 8, PostgreSQL, Redis, Hotwire, Tailwind)
+- Established Development Standards (code quality gates, workflow, documentation)
+- Created Governance framework (amendment process, compliance, runtime guidance)
+
+**Rationale**: Foundation document establishing project governance, technical principles, and development standards for Rails Poll Voting application.
