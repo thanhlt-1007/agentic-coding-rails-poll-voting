@@ -69,10 +69,10 @@
 - [X] T018 [US1] Add password_confirmation field with proper label and styling
 - [X] T019 [US1] Add submit button with Tailwind styling
 - [X] T020 [US1] Verify form uses form_with or form_for with proper model binding
-- [ ] T021 [US1] Configure post-registration redirect in app/controllers/application_controller.rb
-- [ ] T022 [US1] Test successful account creation manually: visit /sign_up and create account
-- [ ] T023 [US1] Verify user is automatically signed in after registration
-- [ ] T024 [US1] Verify redirect to root page after successful sign-up
+- [X] T021 [US1] Configure post-registration redirect in app/controllers/application_controller.rb
+- [X] T022 [US1] Test successful account creation manually: visit /sign_up and create account
+- [X] T023 [US1] Verify user is automatically signed in after registration
+- [X] T024 [US1] Verify redirect to root page after successful sign-up
 
 **Checkpoint**: At this point, User Story 1 should be fully functional - users can create accounts
 
