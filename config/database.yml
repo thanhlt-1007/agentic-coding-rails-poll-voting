@@ -15,6 +15,8 @@
 default: &default
   adapter: postgresql
   encoding: unicode
+  host: <%= ENV.fetch("POLL_VOTING_DATABASE_HOST") { "localhost" } %>
+  port: <%= ENV.fetch("POLL_VOTING_DATABASE_PORT") { 5432 } %>
   username: <%= ENV.fetch("POLL_VOTING_DATABASE_USERNAME") { "postgres" } %>
   password: <%= ENV.fetch("POLL_VOTING_DATABASE_PASSWORD") { "Aa@123456" } %>
   # For details on connection pooling, see Rails configuration guide
@@ -23,8 +25,6 @@ default: &default
 
 development:
   <<: *default
-  host: localhost
-  port: 5432
   database: poll_voting_development
 
   # The specified database role being used to connect to PostgreSQL.
@@ -59,8 +59,6 @@ development:
 # Do not set this db to the same as development or production.
 test:
   <<: *default
-  host: localhost
-  port: 5432
   database: poll_voting_test
 
 # As with config/credentials.yml, you never want to store sensitive information,
@@ -93,7 +91,9 @@ production:
   primary: &primary_production
     <<: *default
     database: poll_voting_production
-    username: poll_voting
+    host: <%= ENV["POLL_VOTING_DATABASE_HOST"] %>
+    port: <%= ENV["POLL_VOTING_DATABASE_PORT"] %>
+    username: <%= ENV["POLL_VOTING_DATABASE_USERNAME"] %>
     password: <%= ENV["POLL_VOTING_DATABASE_PASSWORD"] %>
   cache:
     <<: *primary_production
