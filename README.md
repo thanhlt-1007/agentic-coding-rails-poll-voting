@@ -53,6 +53,8 @@ cp .env.example .env
 Edit `.env` and set your database credentials:
 
 ```env
+POLL_VOTING_DATABASE_HOST=localhost
+POLL_VOTING_DATABASE_PORT=5432
 POLL_VOTING_DATABASE_USERNAME=your_postgres_username
 POLL_VOTING_DATABASE_PASSWORD=your_postgres_password
 ```
@@ -221,6 +223,8 @@ bin/rails solid_queue:start
 
 Default configuration loads from `.env` file. Key variables:
 
+- `POLL_VOTING_DATABASE_HOST` - PostgreSQL host (default: localhost)
+- `POLL_VOTING_DATABASE_PORT` - PostgreSQL port (default: 5432)
 - `POLL_VOTING_DATABASE_USERNAME` - PostgreSQL username
 - `POLL_VOTING_DATABASE_PASSWORD` - PostgreSQL password
 - `REDIS_URL` - Redis connection URL (default: redis://localhost:6379/0)

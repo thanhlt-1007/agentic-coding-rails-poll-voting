@@ -1,26 +1,26 @@
 <!--
 SYNC IMPACT REPORT - Constitution Update
 ========================================
-Version Change: 1.3.0 → 1.4.0
-Type: MINOR (Version history tracking)
+Version Change: 1.4.0 → 1.5.0
+Type: PATCH (Documentation completeness)
 
 Modified Principles: None
-Modified Sections:
-  - Governance > Amendment Process: Added version history update requirement
-  - Added new "Version History" section at end of document
+Modified Sections: None (documentation update only)
 
 Rationale: 
-  Version history provides audit trail of constitutional changes over time.
-  Instead of losing historical context when version updates, all amendments
-  are preserved in chronological order. This supports transparency, enables
-  teams to understand evolution of governance, and provides reference for
-  future amendment discussions.
+  Environment variables POLL_VOTING_DATABASE_HOST and POLL_VOTING_DATABASE_PORT
+  were already present in .env.example and database.yml but missing from README.md
+  documentation. This update ensures README Quick Start section accurately reflects
+  all database configuration variables, fulfilling constitutional documentation
+  requirements.
 
 Template Consistency Status:
   ✅ plan-template.md - No changes required
   ✅ spec-template.md - No changes required
   ✅ tasks-template.md - No changes required
-  ✅ README.md - No changes required
+  ✅ README.md - Updated with complete database ENV variables
+  ✅ .env.example - Already complete (no changes)
+  ✅ config/database.yml - Already complete (no changes)
 
 Follow-up TODOs:
   - Configure render.yaml for service definitions
@@ -221,11 +221,24 @@ This constitution supersedes all ad-hoc practices. When in doubt, constitution r
 - Template commands reference constitution for validation gates
 - Onboarding checklist includes constitution review
 
-**Current Version**: 1.4.0 | **Ratified**: 2026-02-10 | **Last Amended**: 2026-02-10
+**Current Version**: 1.5.0 | **Ratified**: 2026-02-10 | **Last Amended**: 2026-02-10
 
 ---
 
 ## Version History
+
+### Version 1.5.0 - 2026-02-10
+**Type**: PATCH (Documentation completeness)
+
+**Changes**:
+- Updated README.md to document POLL_VOTING_DATABASE_HOST and POLL_VOTING_DATABASE_PORT
+- Added database host/port variables to Quick Start section
+- Added database host/port variables to Environment Configuration section
+- No code changes (variables already existed in .env.example and database.yml)
+
+**Rationale**: Constitutional requirement mandates README.md accuracy for all environment variables affecting local development. These variables were already implemented but missing from documentation, creating potential confusion for new developers during setup.
+
+---
 
 ### Version 1.4.0 - 2026-02-10
 **Type**: MINOR (Version history tracking)
