@@ -90,20 +90,49 @@ test:
 production:
   primary: &primary_production
     <<: *default
-    database: poll_voting_production
-    host: <%= ENV["POLL_VOTING_DATABASE_HOST"] %>
-    port: <%= ENV["POLL_VOTING_DATABASE_PORT"] %>
-    username: <%= ENV["POLL_VOTING_DATABASE_USERNAME"] %>
-    password: <%= ENV["POLL_VOTING_DATABASE_PASSWORD"] %>
+    url: <%= ENV['DATABASE_URL'] %>
+    # Fallback to individual ENV variables if DATABASE_URL not set
+    # adapter: postgresql
+    # encoding: unicode
+    # pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
+    # database: <%= ENV.fetch("POLL_VOTING_DATABASE_NAME") { "poll_voting_production" } %>
+    # host: <%= ENV["POLL_VOTING_DATABASE_HOST"] %>
+    # port: <%= ENV["POLL_VOTING_DATABASE_PORT"] %>
+    # username: <%= ENV["POLL_VOTING_DATABASE_USERNAME"] %>
+    # password: <%= ENV["POLL_VOTING_DATABASE_PASSWORD"] %>
   cache:
     <<: *primary_production
-    database: poll_voting_production_cache
+    url: <%= ENV['DATABASE_URL']&.sub(/\/([^\/]+)$/, '/\1_cache') %>
+    # adapter: postgresql
+    # encoding: unicode
+    # pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
+    # database: <%= ENV.fetch("POLL_VOTING_DATABASE_NAME") { "poll_voting_production" } %>_cache
+    # host: <%= ENV["POLL_VOTING_DATABASE_HOST"] %>
+    # port: <%= ENV["POLL_VOTING_DATABASE_PORT"] %>
+    # username: <%= ENV["POLL_VOTING_DATABASE_USERNAME"] %>
+    # password: <%= ENV["POLL_VOTING_DATABASE_PASSWORD"] %>
     migrations_paths: db/cache_migrate
   queue:
     <<: *primary_production
-    database: poll_voting_production_queue
+    url: <%= ENV['DATABASE_URL']&.sub(/\/([^\/]+)$/, '/\1_queue') %>
+    # adapter: postgresql
+    # encoding: unicode
+    # pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
+    # database: <%= ENV.fetch("POLL_VOTING_DATABASE_NAME") { "poll_voting_production" } %>_queue
+    # host: <%= ENV["POLL_VOTING_DATABASE_HOST"] %>
+    # port: <%= ENV["POLL_VOTING_DATABASE_PORT"] %>
+    # username: <%= ENV["POLL_VOTING_DATABASE_USERNAME"] %>
+    # password: <%= ENV["POLL_VOTING_DATABASE_PASSWORD"] %>
     migrations_paths: db/queue_migrate
   cable:
     <<: *primary_production
-    database: poll_voting_production_cable
+    url: <%= ENV['DATABASE_URL']&.sub(/\/([^\/]+)$/, '/\1_cable') %>
+    # adapter: postgresql
+    # encoding: unicode
+    # pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
+    # database: <%= ENV.fetch("POLL_VOTING_DATABASE_NAME") { "poll_voting_production" } %>_cable
+    # host: <%= ENV["POLL_VOTING_DATABASE_HOST"] %>
+    # port: <%= ENV["POLL_VOTING_DATABASE_PORT"] %>
+    # username: <%= ENV["POLL_VOTING_DATABASE_USERNAME"] %>
+    # password: <%= ENV["POLL_VOTING_DATABASE_PASSWORD"] %>
     migrations_paths: db/cable_migrate
