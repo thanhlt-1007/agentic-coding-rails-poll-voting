@@ -8,6 +8,7 @@ Before you begin, ensure you have the following installed on your local machine:
 
 - **Ruby**: 4.0.1 or higher
 - **Rails**: 8.1.2 or higher
+- **Bundler**: 4.0.3 or higher
 - **PostgreSQL**: 15.0 or higher
 - **Redis**: 7.0 or higher (for caching, background jobs, and Action Cable)
 - **Node.js**: 18.0 or higher (for asset pipeline)
@@ -18,6 +19,7 @@ Before you begin, ensure you have the following installed on your local machine:
 ```bash
 ruby -v        # Should show Ruby 4.0+
 rails -v       # Should show Rails 8.1+
+bundle -v      # Should show Bundler 4.0.3+
 psql --version # Should show PostgreSQL 15+
 redis-server --version # Should show Redis 7+
 node -v        # Should show Node 18+
@@ -144,26 +146,47 @@ DATABASE_URL=postgres://user:pass@host:5432/dbname  # Auto-provided, do NOT set 
 
 Rails automatically parses `DATABASE_URL` in production to create the primary database connection and derives cache/queue/cable database names from it.
 
-## 🧪 Running Tests
-
-### Run All Tests
+### Running Tests
 
 ```bash
-bin/rails test
+# Run all specs
+bundle exec rspec
+
+# Run specific spec file
+bundle exec rspec spec/models/user_spec.rb
+
+# Run specific test by line number
+bundle exec rspec spec/models/user_spec.rb:10
+
+# Run specs with documentation format
+bundle exec rspec --format documentation
+
+# Run specs with coverage report (always enabled by default)
+bundle exec rspec
 ```
 
-### Run Specific Test Files
+### Test Coverage
 
+SimpleCov automatically generates coverage reports on every test run:
+
+- **Coverage report location**: `coverage/index.html`
+- **Minimum coverage**: 90% (enforced by SimpleCov)
+- **Minimum per file**: 80%
+
+To view the coverage report:
 ```bash
-bin/rails test test/models/poll_test.rb
-bin/rails test test/controllers/polls_controller_test.rb
+# Run tests (generates coverage)
+bundle exec rspec
+
+# Open coverage report in browser
+open coverage/index.html  # macOS
+xdg-open coverage/index.html  # Linux
 ```
 
-### Run System Tests
-
-```bash
-bin/rails test:system
-```
+Coverage breakdown by type:
+- **Models**: Target 95% coverage
+- **Controllers/Requests**: Target 90% coverage
+- **Overall project**: Minimum 90% required
 
 ### Code Quality Checks
 
@@ -203,7 +226,53 @@ bundle exec bundle-audit check --update
 └── README.md             # This file
 ```
 
-## 🔧 Common Development Tasks
+## � Authentication
+
+This application uses [Devise](https://github.com/heartcombo/devise) for user authentication.
+
+### User Registration
+
+Users can sign up at `/sign_up` with:
+- Email address (unique, case-insensitive)
+- Password (minimum 6 characters)
+- Password confirmation
+
+### Features
+
+- **Secure password storage**: Passwords are encrypted using bcrypt
+- **Email validation**: Standard email format required
+- **Password requirements**: Minimum 6 characters
+- **Password confirmation**: Prevents typing errors
+- **Auto sign-in**: Users are automatically signed in after successful registration
+- **Error messages**: Clear, actionable feedback for validation errors
+
+### Devise Configuration
+
+Configured modules in `app/models/user.rb`:
+- `:database_authenticatable` - Email/password login
+- `:registerable` - User registration
+- `:recoverable` - Password reset
+- `:rememberable` - Remember me cookie
+- `:validatable` - Email and password validations
+
+### Custom Routes
+
+Authentication routes are available at:
+- Sign up: `/sign_up`
+- Login: `/login`
+- Logout: `/logout`
+
+### Testing Authentication
+
+```bash
+# Run user model tests
+bin/rails test test/models/user_test.rb
+
+# Run sign-up system tests
+bin/rails test test/system/user_signup_test.rb
+```
+
+## �🔧 Common Development Tasks
 
 ### Create a New Model
 
@@ -260,7 +329,7 @@ bin/rails solid_queue:start
 - **Real-time**: Solid Cable (WebSockets)
 - **Frontend**: Hotwire (Turbo + Stimulus)
 - **Styling**: Tailwind CSS 4
-- **Testing**: Minitest + Capybara
+- **Testing**: RSpec + FactoryBot + Capybara
 - **Deployment**: Render.com
 
 ## 🌍 Environment Configuration

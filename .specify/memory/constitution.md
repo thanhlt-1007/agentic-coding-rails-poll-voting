@@ -1,32 +1,114 @@
 <!--
 SYNC IMPACT REPORT - Constitution Update
 ========================================
-Version Change: 1.5.0 → 1.6.0
-Type: PATCH (Documentation clarity - production environment)
+Version Change: 1.19.0 → 1.20.0
+Type: MINOR (RuboCop code style compliance principle)
 
-Modified Principles: None
-Modified Sections: None (documentation update only)
+Added Sections:
+  - NEW Principle XII (RuboCop Code Style Compliance): Zero tolerance for RuboCop violations
 
-Rationale: 
-  DATABASE_URL environment variable was documented but lacked critical production-only
-  context, causing potential confusion for new developers. Developers might set
-  DATABASE_URL in local .env files, which overrides individual database variables
-  and breaks local development. This update adds explicit warnings in .env.example
-  and comprehensive production environment documentation in README.md to prevent
-  misconfiguration, fulfilling constitutional documentation accuracy requirements.
+Changes to Code Quality Requirements:
+  - Added "RuboCop Code Style Compliance (NON-NEGOTIABLE)" as Principle XII
+  - MANDATORY requirement: All code MUST pass RuboCop with zero offenses before committing
+  - Pre-commit workflow documented: tests → rubocop → fix violations → commit
+  - Common violations documented with examples (string literals, array spacing, trailing whitespace)
+  - RuboCop commands documented: bin/rubocop, bin/rubocop -a, bin/rubocop -f github
+  - Configuration: Project uses rubocop-rails-omakase (Rails default)
+  - Cop disabling policy: Requires approval (except generated/legacy code)
+  - CI integration requirement: GitHub Actions must run RuboCop, PR cannot merge if fails
+  - Benefits documented: consistency, readability, maintainability, automated enforcement
+
+Rationale:
+  Recent RuboCop violation fixes across 9 files (Gemfile, controllers, helpers, config, routes,
+  specs) demonstrated need for documented code style principle. Common violations included:
+  string literals (single vs double quotes), array bracket spacing, and trailing whitespace.
+  These violations occurred repeatedly during development, indicating developers needed clear
+  guidance on project style standards. RuboCop enforces Rails community conventions via
+  rubocop-rails-omakase, reducing cognitive load and eliminating style debates. Zero tolerance
+  policy prevents style drift. Running RuboCop before every commit catches violations early,
+  improving developer experience. This is MINOR (new principle requirement) because it adds
+  mandatory code quality gate that changes development workflow.
 
 Template Consistency Status:
-  ✅ plan-template.md - No changes required
-  ✅ spec-template.md - No changes required
-  ✅ tasks-template.md - No changes required
-  ✅ README.md - Updated with production environment section and DATABASE_URL warnings
-  ✅ .env.example - Updated with PRODUCTION ONLY warning for DATABASE_URL
-  ✅ config/database.yml - Already complete (no changes)
+  ✅ plan-template.md - Should add RuboCop check step in implementation phase
+  ✅ spec-template.md - Should add "Code passes RuboCop" to acceptance criteria
+  ✅ tasks-template.md - Should add "Run RuboCop and fix violations" task step
+  ✅ README.md - Should document RuboCop pre-commit workflow
 
 Follow-up TODOs:
-  - Configure render.yaml for service definitions
-  - Set up environment variables in Render dashboard
-  - Configure database connection pooling for Render PostgreSQL
+  - Add GitHub Actions workflow for RuboCop CI check
+  - Update README.md with RuboCop pre-commit workflow section
+  - Update plan-template.md to include RuboCop verification step
+  - Update spec-template.md acceptance criteria to require RuboCop compliance
+  - Update tasks-template.md to include RuboCop task step
+
+Migration Plan:
+  - Existing code: Already RuboCop compliant (52 files, no offenses)
+  - New code: Follow Principle XII before committing
+  - CI: Add RuboCop GitHub Actions check
+  - Documentation: Add to README developer workflow
+
+Previous Update (v1.19.0):
+  Enhanced Principle IX with 1:1 view/partial i18n mapping pattern.
+
+Previous Update (v1.18.0):
+  Enhanced TDD principle with requirement to find existing specs before creating new ones.
+  Documented organized request spec pattern (one file per action).
+
+Previous Update (v1.17.0):
+  Added Controller i18n Management principle (Principle X) and renumbered Stimulus to Principle XI.
+
+Previous Update (v1.16.0):
+  Added Stimulus JavaScript Controllers principle (no inline JavaScript) and enhanced helper spec
+  organization requirement (MANDATORY spec/helpers/[helper_name]/[method_name]_spec.rb pattern).
+
+Added Requirements (Principle X):
+  - When creating/updating controllers, MUST create/update i18n file at config/locales/app/controllers/[path]/[action].en.yml
+  - Controller locale files organized by action (one file per action with user-facing messages)
+  - Include ALL flash messages (success, error, alert, warning, notice)
+  - Organize by controller path: config/locales/app/controllers/users/registrations/create.en.yml matches Users::RegistrationsController#create
+  - Use lazy lookup pattern: t('.key') instead of t('full.path.key')
+  - Rails infers full key from controller class and action name automatically
+  - Update locale file when adding/removing/changing flash messages
+  - Commit locale files alongside controller changes (same PR/commit)
+
+Directory Structure:
+  - config/locales/app/controllers/ mirrors app/controllers/ directory structure
+  - Organized by action: users/registrations/create.en.yml, users/registrations/update.en.yml
+  - Example: Users::RegistrationsController → config/locales/app/controllers/users/registrations/
+  - One locale file per action that has user-facing messages
+
+Benefits Documented:
+  - Centralized controller text (all flash messages in one place per action)
+  - Easy localization (add .es.yml, .fr.yml for multi-language support)
+  - DRY code (no hardcoded strings in controllers)
+  - Consistent messaging (reuse translations)
+  - Lazy lookup reduces verbosity (t('.error') vs t('users.registrations_controller.create.error'))
+
+Rationale:
+  Users::RegistrationsController implementation revealed need for standardized controller i18n management.
+  Hardcoded flash messages in controllers make localization difficult and create maintenance burden.
+  Rails i18n supports lazy lookup (t('.key')) which automatically infers full key from controller class
+  and action name. Creating config/locales/app/controllers/[path]/[action].en.yml per action ensures
+  all flash messages are translatable. Mirroring app/controllers/ directory structure in
+  config/locales/app/controllers/ maintains clear 1:1 mapping. Organizing by action (one file per
+  action) keeps translations focused and prevents large monolithic files. Pattern aligns with Rails
+  i18n best practices and supports future multi-language requirements without code changes.
+
+Template Consistency Status:
+  ✅ plan-template.md - No changes required (i18n management not in planning phase)
+  ✅ spec-template.md - No changes required (acceptance criteria unchanged)
+  ✅ tasks-template.md - Should add controller i18n file generation task pattern
+  ✅ README.md - Should document controller i18n file management process
+
+Follow-up TODOs:
+  - Update tasks-template.md to include controller locale file creation tasks
+  - Add README.md section explaining controller i18n management process
+  - Consider adding controller i18n spec pattern if needed
+
+Previous Update (v1.16.0):
+  Added Stimulus JavaScript Controllers principle (no inline JavaScript) and enhanced helper spec
+  organization requirement (MANDATORY spec/helpers/[helper_name]/[method_name]_spec.rb pattern).
 -->
 
 # Rails Poll Voting Constitution
@@ -54,13 +136,276 @@ TDD is mandatory for all feature work. Red-Green-Refactor cycle strictly enforce
 4. Implement minimum code to pass
 5. Refactor while keeping tests green
 
-**Test coverage requirements**:
-- System tests for critical user journeys (voting flows, poll creation)
-- Request tests for all controller actions
-- Model tests for validations, associations, business logic
-- Minimum 90% coverage on models and services
+**Testing Framework: RSpec**
 
-**Rationale**: Tests are executable specifications. Writing them first ensures we build what's needed, not what's easy. Early validation prevents costly rewrites.
+This project uses **RSpec** as the primary testing framework. All tests MUST be written in RSpec format:
+
+**Test Types and Coverage Requirements**:
+- **Model specs** (`spec/models/`): Validations, associations, scopes, business logic methods
+  - MUST test all validations (presence, uniqueness, format, custom)
+  - MUST test all associations (belongs_to, has_many, has_one)
+  - MUST test public methods and class methods
+  - Use Shoulda Matchers for Rails validations (one-liner syntax)
+- **Request specs** (`spec/requests/`): Controller actions, HTTP responses, authentication/authorization
+  - MUST test all controller actions (GET, POST, PATCH, DELETE)
+  - MUST test success and failure scenarios
+  - MUST test authentication and authorization logic
+  - MUST verify HTTP status codes and redirects
+  - MUST test flash messages and error responses
+- **System specs** (`spec/system/`): End-to-end user journeys, critical flows
+  - MUST test critical user paths (sign-up, login, core features)
+  - Use Capybara for browser simulation
+  - Test JavaScript interactions when present
+
+**Automatic Spec Generation**:
+
+Rails generators MUST be configured to automatically create RSpec specs:
+- `rails generate model` → creates `spec/models/[model]_spec.rb` + `spec/factories/[model].rb`
+- `rails generate controller` → creates `spec/requests/[controller]_spec.rb`
+- `rails generate scaffold` → creates model, request, and factory specs
+
+Configuration in `config/application.rb`:
+```ruby
+config.generators do |g|
+  g.test_framework :rspec,
+    fixtures: false,
+    view_specs: false,
+    helper_specs: false,
+    routing_specs: false,
+    request_specs: true,
+    controller_specs: false
+  g.fixture_replacement :factory_bot, dir: 'spec/factories'
+end
+```
+
+**When Creating/Updating Code**:
+
+1. **New Models**: Write model spec FIRST before creating migration
+   ```bash
+   # Create spec file manually or via generator
+   rails generate model Poll title:string description:text
+   # This creates: spec/models/poll_spec.rb + spec/factories/polls.rb
+   ```
+
+2. **New Controllers/Features**: Write request spec FIRST before implementing action
+   ```bash
+   # Create request spec manually or via generator
+   rails generate controller Polls index show new create
+   # This creates: spec/requests/polls_spec.rb
+   ```
+
+3. **Updating Existing Code**: Update/add specs BEFORE changing implementation
+   - If adding validation: Add `it { should validate_presence_of(:field) }` first
+   - If adding method: Add `describe '#method_name'` with test cases first
+   - If changing behavior: Update specs to reflect new expected behavior first
+
+4. **CRITICAL: Find Existing Specs Before Creating New Ones**:
+   - **MUST** search for existing spec files before creating new specs
+   - Request specs may be organized by action/HTTP method (e.g., `spec/requests/users/registrations/post_create_spec.rb`)
+   - Use `file_search` or `grep_search` to locate existing specs for the controller/model
+   - If organized specs exist, UPDATE them instead of creating flat controller spec
+   - Example: For `Users::RegistrationsController#create`, look for:
+     - `spec/requests/users/registrations/post_create_spec.rb` (organized by action - PREFERRED)
+     - `spec/requests/users/registrations_controller_spec.rb` (flat controller spec)
+     - `spec/requests/users/registrations_spec.rb` (legacy naming)
+   - **Pattern Recognition**:
+     - If `spec/requests/[namespace]/[controller]/[http_method]_[action]_spec.rb` exists, use it
+     - If `spec/requests/[namespace]/[controller]_spec.rb` exists, use it
+     - Only create new spec if NO existing spec found for that controller
+   - **Benefits**: Prevents spec duplication, maintains project organization, respects existing test structure
+
+5. **Every Commit MUST Include**:
+   - Code changes AND corresponding spec updates
+   - All specs passing (`bundle exec rspec`)
+   - No decrease in test coverage
+
+**Test Data Management**:
+- **FactoryBot** for creating test objects (replaces fixtures)
+- **Faker** for realistic fake data (emails, names, text)
+- Factories MUST be defined in `spec/factories/` directory
+- Use `build(:model)` for in-memory objects (faster)
+- Use `create(:model)` only when database persistence needed
+- Use traits for variations: `create(:user, :admin)` or `create(:poll, :expired)`
+
+**Test Helpers and Support**:
+- **Shoulda Matchers**: One-liner matchers for Rails validations
+  ```ruby
+  it { should validate_presence_of(:email) }
+  it { should have_many(:polls) }
+  ```
+- **Database Cleaner**: Clean database state between tests
+- **Devise Test Helpers**: `sign_in user` for authentication in request/system specs
+
+**Minimum Coverage Requirements**:
+- Models: 95% coverage (validations, associations, methods)
+- Controllers/Requests: 90% coverage (all actions, edge cases)
+- System: Critical user journeys only (authentication, core features)
+- Overall project: minimum 90% coverage
+
+**Running Tests**:
+```bash
+# Run all specs
+bundle exec rspec
+
+# Run specific spec file
+bundle exec rspec spec/models/user_spec.rb
+
+# Run specific test by line number
+bundle exec rspec spec/models/user_spec.rb:25
+
+# Run with documentation format
+bundle exec rspec --format documentation
+```
+
+**Test Organization** (`spec/` directory):
+```
+spec/
+├── factories/          # FactoryBot factories for test data
+├── models/            # Model unit tests
+├── requests/          # Request specs (controller actions, APIs)
+│   ├── users/         # Namespace-organized request specs
+│   │   ├── registrations/  # Controller-specific directory
+│   │   │   ├── post_create_spec.rb   # One file per action (PREFERRED)
+│   │   │   ├── get_new_spec.rb
+│   │   │   ├── patch_update_spec.rb
+│   │   │   ├── get_edit_spec.rb
+│   │   │   └── delete_destroy_spec.rb
+│   │   ├── sessions/       # Another controller directory
+│   │   │   ├── post_create_spec.rb
+│   │   │   └── delete_destroy_spec.rb
+│   │   └── passwords/      # Yet another controller directory
+│   └── polls_spec.rb      # Alternative: flat file for simple controllers
+├── system/            # End-to-end browser tests (Capybara)
+├── helpers/           # Helper method tests (organized by helper module)
+│   ├── error_helper/  # ErrorHelper method specs (one file per method)
+│   │   ├── field_error_message_spec.rb
+│   │   ├── field_icon_color_spec.rb
+│   │   └── field_border_classes_spec.rb
+│   └── application_helper/  # ApplicationHelper method specs
+├── support/           # Shared test configuration
+│   ├── database_cleaner.rb
+│   ├── factory_bot.rb
+│   └── shoulda_matchers.rb
+├── rails_helper.rb    # Rails-specific RSpec configuration
+└── spec_helper.rb     # General RSpec configuration
+```
+
+**Request Spec Organization Patterns**:
+
+This project uses **organized request specs** (one file per controller action) instead of flat controller specs:
+
+**PREFERRED: Organized by Action** (spec/requests/[namespace]/[controller]/[http_method]_[action]_spec.rb):
+```
+spec/requests/users/registrations/
+├── post_create_spec.rb      # POST /sign_up (registration creation)
+├── get_new_spec.rb          # GET /sign_up (registration form)
+├── patch_update_spec.rb     # PATCH /users (account update)
+├── get_edit_spec.rb         # GET /users/edit (account form)
+└── delete_destroy_spec.rb   # DELETE /users (account deletion)
+```
+
+Each file tests ONE controller action comprehensively:
+```ruby
+# spec/requests/users/registrations/post_create_spec.rb
+RSpec.describe 'User Registrations', type: :request do
+  describe 'POST /sign_up' do
+    context 'with valid parameters' do
+      it 'creates a new user'
+      it 'signs in the user automatically'
+      it 'redirects to root path'
+      it 'sets a success flash message'
+    end
+
+    context 'with invalid parameters' do
+      context 'when email is blank' do
+        it 'does not create a new user'
+        it 'returns unprocessable entity status'
+        it 'displays error message'
+      end
+      # ... more validation scenarios
+    end
+  end
+end
+```
+
+**Benefits of Organized Request Specs**:
+- **Clear ownership**: Each file maps 1:1 with controller action
+- **Faster test runs**: Run only tests for action being worked on
+- **Easier navigation**: Find tests by action name, not line number
+- **Better git history**: Action changes affect single spec file
+- **Reduced merge conflicts**: Team members work on different action spec files
+- **Comprehensive coverage**: Dedicated file encourages thorough testing of edge cases
+
+**ALTERNATIVE: Flat Controller Spec** (spec/requests/[namespace]/[controller]_spec.rb):
+```ruby
+# spec/requests/polls_spec.rb - acceptable for simple controllers
+RSpec.describe 'Polls', type: :request do
+  describe 'GET /polls' do
+    # index action tests
+  end
+
+  describe 'POST /polls' do
+    # create action tests
+  end
+end
+```
+
+Use flat controller specs ONLY when:
+- Controller has ≤3 actions
+- Each action has ≤5 test cases
+- Team hasn't established organized pattern yet
+
+**Migration Path**:
+- When flat controller spec grows beyond 100 lines, split into organized action specs
+- When adding 4th action to controller, reorganize into action-based structure
+- Don't mix patterns: if controller has organized specs, maintain that pattern
+
+**Helper Spec Organization Pattern**:
+
+Helper specs MUST be organized by helper module with one spec file per public method:
+- Create subdirectory: `spec/helpers/[helper_name]/`
+- One spec file per public method: `[method_name]_spec.rb`
+- Each file tests ONE method only (focused, single responsibility)
+
+Example for `ErrorHelper` with 3 public methods:
+```
+spec/helpers/error_helper/
+├── field_error_message_spec.rb    # Tests #field_error_message only
+├── field_icon_color_spec.rb       # Tests #field_icon_color only
+└── field_border_classes_spec.rb   # Tests #field_border_classes only
+```
+
+Each spec file structure:
+```ruby
+# frozen_string_literal: true
+
+require 'rails_helper'
+
+RSpec.describe ErrorHelper, type: :helper do
+  describe '#method_name' do
+    let(:resource) { User.new }
+
+    context 'when [condition]' do
+      it 'returns [expected result]' do
+        # Test cases
+      end
+    end
+
+    context 'with different field names' do
+      # Test method works with various inputs
+    end
+  end
+end
+```
+
+**Benefits**:
+- Easy to locate tests for specific helper method
+- Faster test runs when working on single method (run one file)
+- Clear ownership: each file maps 1:1 with public method
+- Simplified pull requests: method changes affect single spec file
+- Better git history: method-specific commits touch only relevant spec file
+
+**Rationale**: Tests are executable specifications. Writing them first ensures we build what's needed, not what's easy. Early validation prevents costly rewrites. RSpec's BDD-style syntax creates self-documenting tests that serve as living documentation. Automatic spec generation via Rails generators ensures tests are written alongside code, not as an afterthought. FactoryBot and Shoulda Matchers reduce boilerplate and improve test readability. Organizing helper specs by method improves maintainability and follows single responsibility principle at the file level.
 
 ### III. SSR Performance & User Experience
 
@@ -116,6 +461,1051 @@ Start with the simplest solution that works. Complexity requires explicit justif
 
 **Rationale**: Simple code is maintainable code. Rails' sweet spot is conventional applications; fighting the framework creates maintenance debt.
 
+### VI. User-Centric Error Handling & Validation UX
+
+All forms and user inputs MUST provide clear, actionable error feedback following established UX patterns:
+
+**Validation Error Display Requirements**:
+- **Inline field errors**: Display error messages directly below invalid input fields
+- **Visual indicators**: Highlight invalid fields with red border (`border-red-500`)
+- **Icon feedback**: Change field icons to red when validation fails (`text-red-400`)
+- **Error text color**: Use Tailwind red variants available in v4 (`text-red-700`, not `text-red-600`)
+- **Focus state consistency**: Invalid fields maintain red border on focus (no color switching)
+- **No focus ring overlap**: Remove `focus:ring-2` on error states to prevent black ring fallback
+
+**Notification Pattern** (Tailwind Notifications style):
+- **Position**: Fixed top-right corner (`fixed top-4 right-4 z-50`)
+- **Summary message**: Display error count and resource name (e.g., "1 error prohibited this user from being saved")
+- **Error list**: Show up to 3 specific errors in notification; full list via inline field errors
+- **Dismissible**: Include close button with accessible label (`sr-only`)
+- **Visual hierarchy**: 
+  - Warning icon (red) for error notifications
+  - White background with ring shadow (`ring-1 ring-black ring-opacity-5`)
+  - Professional spacing and typography
+
+**Implementation Standards**:
+```erb
+<!-- Top-right notification for form errors -->
+<% if resource.errors.any? %>
+  <div class="fixed top-4 right-4 z-50 max-w-md">
+    <div class="bg-white rounded-lg shadow-lg pointer-events-auto ring-1 ring-black ring-opacity-5">
+      <!-- Error summary with dismissible close button -->
+    </div>
+  </div>
+<% end %>
+
+<!-- Inline field error example -->
+<%= f.email_field :email,
+    class: "#{resource.errors[:email].any? ? 'border-red-500 focus:border-red-500' : 'border-gray-300 focus:ring-indigo-500 focus:ring-2'}" %>
+<% if resource.errors[:email].any? %>
+  <p class="mt-1 text-sm text-red-700"><%= resource.errors[:email].first %></p>
+<% end %>
+```
+
+**Consistency Requirements**:
+- All forms (authentication, resource creation/editing) use identical error pattern
+- Flash messages for non-form errors (login failures, authorization) use layout notification area
+- Progressive enhancement: errors work without JavaScript
+- Server-side validation primary; client-side optional enhancement only
+
+**Tailwind v4 Color Constraints**:
+- ONLY use red variants that exist in generated CSS: `text-red-400`, `text-red-500`, `text-red-700`, `text-red-800`, `border-red-500`
+- Avoid `text-red-600` (not generated in Tailwind v4, renders as black)
+- Check `app/assets/builds/tailwind.css` for available color utilities before use
+
+**Rationale**: Consistent, clear error feedback reduces user frustration and form abandonment. Inline field errors provide immediate, actionable guidance at the point of error. Top-right notifications give global context without blocking form content. This pattern balances visibility with usability, following established UX best practices from Tailwind UI and modern web applications. Tailwind v4's on-demand class generation requires explicit verification of color utility availability to prevent styling bugs.
+
+### VII. Gem Internationalization (i18n) Management
+
+When installing gems that include internationalization (i18n) files, locale files MUST be copied from the gem's GitHub repository to the project's `config/locales/gems/` directory for version control and customization.
+
+**Requirements**:
+- **Directory organization**: `config/locales/gems/[gem_name]/`
+  - Rails core: `config/locales/gems/rails/` (actionview, activemodel, activerecord, activesupport)
+  - Third-party gems: `config/locales/gems/devise/`, `config/locales/gems/pundit/`, etc.
+- **Source**: Official GitHub repository at tagged version matching installed gem
+  - Example: Rails 8.1.2 → `https://raw.githubusercontent.com/rails/rails/v8.1.2/[component]/lib/[component]/locale/en.yml`
+  - Example: Devise 4.9.0 → `https://raw.githubusercontent.com/heartcombo/devise/v4.9.0/config/locales/en.yml`
+- **Files**: Download ALL locale files for the gem
+  - Minimum: `en.yml` (English)
+  - Optional: Additional languages if project supports them (`es.yml`, `fr.yml`, etc.)
+- **Rails core components**: Use separate files for each component
+  - `actionview.en.yml` - Form helpers, datetime formatting, distance_in_words
+  - `activemodel.en.yml` - Model validation error messages
+  - `activerecord.en.yml` - ActiveRecord-specific error messages
+  - `activesupport.en.yml` - Date/time formatting, number formatting, array helpers
+- **Version control**: Locale files MUST be committed to git (NOT ignored)
+- **Documentation**: Update README.md with process for updating locale files during gem upgrades
+
+**Implementation Process**:
+```bash
+# Create directory for gem locale files
+mkdir -p config/locales/gems/rails
+
+# Download Rails 8.1.2 locale files from GitHub
+curl -o config/locales/gems/rails/actionview.en.yml \
+  https://raw.githubusercontent.com/rails/rails/v8.1.2/actionview/lib/action_view/locale/en.yml
+
+curl -o config/locales/gems/rails/activemodel.en.yml \
+  https://raw.githubusercontent.com/rails/rails/v8.1.2/activemodel/lib/active_model/locale/en.yml
+
+curl -o config/locales/gems/rails/activerecord.en.yml \
+  https://raw.githubusercontent.com/rails/rails/v8.1.2/activerecord/lib/active_record/locale/en.yml
+
+curl -o config/locales/gems/rails/activesupport.en.yml \
+  https://raw.githubusercontent.com/rails/rails/v8.1.2/activesupport/lib/active_support/locale/en.yml
+
+# For third-party gems (e.g., Devise)
+mkdir -p config/locales/gems/devise
+curl -o config/locales/gems/devise/en.yml \
+  https://raw.githubusercontent.com/heartcombo/devise/v4.9.0/config/locales/en.yml
+```
+
+**Configuration Requirements**:
+
+Rails i18n configuration MUST include recursive locale loading to load gem files:
+```ruby
+# config/application.rb
+config.i18n.default_locale = :en
+config.i18n.available_locales = [:en]
+config.i18n.fallbacks = true
+config.i18n.load_path += Dir[Rails.root.join('config', 'locales', '**', '*.{rb,yml}')]
+```
+
+**Locale File Organization**:
+```
+config/locales/
+├── en.yml                          # Application-specific translations
+├── devise.en.yml                   # Devise overrides (optional)
+└── gems/
+    ├── rails/                      # Rails core locale files
+    │   ├── actionview.en.yml
+    │   ├── activemodel.en.yml
+    │   ├── activerecord.en.yml
+    │   └── activesupport.en.yml
+    ├── devise/                     # Devise locale files
+    │   └── en.yml
+    └── [other_gems]/               # Additional gem locale files
+```
+
+**Benefits**:
+- **Version control**: Track changes to i18n files across gem upgrades
+- **Customization**: Modify translations without monkey-patching gem internals
+- **Offline development**: No runtime dependency on gem load paths
+- **Explicit visibility**: Know exactly what translations are available
+- **Consistency**: Production uses exact translations as dev/test environments
+- **Review process**: Locale changes visible in git diffs during gem upgrades
+- **Debugging**: Easy to locate translation keys and values
+
+**Gem Upgrade Process**:
+1. Check gem version in `Gemfile.lock` after `bundle update [gem_name]`
+2. Download new locale files from GitHub at matching tag/version
+3. Review diff (`git diff config/locales/gems/[gem_name]/`) for translation changes
+4. Test application to ensure translations work correctly
+5. Commit locale file updates with gem version bump
+
+**Rationale**: Gems include locale files in their load paths, but these aren't tracked in version control or easily customizable. Copying from GitHub to `config/locales/gems/` ensures explicit control over all user-facing text and supports i18n best practices. This pattern applies to Rails core components (actionview, activemodel, activerecord, activesupport) and third-party gems (Devise, Pundit, etc.). Directory organization keeps gem locale files separate from application-specific translations (`config/locales/en.yml`), improving maintainability and reducing merge conflicts during gem upgrades.
+
+### VIII. Application Model Internationalization (i18n) Management
+
+When creating or updating models in `app/models/`, corresponding i18n locale files MUST be created/updated in `config/locales/app/models/` to provide human-readable model and attribute names.
+
+**Requirements**:
+- **Directory organization**: `config/locales/app/models/[model_name].en.yml`
+  - Example: User model → `config/locales/app/models/user.en.yml`
+  - Example: Poll model → `config/locales/app/models/poll.en.yml`
+  - Example: Vote model → `config/locales/app/models/vote.en.yml`
+- **Model names**: Include singular and plural forms under `activerecord.models`
+- **Attributes**: Include ALL attributes under `activerecord.attributes.[model_name]`
+  - Database columns (id, email, created_at, updated_at, etc.)
+  - Virtual attributes (password, password_confirmation, current_password, remember_me)
+  - Association names (author, comments, votes, etc.)
+- **Namespace convention**: Follow Rails i18n standards
+  ```yaml
+  en:
+    activerecord:
+      models:
+        user:
+          one: User
+          other: Users
+      attributes:
+        user:
+          email: Email
+          password: Password
+  ```
+- **i18n Spec Requirement**: Create/update `spec/models/[model_name]/i18n_spec.rb`
+  - Test model name translations (singular and plural)
+  - Test ALL attribute name translations
+  - One test per attribute verifying `Model.human_attribute_name(:attribute)`
+  - Follows model spec organization pattern (one file per concern)
+- **Synchronization**: Update locale file AND i18n spec when adding/removing/renaming model attributes
+- **Commit together**: Model changes, locale file updates, and i18n spec in same PR/commit
+- **Version control**: Locale files and specs MUST be committed to git
+
+**Implementation Process**:
+```bash
+# When creating User model
+rails generate model User email:string
+
+# Immediately create locale file
+mkdir -p config/locales/app/models
+touch config/locales/app/models/user.en.yml
+
+# Add translations for model name and all attributes
+
+# Create i18n spec
+touch spec/models/user/i18n_spec.rb
+
+# Add tests for model name and attribute translations
+```
+
+**Model Locale File Template**:
+```yaml
+en:
+  activerecord:
+    models:
+      [model_name]:
+        one: [Singular Name]
+        other: [Plural Name]
+    
+    attributes:
+      [model_name]:
+        # Database columns
+        id: ID
+        created_at: Created at
+        updated_at: Updated at
+        
+        # Model-specific attributes
+        [attribute_1]: [Human-readable label]
+        [attribute_2]: [Human-readable label]
+        
+        # Virtual attributes (if applicable)
+        # password: Password
+        # password_confirmation: Password confirmation
+```
+
+**Example - User Model**:
+```yaml
+en:
+  activerecord:
+    models:
+      user:
+        one: User
+        other: Users
+    
+    attributes:
+      user:
+        email: Email
+        password: Password
+        password_confirmation: Password confirmation
+        current_password: Current password
+        remember_me: Remember me
+        created_at: Created at
+        updated_at: Updated at
+```
+
+**Usage in Application**:
+```ruby
+# In views/forms
+User.model_name.human           # => "User"
+User.model_name.human.pluralize # => "Users"
+User.human_attribute_name(:email) # => "Email"
+
+# In error messages (automatically used by Rails)
+# "Email can't be blank" instead of "email can't be blank"
+```
+
+**Locale File Organization**:
+```
+config/locales/
+├── en.yml                          # Global application translations
+├── app/                            # Application-specific translations
+│   └── models/                     # Model translations
+│       ├── user.en.yml
+│       ├── poll.en.yml
+│       └── vote.en.yml
+└── gems/                           # Gem locale files
+    ├── rails/                      # Rails core
+    │   ├── actionview.en.yml
+    │   ├── activemodel.en.yml
+    │   ├── activerecord.en.yml
+    │   └── activesupport.en.yml
+    └── devise/                     # Third-party gems
+        └── en.yml
+
+spec/models/
+└── [model_name]/
+    ├── i18n_spec.rb                # i18n translation tests
+    ├── validations_spec.rb
+    └── ...
+```
+
+**i18n Spec Template**:
+```ruby
+# frozen_string_literal: true
+
+require 'rails_helper'
+
+RSpec.describe User, type: :model do
+  describe 'i18n translations' do
+    describe 'model name' do
+      it 'returns translated singular model name' do
+        expect(User.model_name.human).to eq('User')
+      end
+
+      it 'returns translated plural model name' do
+        expect(User.model_name.human.pluralize).to eq('Users')
+      end
+    end
+
+    describe 'attribute names' do
+      it 'returns translated email attribute' do
+        expect(User.human_attribute_name(:email)).to eq('Email')
+      end
+
+      # Add one test per attribute
+    end
+  end
+end
+```
+
+**Benefits**:
+- **Centralized translations**: All model attribute labels in one place per model
+- **Human-readable errors**: Validation errors use proper capitalization and formatting
+- **Consistent terminology**: Same attribute labels across forms, tables, and error messages
+- **Easy customization**: Change labels without modifying view/form code
+- **Multi-language ready**: Add es.yml, fr.yml files later for internationalization
+- **Rails integration**: Automatic usage in form labels, error messages, and model helpers
+- **Maintainability**: Clear mapping between models and their translations
+- **Test coverage**: i18n specs ensure translations are defined and correct
+- **Prevent regressions**: Tests catch missing/incorrect translations before runtime
+
+**Maintenance Workflow**:
+1. Add new attribute to model (migration + model file)
+2. Update `config/locales/app/models/[model].en.yml` with new attribute translation
+3. Update `spec/models/[model]/i18n_spec.rb` with new attribute test
+4. Run specs to verify translation works
+5. Commit model changes, locale file, and i18n spec together
+6. Review: ensure all attributes have human-readable labels and passing tests
+
+**Rationale**: Rails i18n supports model and attribute name translation via `activerecord.models` and `activerecord.attributes`, but requires explicit locale files. Creating `config/locales/app/models/xxx.en.yml` per model ensures all attribute names are translatable, improving user-facing error messages and form labels. Adding `spec/models/xxx/i18n_spec.rb` ensures translations are defined correctly and prevents runtime errors from missing translations. Tests serve as documentation for expected attribute labels and catch regressions during locale file updates. Separating application-specific (`app/`) from gem-specific (`gems/`) locale files improves organization and prevents mixing concerns. This pattern aligns with Rails i18n best practices and supports future multi-language requirements without code changes.
+
+### IX. Application View Internationalization (i18n) Management
+
+When creating or updating views in `app/views/`, corresponding i18n locale files MUST be created/updated in `config/locales/app/views/` to provide translations for all user-facing text.
+
+**Requirements**:
+- **Directory organization**: `config/locales/app/views/[path]/[view_name].en.yml`
+  - Mirrors `app/views/` directory structure exactly
+  - **1:1 Mapping Pattern**: Each `.html.erb` file has corresponding `.en.yml` file
+  - Main views: `app/views/devise/sessions/new.html.erb` → `config/locales/app/views/devise/sessions/new.en.yml`
+  - **Partials**: `app/views/devise/sessions/new/_header.html.erb` → `config/locales/app/views/devise/sessions/new/header.en.yml`
+  - Remove leading underscore from partial name in locale file
+  - Partials nested in subdirectory: `app/views/[path]/[view]/` → `config/locales/app/views/[path]/[view]/`
+  - Example structure:
+    ```
+    app/views/devise/sessions/new/
+    ├── _header.html.erb           → config/locales/app/views/devise/sessions/new/header.en.yml
+    ├── _form_email.html.erb       → config/locales/app/views/devise/sessions/new/form_email.en.yml
+    └── _form_button_submit.html.erb → config/locales/app/views/devise/sessions/new/form_button_submit.en.yml
+    ```
+- **Content**: Include ALL user-facing text for that specific view/partial only
+  - Page titles and headings
+  - Button labels and link text
+  - Form labels and placeholders
+  - Helper text and instructions
+  - Success/error messages specific to the view
+  - **Scope to partial**: Each partial's locale file contains ONLY translations used in that partial
+- **Lazy lookup pattern**: Use `t('.key')` instead of full path
+  - Rails automatically infers full key from view path and partial name
+  - In main view `app/views/devise/sessions/new.html.erb`: `t('.title')` → `devise.sessions.new.title`
+  - In partial `app/views/devise/sessions/new/_header.html.erb`: `t('.title')` → `devise.sessions.new.header.title`
+  - Partial translations scoped under partial name: `devise.sessions.new.[partial_name].[key]`
+  - Shorter, more maintainable than full paths
+- **Synchronization**: Update locale file when adding/removing/changing user-facing text in views
+- **Commit together**: View changes and locale file updates in same PR/commit
+- **Version control**: Locale files MUST be committed to git
+- **Refactoring**: When splitting view into partials, split locale file into corresponding partial locale files
+
+**Implementation Process**:
+```bash
+# When creating devise/sessions/new.html.erb
+# Immediately create corresponding locale file
+mkdir -p config/locales/app/views/devise/sessions
+touch config/locales/app/views/devise/sessions/new.en.yml
+
+# Add all user-facing text translations
+```
+
+**View Locale File Template**:
+```yaml
+# Main view locale file
+en:
+  [controller]:
+    [action]:
+      [view_name]:
+        title: "[Page Title]"
+        subtitle: "[Subtitle or Description]"
+        button_name: "[Button Text]"
+        field_placeholder: "[Placeholder Text]"
+        # Add all user-facing strings for main view
+
+# Partial locale file (scoped under partial name)
+en:
+  [controller]:
+    [action]:
+      [view_name]:
+        [partial_name]:  # Scoped under partial name (without underscore)
+          key: "[Translation]"
+          # Add only strings used in this specific partial
+```
+
+**Example - Devise Sessions New View with Partials**:
+
+Main view locale (if needed for view-level translations):
+```yaml
+# config/locales/app/views/devise/sessions/new.en.yml (optional if all text in partials)
+en:
+  devise:
+    sessions:
+      new:
+        # View-level translations (if any)
+```
+
+Partial locale files (1:1 mapping with each partial):
+```yaml
+# config/locales/app/views/devise/sessions/new/header.en.yml
+en:
+  devise:
+    sessions:
+      new:
+        header:
+          title: "Welcome Back"
+          subtitle: "Sign in to continue to your account"
+
+# config/locales/app/views/devise/sessions/new/form_email.en.yml
+en:
+  devise:
+    sessions:
+      new:
+        form_email:
+          email_placeholder: "you@example.com"
+
+# config/locales/app/views/devise/sessions/new/form_password.en.yml
+en:
+  devise:
+    sessions:
+      new:
+        form_password:
+          password_placeholder: "••••••••"
+
+# config/locales/app/views/devise/sessions/new/form_button_submit.en.yml
+en:
+  devise:
+    sessions:
+      new:
+        form_button_submit:
+          submit_button: "Log in"
+```
+
+**Usage in Views** (Lazy Lookup):
+
+Main view:
+```erb
+<!-- app/views/devise/sessions/new.html.erb -->
+<%= render 'devise/sessions/new/header' %>
+<%= render 'devise/sessions/new/form_email', f: f %>
+```
+
+Partials (lazy lookup scoped to partial name):
+```erb
+<!-- app/views/devise/sessions/new/_header.html.erb -->
+<h2><%= t('.title') %></h2>  <!-- Resolves to devise.sessions.new.header.title -->
+<p><%= t('.subtitle') %></p>  <!-- Resolves to devise.sessions.new.header.subtitle -->
+
+<!-- app/views/devise/sessions/new/_form_email.html.erb -->
+<%= f.email_field :email, placeholder: t('.email_placeholder') %>  
+<!-- Resolves to devise.sessions.new.form_email.email_placeholder -->
+
+<!-- app/views/devise/sessions/new/_form_button_submit.html.erb -->
+<%= f.submit t('.submit_button') %>  
+<!-- Resolves to devise.sessions.new.form_button_submit.submit_button -->
+```
+
+**Locale File Organization**:
+```
+config/locales/
+├── en.yml                          # Global application translations
+├── app/
+│   ├── models/                     # Model translations
+│   │   ├── user.en.yml
+│   │   └── poll.en.yml
+│   ├── controllers/                # Controller translations
+│   │   └── users/
+│   │       └── registrations/
+│   │           └── create.yml
+│   └── views/                      # View translations (mirrors app/views/)
+│       ├── devise/
+│       │   ├── sessions/
+│       │   │   └── new/            # Partial locale files (1:1 with partials)
+│       │   │       ├── header.en.yml
+│       │   │       ├── form_email.en.yml
+│       │   │       ├── form_password.en.yml
+│       │   │       └── form_button_submit.en.yml
+│       │   └── registrations/
+│       │       ├── new.en.yml      # Main view locale (if needed)
+│       │       └── edit.en.yml
+│       └── polls/
+│           ├── index.en.yml
+│           ├── show.en.yml
+│           └── new.en.yml
+└── gems/                           # Gem locale files
+    ├── rails/
+    └── devise/
+```
+
+**Benefits**:
+- **1:1 File Mapping**: Each `.html.erb` file (view or partial) has exactly one `.en.yml` file
+- **Centralized partial text**: All user-facing strings for a partial in one dedicated file
+- **Easy localization**: Add `.es.yml`, `.fr.yml` files for multi-language support (same 1:1 structure)
+- **DRY code**: No hardcoded strings in views or partials
+- **Consistent wording**: Reuse translations across views via shared keys
+- **Lazy lookup**: Reduces verbosity (`t('.title')` vs `t('devise.sessions.new.header.title')`)
+- **Maintainability**: Clear 1:1 mapping between partials and their translations makes finding/updating text trivial
+- **Refactoring safety**: Change wording without touching view code; split view into partials without losing organization
+- **Designer-friendly**: Non-technical team members can update copy in YAML files
+- **Scoped translations**: Partial translations automatically scoped under partial name, preventing key collisions
+- **Modular organization**: When extracting partial, extract its translations into dedicated locale file simultaneously
+
+**Maintenance Workflow**:
+1. Add/modify text in view template or partial
+2. Update corresponding `config/locales/app/views/[path]/[file].en.yml` with new/changed translations
+   - Main view: `config/locales/app/views/[path]/[view].en.yml`
+   - Partial: `config/locales/app/views/[path]/[view]/[partial].en.yml` (remove underscore from partial name)
+3. Use lazy lookup `t('.key')` in view/partial
+4. Verify translation displays correctly
+5. Commit view/partial and locale file together
+6. Review: ensure no hardcoded strings remain
+
+**Refactoring Workflow (Splitting Views into Partials)**:
+1. Identify sections of view to extract as partials
+2. Create partial files in `app/views/[path]/[view]/` directory
+3. Split existing locale file into partial-specific locale files:
+   - Create `config/locales/app/views/[path]/[view]/` directory
+   - Create one `.en.yml` file per partial (remove underscore from partial name)
+   - Move relevant translations from main locale file to partial locale files
+   - Scope translations under partial name: `[view].[partial_name].[key]`
+4. Update lazy lookup calls in partials to use `t('.key')`
+5. Delete main view locale file if all translations moved to partials
+6. Test that all translations resolve correctly
+7. Commit view refactoring and locale restructuring together
+
+**Example Refactoring**:
+```bash
+# Before: monolithic view
+app/views/devise/sessions/new.html.erb
+config/locales/app/views/devise/sessions/new.en.yml  # All translations here
+
+# After: split into partials with 1:1 locale mapping
+app/views/devise/sessions/new.html.erb              # Renders partials
+app/views/devise/sessions/new/_header.html.erb
+app/views/devise/sessions/new/_form_email.html.erb
+config/locales/app/views/devise/sessions/new/header.en.yml        # Header translations
+config/locales/app/views/devise/sessions/new/form_email.en.yml    # Email field translations
+# Main locale file deleted (all translations now in partial files)
+```
+
+**Rationale**: Hardcoded strings in views make localization difficult and create maintenance burden when copy changes. Rails i18n supports lazy lookup (`t('.key')`) which automatically infers full key from view path and partial name, reducing verbosity and improving maintainability. The **1:1 mapping pattern** ensures each `.html.erb` file (view or partial) has exactly one corresponding `.en.yml` locale file, making it trivial to find and update translations. When refactoring monolithic views into smaller partials, locale files should be split similarly to maintain this 1:1 relationship. Partial translations are automatically scoped under the partial name (e.g., `devise.sessions.new.header.title` for `_header.html.erb`), preventing key collisions and organizing translations hierarchically. This pattern scales well: small views can use a single locale file, while complex views split into partials have dedicated locale files per partial. Mirroring `app/views/` directory structure in `config/locales/app/views/` maintains clear mapping. This aligns with Rails i18n best practices, supports future multi-language requirements without code changes, and makes view refactoring safer by ensuring translations move with their partials.
+
+---
+
+### X. Application Controller Internationalization (i18n) Management
+
+When creating or updating controllers in `app/controllers/`, corresponding i18n locale files MUST be created/updated in `config/locales/app/controllers/` to provide translations for flash messages and other user-facing text.
+
+**Requirements**:
+- **Directory organization**: `config/locales/app/controllers/[controller_path]/[action].en.yml`
+  - Mirrors controller path: `app/controllers/users/registrations_controller.rb` → `config/locales/app/controllers/users/registrations/`
+  - One file per action that has user-facing messages: `create.en.yml`, `update.en.yml`, `destroy.en.yml`
+  - Example: `config/locales/app/controllers/users/registrations/create.en.yml`
+  - Example: `config/locales/app/controllers/polls/create.en.yml`
+- **Content**: Include ALL user-facing text from controller actions
+  - Flash messages (success, error, alert, warning, notice)
+  - Redirect messages
+  - Confirmation messages
+  - Any text set via `flash[:key] = "message"`
+- **Lazy lookup pattern**: Use `t('.key')` in controller actions
+  - Rails automatically infers full key from controller class and action name
+  - Example: In `Users::RegistrationsController#create`, `t('.error')` resolves to `users.registrations.create.error`
+  - Note: Controller lazy lookup uses controller path WITHOUT `_controller` suffix
+  - Shorter, more maintainable than `t('users.registrations.create.error')`
+- **Namespace convention**: Follow controller class hierarchy WITHOUT `_controller` suffix
+  - Namespaced controllers: `users.registrations.create.key` (NOT `users.registrations_controller`)
+  - Top-level controllers: `polls.create.key` (NOT `polls_controller`)
+- **Synchronization**: Update locale file when adding/removing/changing flash messages in controller actions
+- **Commit together**: Controller changes and locale file updates in same PR/commit
+- **Version control**: Locale files MUST be committed to git
+
+**Implementation Process**:
+```bash
+# When creating Users::RegistrationsController with create action
+# Immediately create corresponding locale file
+mkdir -p config/locales/app/controllers/users/registrations
+touch config/locales/app/controllers/users/registrations/create.en.yml
+
+# Add all flash messages and user-facing text
+```
+
+**Controller Locale File Template**:
+```yaml
+en:
+  [namespace]:
+    [controller_name]:  # WITHOUT _controller suffix
+      [action]:
+        success: "[Success Message]"
+        error: "[Error Message]"
+        notice: "[Notice Message]"
+        # Add all flash message keys
+```
+
+**Example - Users::RegistrationsController#create**:
+```yaml
+# config/locales/app/controllers/users/registrations/create.en.yml
+en:
+  users:
+    registrations:  # NOT registrations_controller
+      create:
+        error: "Registration failed"
+        success: "Welcome! You have signed up successfully."
+```
+
+**Usage in Controllers** (Lazy Lookup):
+```ruby
+# app/controllers/users/registrations_controller.rb
+class Users::RegistrationsController < Devise::RegistrationsController
+  def create
+    super do |resource|
+      if !resource.persisted? && resource.errors.any?
+        flash.now[:alert] = t('.error')  # Resolves to users.registrations.create.error
+      end
+    end
+  end
+end
+```
+
+**Locale File Organization**:
+```
+config/locales/
+├── en.yml                          # Global application translations
+├── app/
+│   ├── models/                     # Model translations
+│   │   ├── user.en.yml
+│   │   └── poll.en.yml
+│   ├── views/                      # View translations (mirrors app/views/)
+│   │   ├── devise/
+│   │   │   ├── sessions/
+│   │   │   │   └── new.en.yml
+│   │   │   └── registrations/
+│   │   │       └── new.en.yml
+│   │   └── polls/
+│   │       └── index.en.yml
+│   └── controllers/                # Controller translations (mirrors app/controllers/)
+│       ├── users/
+│       │   └── registrations/
+│       │       ├── create.en.yml
+│       │       └── update.en.yml
+│       └── polls/
+│           ├── create.en.yml
+│           ├── update.en.yml
+│           └── destroy.en.yml
+└── gems/                           # Gem locale files
+    ├── rails/
+    └── devise/
+```
+
+**Benefits**:
+- **Centralized controller text**: All flash messages in one place per action
+- **Easy localization**: Add `.es.yml`, `.fr.yml` files for multi-language support
+- **DRY code**: No hardcoded strings in controllers
+- **Consistent messaging**: Reuse translations across controllers via shared keys
+- **Lazy lookup**: Reduces verbosity (`t('.error')` vs `t('users.registrations_controller.create.error')`)
+- **Maintainability**: Clear 1:1 mapping between controller actions and their messages
+- **Refactoring safety**: Change messaging without touching controller code
+- **Testable**: i18n keys can be verified in controller specs
+
+**Maintenance Workflow**:
+1. Add/modify flash message in controller action
+2. Update `config/locales/app/controllers/[path]/[action].en.yml` with new/changed translations
+3. Use lazy lookup `t('.key')` in controller
+4. Verify message displays correctly
+5. Commit controller and locale file together
+6. Review: ensure no hardcoded strings remain in controller actions
+
+**Controller Spec Pattern** (Optional but recommended):
+```ruby
+# spec/requests/users/registrations_controller_spec.rb
+RSpec.describe Users::RegistrationsController, type: :request do
+  describe 'POST /sign_up' do
+    context 'when registration fails' do
+      it 'sets flash alert with translated error message' do
+        post user_registration_path, params: { user: { email: '' } }
+        
+        expect(flash[:alert]).to eq(I18n.t('users.registrations.create.error'))
+      end
+    end
+  end
+end
+```
+
+**Rationale**: Hardcoded flash messages in controllers make localization difficult and create maintenance burden when copy changes. Rails i18n supports lazy lookup (`t('.key')`) which automatically infers full key from controller class and action name, reducing verbosity and improving maintainability. Creating `config/locales/app/controllers/[path]/[action].en.yml` per action ensures all flash messages are translatable. Mirroring `app/controllers/` directory structure in `config/locales/app/controllers/` maintains clear 1:1 mapping and makes locale files easy to find. Organizing by action (one file per action) keeps translations focused and prevents large monolithic files. This pattern aligns with Rails i18n best practices and supports future multi-language requirements without code changes.
+
+---
+
+### XI. Stimulus JavaScript Controllers (No Inline JavaScript)
+
+ALL JavaScript interactivity MUST be implemented using Stimulus controllers. Inline JavaScript (onclick, onchange, onsubmit, etc.) is PROHIBITED.
+
+**Requirements**:
+- **No inline JavaScript**: Never use `onclick`, `onchange`, `onsubmit`, or any inline event handlers
+- **Stimulus controllers only**: All JavaScript behavior via `app/javascript/controllers/[feature]_controller.js`
+- **Declarative data attributes**: Use `data-controller`, `data-action`, `data-[controller]-target` for DOM binding
+- **Progressive enhancement**: JavaScript enhances server-rendered functionality, doesn't replace it
+- **Lifecycle management**: Use `connect()` for initialization, `disconnect()` for cleanup
+
+**Controller Organization**:
+```
+app/javascript/controllers/
+├── flash_controller.js        # Flash message auto-dismiss & manual close
+├── form_controller.js         # Form validation, dynamic fields
+├── modal_controller.js        # Modal open/close behavior
+└── dropdown_controller.js     # Dropdown toggle behavior
+```
+
+**Naming Convention**:
+- File: `[feature]_controller.js` (snake_case)
+- Class: `export default class extends Controller`
+- Data controller: `data-controller="[feature]"` (matches filename without `_controller.js`)
+
+**Controller Structure Template**:
+```javascript
+// app/javascript/controllers/flash_controller.js
+import { Controller } from "@hotwired/stimulus"
+
+export default class extends Controller {
+  static targets = ["message"]  // DOM element references
+  static values = {              // Configurable values via data attributes
+    autoDismiss: { type: Boolean, default: true },
+    dismissAfter: { type: Number, default: 5000 }
+  }
+
+  connect() {
+    // Initialization logic (runs when controller attached to DOM)
+    if (this.autoDismissValue) {
+      this.timeout = setTimeout(() => this.dismiss(), this.dismissAfterValue)
+    }
+  }
+
+  disconnect() {
+    // Cleanup logic (runs when controller removed from DOM)
+    if (this.timeout) clearTimeout(this.timeout)
+  }
+
+  dismiss() {
+    // Action methods (called via data-action)
+    this.element.remove()
+  }
+}
+```
+
+**View Integration** (Declarative Data Attributes):
+```erb
+<!-- ❌ WRONG: Inline JavaScript -->
+<button onclick="this.parentElement.remove()">Close</button>
+
+<!-- ✅ CORRECT: Stimulus Controller -->
+<div data-controller="flash" 
+     data-flash-auto-dismiss-value="true" 
+     data-flash-dismiss-after-value="5000">
+  <p data-flash-target="message">Flash message content</p>
+  <button data-action="click->flash#dismiss">Close</button>
+</div>
+```
+
+**Common Patterns**:
+
+1. **Auto-dismiss with configurable timeout** (Flash messages, notifications):
+```javascript
+static values = { dismissAfter: { type: Number, default: 5000 } }
+
+connect() {
+  this.timeout = setTimeout(() => this.dismiss(), this.dismissAfterValue)
+}
+
+disconnect() {
+  if (this.timeout) clearTimeout(this.timeout)
+}
+
+dismiss() {
+  this.element.remove()
+}
+```
+
+2. **Toggle visibility** (Modals, dropdowns):
+```javascript
+toggle() {
+  this.element.classList.toggle("hidden")
+}
+
+close() {
+  this.element.classList.add("hidden")
+}
+```
+
+3. **Form validation** (Dynamic field validation):
+```javascript
+static targets = ["field", "error"]
+
+validate() {
+  const isValid = this.fieldTarget.value.length > 0
+  this.errorTarget.classList.toggle("hidden", isValid)
+}
+```
+
+**Values API** (Configuration via data attributes):
+```erb
+<!-- Boolean values -->
+<div data-controller="flash" data-flash-auto-dismiss-value="false">
+
+<!-- Number values -->
+<div data-controller="flash" data-flash-dismiss-after-value="3000">
+
+<!-- String values -->
+<div data-controller="modal" data-modal-size-value="large">
+
+<!-- Array values -->
+<div data-controller="carousel" data-carousel-slides-value='["slide1", "slide2"]'>
+
+<!-- Object values -->
+<div data-controller="map" data-map-options-value='{"zoom": 12, "center": [0, 0]}'>
+```
+
+**Testing Stimulus Controllers** (Future requirement):
+- System specs (Capybara) test JavaScript behavior in integration tests
+- Consider adding controller-specific JavaScript unit tests when complex logic exists
+
+**Benefits**:
+- **Clean HTML**: No inline JavaScript, easier to read and maintain
+- **Security**: Supports Content Security Policy (CSP) - no inline script execution
+- **Reusability**: Controllers can be reused across multiple views
+- **Testable**: Stimulus controllers can be unit tested (JavaScript tests)
+- **Progressive enhancement**: Server renders HTML, JavaScript enhances it
+- **Lifecycle management**: `disconnect()` prevents memory leaks (cleanup timers, listeners)
+- **Configurable**: Values API allows customization via data attributes without code changes
+
+**Flash Message Example** (Complete Implementation):
+
+**Controller** (`app/javascript/controllers/flash_controller.js`):
+```javascript
+import { Controller } from "@hotwired/stimulus"
+
+export default class extends Controller {
+  static values = {
+    autoDismiss: { type: Boolean, default: true },
+    dismissAfter: { type: Number, default: 5000 }
+  }
+
+  connect() {
+    if (this.autoDismissValue) {
+      this.timeout = setTimeout(() => this.dismiss(), this.dismissAfterValue)
+    }
+  }
+
+  disconnect() {
+    if (this.timeout) clearTimeout(this.timeout)
+  }
+
+  dismiss() {
+    this.element.remove()
+  }
+}
+```
+
+**Partial** (`app/views/layouts/_flash.html.erb`):
+```erb
+<div class="fixed top-4 right-4 z-50 max-w-md">
+  <% flash.each do |type, message| %>
+    <% styles = flash_styles(type) %>
+    <div data-controller="flash" 
+         class="bg-white <%= styles[:border_color] %> border-l-4 shadow-lg rounded-lg p-4 mb-4"
+         role="alert">
+      <div class="flex items-start">
+        <div class="flex-shrink-0">
+          <svg class="h-5 w-5 <%= styles[:icon_color] %>" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="<%= styles[:icon_path] %>" clip-rule="evenodd"/>
+          </svg>
+        </div>
+        <div class="ml-3 flex-1">
+          <p class="text-sm font-medium text-gray-900"><%= message %></p>
+        </div>
+        <button data-action="click->flash#dismiss" 
+                type="button" 
+                class="ml-4 flex-shrink-0 text-gray-400 hover:text-gray-600">
+          <svg class="h-4 w-4" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+  <% end %>
+</div>
+```
+
+**Usage**:
+```ruby
+# Controller action
+redirect_to root_path, notice: "Successfully logged in"
+redirect_to root_path, alert: "Invalid credentials"
+redirect_to root_path, flash: { warning: "Session expiring soon" }
+```
+
+**Result**:
+- Flash message appears with appropriate styling (green/red/yellow/blue)
+- Auto-dismisses after 5 seconds (configurable via `data-flash-dismiss-after-value`)
+- Can disable auto-dismiss: `data-flash-auto-dismiss-value="false"`
+- Manual close via X button (`data-action="click->flash#dismiss"`)
+- Clean separation: Helper for styling, Stimulus for behavior, view for structure
+
+**Rationale**: Inline JavaScript (onclick, onchange) violates Content Security Policy (CSP), making applications vulnerable to XSS attacks. Inline handlers are hard to test, difficult to reuse, and create maintenance burden. Stimulus provides declarative data attributes for DOM binding (`data-action="click->flash#dismiss"`), lifecycle hooks for cleanup (`disconnect()` clears timers), and values API for configuration (`data-flash-dismiss-after-value="5000"`). All JavaScript should follow this pattern for consistency, testability, security, and maintainability. Flash message refactoring demonstrated the pattern: auto-dismiss via Stimulus values API, manual close via data-action, and proper cleanup in disconnect() lifecycle hook.
+
+---
+
+### XII. RuboCop Code Style Compliance (NON-NEGOTIABLE)
+
+ALL code MUST pass RuboCop with ZERO offenses before committing. Code style consistency is mandatory across the entire codebase.
+
+**Requirements**:
+- **Zero tolerance**: No RuboCop offenses allowed in any commit
+- **Run before commit**: Execute `bin/rubocop` before every commit and ensure clean output
+- **Fix immediately**: Address all violations before pushing code
+- **No disabling cops**: Do NOT disable RuboCop cops with inline comments unless explicitly approved
+- **Configuration**: Project uses `rubocop-rails-omakase` configuration (Rails default)
+
+**Common Violations to Avoid**:
+
+1. **String Literals** (Style/StringLiterals):
+   ```ruby
+   # ❌ WRONG: Single quotes when double quotes preferred
+   layout 'devise'
+   t('.error')
+   require 'devise/orm/active_record'
+   
+   # ✅ CORRECT: Double quotes (project default)
+   layout "devise"
+   t(".error")
+   require "devise/orm/active_record"
+   ```
+
+2. **Array Bracket Spacing** (Layout/SpaceInsideArrayLiteralBrackets):
+   ```ruby
+   # ❌ WRONG: No spaces inside brackets
+   config.i18n.available_locales = [:en]
+   config.case_insensitive_keys = [:email]
+   
+   # ✅ CORRECT: Spaces inside brackets
+   config.i18n.available_locales = [ :en ]
+   config.case_insensitive_keys = [ :email ]
+   ```
+
+3. **Trailing Whitespace** (Layout/TrailingWhitespace):
+   ```ruby
+   # ❌ WRONG: Spaces/tabs at end of line
+   gem "rspec-rails"   
+   # Code here  
+   
+   # ✅ CORRECT: No trailing whitespace
+   gem "rspec-rails"
+   # Code here
+   ```
+
+4. **Line Length** (Layout/LineLength):
+   - Keep lines under 120 characters (omakase default)
+   - Break long method chains across lines
+   - Use heredocs or multi-line strings for long text
+
+5. **Method Length** (Metrics/MethodLength):
+   - Keep methods focused and under 10-15 lines
+   - Extract private methods when logic becomes complex
+   - Use service objects for multi-step business logic
+
+**Running RuboCop**:
+```bash
+# Check all files
+bin/rubocop
+
+# Check specific file
+bin/rubocop app/controllers/users/sessions_controller.rb
+
+# Auto-fix safe violations (use with caution)
+bin/rubocop -a
+
+# Auto-fix all violations including unsafe (review changes carefully)
+bin/rubocop -A
+
+# Output format for CI/GitHub Actions
+bin/rubocop -f github
+```
+
+**Pre-Commit Workflow**:
+1. Write/modify code
+2. Run tests: `bundle exec rspec`
+3. Run RuboCop: `bin/rubocop`
+4. Fix any violations reported
+5. Re-run RuboCop to confirm: `52 files inspected, no offenses detected`
+6. Commit only when both tests and RuboCop pass
+
+**Configuration** (`.rubocop.yml`):
+```yaml
+# Project uses Rails Omakase configuration
+inherit_gem: { rubocop-rails-omakase: rubocop.yml }
+
+# String literals: double quotes preferred (Rails default)
+# Array brackets: spaces inside brackets required
+# Line length: 120 characters maximum
+# Method length: 10-15 lines recommended
+```
+
+**When to Seek Approval for Cop Disabling**:
+- Performance-critical code that violates metrics (document why)
+- Generated code that cannot be modified (migrations, schemas)
+- Third-party integration requiring specific style
+- Legacy code being gradually refactored (temporary, with TODO)
+
+**Benefits**:
+- **Consistency**: Entire codebase follows same style conventions
+- **Readability**: Code is easier to read when style is uniform
+- **Maintainability**: Reduces cognitive load when switching between files
+- **Code Review**: Eliminates style bikeshedding in PR reviews
+- **Onboarding**: New developers have clear style guide to follow
+- **Automated**: CI enforces style, preventing style drift over time
+
+**Integration with CI**:
+- GitHub Actions MUST run RuboCop on every PR
+- PR cannot merge if RuboCop fails
+- Status check: "RuboCop / Code Style" must be green
+
+**Common Fixes After Code Generation**:
+
+When generating code via Rails generators or writing new files:
+1. **Controllers**: Check string literals (double quotes), layout directives
+2. **Routes**: Verify string literals in path names and controller references
+3. **Config files**: Ensure array bracket spacing, string literal style
+4. **Specs**: Check array spacing in matchers (`match_array([ :a, :b ])`)
+5. **Helpers**: Verify string literals in returned CSS classes
+
+**Rationale**: Code style consistency is critical for maintainability in team environments. RuboCop enforces Rails community conventions (via rubocop-rails-omakase), reducing cognitive load when reading code and eliminating style debates in code reviews. String literal consistency (double quotes), proper spacing, and no trailing whitespace are fundamental to clean code. Running RuboCop before every commit ensures violations are caught early, not during CI or code review. Zero tolerance policy prevents style drift and keeps codebase clean. Configuration inherits from rubocop-rails-omakase (Rails default), aligning with Rails ecosystem best practices. Recent experience fixing RuboCop violations (string literals, array spacing, trailing whitespace) demonstrated importance of running RuboCop before committing and documenting common violations to prevent recurrence.
+
+---
+
 ## Technology Stack
 
 **Core**:
@@ -126,16 +1516,19 @@ Start with the simplest solution that works. Complexity requires explicit justif
 
 **Frontend**:
 - Hotwire (Turbo + Stimulus) for SPA-like interactions
-- Tailwind CSS 4+ for styling
+- Tailwind CSS 4+ for styling (MUST use official patterns from https://tailwindcss.com/)
 - ViewComponent for reusable UI components
 - Importmap for JavaScript dependencies (no build step unless unavoidable)
 
 **Testing**:
-- RSpec (system, request, model specs)
-- FactoryBot for test data
-- Faker for realistic fake data
-- Capybara for system tests
-- SimpleCov for coverage tracking
+- **RSpec** (system, request, model specs) - BDD testing framework
+- **FactoryBot** for test data generation (replaces fixtures)
+- **Faker** for realistic fake data generation
+- **Shoulda Matchers** for Rails validation testing (one-liner matchers)
+- **Database Cleaner** for clean database state between tests
+- **Capybara** for system/browser testing
+- **Selenium WebDriver** for JavaScript testing
+- **SimpleCov** for coverage tracking (minimum 90% required)
 
 **Development**:
 - Rubocop with Rails cops (style enforcement)
@@ -160,7 +1553,12 @@ Start with the simplest solution that works. Complexity requires explicit justif
 
 **Workflow**:
 - Feature branches: `###-feature-name` (issue number prefix)
-- Commits: conventional commits format (`feat:`, `fix:`, `refactor:`, `test:`, `docs:`)
+- Commits: MUST follow format `[specs#xxx][tasks#yyy] type: description`
+  - `xxx`: Spec number (e.g., 001 for specs/001-user-signup/)
+  - `yyy`: Task number (e.g., 054 for T054)
+  - `type`: Conventional commit type (`feat`, `fix`, `refactor`, `test`, `docs`)
+  - Example: `[specs#001][tasks#054] test: add User model validation tests`
+  - Exception: Infrastructure/non-spec commits use conventional format only
 - PRs: include spec reference, test coverage, migration plan if applicable
 - Database migrations: reversible, tested in Render preview environments before production
 - Deployment: Automatic on merge to `main` (via Render.com GitHub integration)
@@ -198,6 +1596,17 @@ Start with the simplest solution that works. Complexity requires explicit justif
 - Database schema maintained (schema.rb automatically tracked)
 - .env.example updated when new environment variables introduced
 
+**UI Standards**:
+- All screens MUST use official Tailwind CSS patterns from https://tailwindcss.com/
+- Reference Tailwind documentation for forms, layouts, and components
+- Prohibited: Custom gradients, animations, or utility classes not in official Tailwind CSS
+- Prefer semantic Tailwind utilities: `ring-*` for focus states, `leading-*` for spacing
+- Follow mobile-first responsive design with Tailwind breakpoints (`sm:`, `md:`, `lg:`, `xl:`)
+- Form validation styling MUST use Tailwind's alert/error patterns
+- Authentication pages (login, signup, password reset) MUST follow official form examples
+
+**Rationale**: Official Tailwind patterns are community-tested for accessibility, responsive design, and browser compatibility. Custom implementations create maintenance debt and design inconsistencies. The tailwindcss.com documentation provides battle-tested components that align with modern UI/UX best practices.
+
 ## Governance
 
 This constitution supersedes all ad-hoc practices. When in doubt, constitution rules.
@@ -222,11 +1631,376 @@ This constitution supersedes all ad-hoc practices. When in doubt, constitution r
 - Template commands reference constitution for validation gates
 - Onboarding checklist includes constitution review
 
-**Current Version**: 1.6.0 | **Ratified**: 2026-02-10 | **Last Amended**: 2026-02-10
+**Current Version**: 1.20.0 | **Ratified**: 2026-02-10 | **Last Amended**: 2026-02-11
 
 ---
 
 ## Version History
+
+### Version 1.20.0 - 2026-02-11
+**Type**: MINOR (RuboCop code style compliance principle)
+
+**Changes**:
+- Added Principle XII (RuboCop Code Style Compliance):
+  - **Zero tolerance** requirement: All code MUST pass RuboCop with zero offenses before committing
+  - Mandatory pre-commit workflow: Run `bin/rubocop` before every commit
+  - Common violations documented with examples:
+    - String literals (Style/StringLiterals): Use double quotes (project default via rubocop-rails-omakase)
+    - Array bracket spacing (Layout/SpaceInsideArrayLiteralBrackets): Use spaces inside brackets `[ :en ]`
+    - Trailing whitespace (Layout/TrailingWhitespace): Remove all trailing spaces/tabs
+    - Line length (Layout/LineLength): Keep under 120 characters
+    - Method length (Metrics/MethodLength): Keep methods under 10-15 lines
+  - RuboCop commands documented: `bin/rubocop`, `bin/rubocop -a`, `bin/rubocop -f github`
+  - Pre-commit workflow: tests → rubocop → fix violations → commit
+  - Configuration: Project uses `rubocop-rails-omakase` (Rails default conventions)
+  - Cop disabling policy: Requires explicit approval except for generated/legacy code
+  - CI integration: GitHub Actions MUST run RuboCop, PR cannot merge if fails
+  - Common fixes after code generation documented (controllers, routes, config, specs, helpers)
+  - Benefits: consistency, readability, maintainability, eliminates style bikeshedding, automated enforcement
+
+**Rationale**: Code style consistency is critical for team maintainability. Recent RuboCop violation fixes (string literals from single to double quotes, array bracket spacing, trailing whitespace across 9 files) demonstrated need for documented code style principle. RuboCop enforces Rails community conventions via rubocop-rails-omakase configuration, reducing cognitive load and eliminating style debates in code reviews. Common violations (string literals, array spacing, trailing whitespace) were occurring repeatedly during development, indicating developers needed clear guidance on project style standards. Zero tolerance policy prevents style drift and ensures codebase remains clean. Running RuboCop before every commit catches violations early (not during CI or code review), improving developer experience. Documenting common violations with correct/incorrect examples provides reference for developers to avoid repeated mistakes. Configuration inherits from rubocop-rails-omakase, aligning with Rails ecosystem best practices. This is MINOR version (new principle) because it adds mandatory code quality requirement that changes development workflow (must run RuboCop before commit).
+
+**Migration Plan**:
+- Existing code: Already RuboCop compliant (52 files inspected, no offenses detected)
+- New code: Follow principle XII requirements before committing
+- CI: Add RuboCop check to GitHub Actions workflow
+- Developer setup: Document RuboCop pre-commit workflow in README
+
+---
+
+### Version 1.19.0 - 2026-02-11
+**Type**: MINOR (View i18n 1:1 mapping pattern for partials)
+
+**Changes**:
+- Enhanced Principle IX (Application View Internationalization):
+  - Added **1:1 Mapping Pattern** requirement: each `.html.erb` file (view or partial) has exactly one corresponding `.en.yml` locale file
+  - Documented partial locale file naming convention:
+    - Partial file: `app/views/[path]/[view]/_partial.html.erb`
+    - Locale file: `config/locales/app/views/[path]/[view]/partial.en.yml` (remove underscore from partial name)
+    - Example: `app/views/devise/sessions/new/_header.html.erb` → `config/locales/app/views/devise/sessions/new/header.en.yml`
+  - Added partial translation scoping under partial name:
+    - Main view: `t('.title')` → `devise.sessions.new.title`
+    - Partial: `t('.title')` in `_header.html.erb` → `devise.sessions.new.header.title`
+  - Added "Scope to partial" requirement: each partial's locale file contains ONLY translations used in that specific partial
+  - Updated view locale file template to show both main view and partial locale structure
+  - Added complete example showing 4 partial locale files for sessions/new:
+    - `header.en.yml` (title, subtitle)
+    - `form_email.en.yml` (email_placeholder)
+    - `form_password.en.yml` (password_placeholder)
+    - `form_button_submit.en.yml` (submit_button)
+  - Updated lazy lookup usage examples to demonstrate partial-scoped resolution with comments
+  - Updated locale file organization structure to show partial subdirectory pattern
+  - Added "Refactoring Workflow" section documenting how to split monolithic view locale files into partial-specific files:
+    - Step-by-step process for extracting partials with corresponding locale files
+    - Example showing before/after directory structure
+    - Guidance on moving translations from main locale file to partial locale files
+    - Emphasis on scoping translations under partial name
+  - Enhanced benefits list with partial-specific advantages:
+    - 1:1 File Mapping (each file has exactly one locale file)
+    - Centralized partial text (all strings for partial in one dedicated file)
+    - Scoped translations (automatic scoping under partial name prevents key collisions)
+    - Modular organization (extract partial with its translations simultaneously)
+  - Updated rationale to explain 1:1 mapping benefits, partial scoping, and scalability
+
+**Rationale**: Session login view refactoring (splitting `sessions/new.html.erb` into partials) revealed need for documenting partial i18n pattern. Project split view into 4 partials (`_header`, `_form_email`, `_form_password`, `_form_button_submit`) and correspondingly split monolithic `new.en.yml` into 4 partial-specific locale files (`header.en.yml`, `form_email.en.yml`, `form_password.en.yml`, `form_button_submit.en.yml`). This 1:1 mapping between partial files and locale files significantly improves maintainability by making it clear exactly where to find and update translations for each UI component. Rails lazy lookup automatically scopes partial translations under the partial name (e.g., `devise.sessions.new.header.title`), preventing key collisions and organizing translations hierarchically. Pattern scales well: simple views can use single locale file, complex views split into partials have dedicated locale files per partial. This pattern was already implemented during sessions view refactoring but not documented in constitution. Adding to constitution ensures future view refactorings follow this 1:1 pattern consistently and provides clear workflow for splitting monolithic views. This is MINOR version (new pattern requirement) because it extends existing view i18n principle with partial-specific guidance that changes how developers should organize locale files when refactoring views.
+
+---
+
+### Version 1.18.0 - 2026-02-11
+**Type**: PATCH (Request spec organization clarification and existing spec discovery requirement)
+
+**Changes**:
+- Enhanced Principle II (Test-Driven Development):
+  - Added Point 4: "CRITICAL: Find Existing Specs Before Creating New Ones"
+  - MUST search for existing spec files using file_search or grep_search before creating new specs
+  - Request specs may be organized by action/HTTP method (e.g., spec/requests/users/registrations/post_create_spec.rb)
+  - If organized specs exist for a controller, UPDATE them instead of creating flat controller spec
+  - Added pattern recognition guidelines for finding specs:
+    - spec/requests/[namespace]/[controller]/[http_method]_[action]_spec.rb (organized by action - PREFERRED)
+    - spec/requests/[namespace]/[controller]_spec.rb (flat controller spec - ALTERNATIVE)
+  - Listed benefits: prevents spec duplication, maintains project organization, respects existing test structure
+- Expanded "Test Organization" section:
+  - Documented organized request spec pattern (one file per controller action)
+  - Added comprehensive directory structure examples showing namespace/controller/action organization
+  - Added "Request Spec Organization Patterns" subsection with detailed examples
+  - Documented PREFERRED pattern: spec/requests/users/registrations/post_create_spec.rb (one file per action)
+  - Documented ALTERNATIVE pattern: spec/requests/polls_spec.rb (flat file for simple controllers)
+  - Provided complete example spec structure for organized pattern
+  - Listed benefits of organized request specs:
+    - Clear ownership (1:1 mapping with controller action)
+    - Faster test runs (run only tests for action being worked on)
+    - Easier navigation (find tests by action name, not line number)
+    - Better git history (action changes affect single spec file)
+    - Reduced merge conflicts (team members work on different action spec files)
+    - Comprehensive coverage (dedicated file encourages thorough testing of edge cases)
+  - Defined when to use flat vs organized specs:
+    - Flat acceptable when: controller has ≤3 actions, each action has ≤5 test cases, team hasn't established organized pattern
+    - Use organized when: controller has >3 actions or >100 lines of tests
+  - Added migration path: split flat specs into organized when growing beyond 100 lines or adding 4th action
+  - Emphasized: "Don't mix patterns - if controller has organized specs, maintain that pattern"
+
+**Rationale**: Agent speckit.implement created duplicate spec file (spec/requests/users/registrations_controller_spec.rb) instead of updating existing organized spec (spec/requests/users/registrations/post_create_spec.rb). This organized pattern has existed in project since initial setup but was not documented in constitution, causing agents to create flat controller specs when organized action-based specs already existed. Adding explicit requirement to search for existing specs prevents duplication and maintains project organization. Documenting organized request spec pattern (one file per action) ensures future agents respect existing structure and provides clear guidance on when to use organized vs flat patterns. This is a PATCH version (clarification/documentation) rather than MINOR (new requirement) because organized specs were already the project standard - constitution is catching up to reality rather than introducing new rules. No code changes required, only procedural clarification to prevent future spec duplication.
+
+---
+
+### Version 1.17.0 - 2026-02-11
+**Type**: MINOR (Controller i18n management requirement)
+
+**Changes**:
+- Added new principle: X. Application Controller Internationalization (i18n) Management
+- Renumbered existing Principle X (Stimulus JavaScript Controllers) → Principle XI
+- Established requirements for controller locale files:
+  - Create/update config/locales/app/controllers/[path]/[action].en.yml when creating/updating controllers
+  - Mirror app/controllers/ directory structure in config/locales/app/controllers/
+  - Organize by action (one file per action with user-facing messages)
+  - Include ALL flash messages (success, error, alert, warning, notice)
+  - Use lazy lookup pattern: t('.key') instead of t('full.path.key')
+  - Rails infers full key from controller class and action name automatically
+  - Update locale file when adding/removing/changing flash messages
+  - Commit locale files alongside controller changes (same PR/commit)
+- Added implementation process with controller locale file template
+- Added example for Users::RegistrationsController#create showing flash message pattern
+- Added usage examples demonstrating lazy lookup: t('.error'), t('.success')
+- Updated locale file organization structure:
+  - Added config/locales/app/controllers/ mirroring app/controllers/ directory structure
+  - Example paths: users/registrations/create.en.yml, polls/create.en.yml
+  - One locale file per action that has user-facing messages
+- Added maintenance workflow (modify flash message → update locale → use t('.key') → commit together)
+- Listed benefits: centralized controller text, easy localization, DRY code, consistent messaging, lazy lookup reduces verbosity, maintainability, refactoring safety, testable
+
+**Rationale**: Users::RegistrationsController implementation revealed need for standardized controller i18n management. Hardcoded flash messages in controllers make localization difficult and create maintenance burden when copy changes. Rails i18n supports lazy lookup (t('.key')) which automatically infers full key from controller class and action name, reducing verbosity and improving maintainability. Creating config/locales/app/controllers/[path]/[action].en.yml per action ensures all flash messages are translatable. Mirroring app/controllers/ directory structure in config/locales/app/controllers/ maintains clear 1:1 mapping and makes locale files easy to find. Organizing by action (one file per action) keeps translations focused and prevents large monolithic files. This pattern aligns with Rails i18n best practices and supports future multi-language requirements without code changes.
+
+---
+
+### Version 1.16.0 - 2026-02-11
+**Type**: MINOR (Stimulus JavaScript interactivity patterns & helper spec enforcement)
+
+**Changes**:
+- Added new principle: X. Stimulus JavaScript Controllers (No Inline JavaScript)
+- Prohibited ALL inline JavaScript (onclick, onchange, onsubmit, etc.)
+- Established requirements for Stimulus controllers:
+  - All JavaScript behavior via app/javascript/controllers/[feature]_controller.js
+  - Declarative data attributes: data-controller, data-action, data-target
+  - Progressive enhancement: JavaScript enhances server-rendered functionality
+  - Lifecycle management: connect() for initialization, disconnect() for cleanup
+- Added controller organization structure and naming conventions:
+  - File: [feature]_controller.js (snake_case)
+  - Class: export default class extends Controller
+  - Data controller: data-controller="[feature]"
+- Added controller structure template with targets, values, lifecycle hooks
+- Added view integration examples (WRONG: onclick vs CORRECT: data-action)
+- Added common patterns: auto-dismiss, toggle visibility, form validation
+- Added Values API examples (Boolean, Number, String, Array, Object values)
+- Added complete flash message implementation example:
+  - flash_controller.js with auto-dismiss and configurable timeout
+  - _flash.html.erb partial using data-controller and data-action
+  - FlashHelper for styling logic
+  - Clean separation: Helper for styling, Stimulus for behavior, view for structure
+- Listed benefits: clean HTML, CSP security, reusability, testability, progressive enhancement, lifecycle management, configurability
+- Enhanced Principle II (Test-Driven Development):
+  - MANDATORY: Helper specs MUST be organized in spec/helpers/[helper_name]/ subdirectory
+  - ONE spec file per public method: [method_name]_spec.rb
+  - Emphasized existing pattern with explicit examples from error_helper
+  - Added requirement for generators to follow this structure
+
+**Rationale**: Flash messages refactoring revealed need for standardized JavaScript interactivity patterns. Inline onclick/onchange handlers violate Content Security Policy (CSP), are hard to test, and create maintenance burden. Stimulus provides declarative data attributes for DOM binding, lifecycle hooks for cleanup, and values API for configuration. Flash controller demonstrated auto-dismiss pattern with configurable timeout. All JavaScript should follow this pattern for consistency, testability, and security. Helper spec organization pattern (spec/helpers/[helper_name]/[method_name]_spec.rb) already existed in error_helper but wasn't emphasized enough, leading to flat file generation initially. Making this MANDATORY prevents future violations.
+
+---
+
+### Version 1.15.0 - 2026-02-11
+**Type**: MINOR (View i18n management requirement)
+
+**Changes**:
+- Added new principle: IX. Application View Internationalization (i18n) Management
+- Established requirements for view locale files:
+  - Create/update config/locales/app/views/[path]/[view_name].en.yml when creating/updating views
+  - Mirror app/views/ directory structure in config/locales/app/views/
+  - Include ALL user-facing text (titles, labels, buttons, placeholders, messages)
+  - Use lazy lookup pattern: t('.key') instead of t('full.path.key')
+  - Rails infers full key from view path automatically
+  - Update locale file when adding/removing/changing user-facing text
+  - Commit locale files alongside view changes (same PR/commit)
+- Added implementation process with view locale file template
+- Added example for Devise sessions new view showing all text elements
+- Added usage examples demonstrating lazy lookup: t('.title'), t('.submit_button')
+- Updated locale file organization structure:
+  - Added config/locales/app/views/ mirroring app/views/ directory structure
+  - Example paths: devise/sessions/new.en.yml, polls/index.en.yml
+  - One locale file per view template
+- Added maintenance workflow (modify view text → update locale → use t('.key') → commit together)
+- Listed benefits: centralized view text, easy localization, DRY code, consistent wording, lazy lookup reduces verbosity, maintainability, refactoring safety, designer-friendly
+
+**Rationale**: Devise sessions view i18n revealed need for standardized view i18n management. Hardcoded strings in views make localization difficult and create maintenance burden when copy changes. Rails i18n supports lazy lookup (t('.key')) which automatically infers full key from view path, reducing verbosity and improving maintainability. Creating config/locales/app/views/[path]/[view].en.yml per view ensures all user-facing text is translatable. Mirroring app/views/ directory structure in config/locales/app/views/ maintains clear 1:1 mapping and makes locale files easy to find. Pattern aligns with Rails i18n best practices and supports future multi-language requirements without code changes.
+
+---
+
+### Version 1.14.0 - 2026-02-11
+**Type**: PATCH (Model i18n spec requirement)
+
+**Changes**:
+- Updated Principle VIII: Application Model i18n Management
+- Added i18n spec requirement for model translations:
+  - Create/update spec/models/[model]/i18n_spec.rb when creating/updating models
+  - Test model name translations (singular and plural)
+  - Test ALL attribute name translations (one test per attribute)
+  - Tests verify Model.model_name.human and Model.human_attribute_name(:attribute)
+  - Update i18n spec when adding/removing/renaming attributes
+  - Commit i18n spec alongside model and locale file changes
+- Added i18n spec template with example structure
+- Updated implementation process to include i18n spec creation
+- Updated maintenance workflow to include i18n spec updates and test runs
+- Updated benefits list: added test coverage, prevent regressions
+- Updated directory structure diagram to show spec/models/[model]/i18n_spec.rb
+
+**Rationale**: User model i18n setup revealed need for testing i18n translations. Without tests, missing or incorrect translations aren't caught until runtime, potentially showing technical attribute names (e.g., "email" instead of "Email") to users. Testing Model.model_name.human and Model.human_attribute_name ensures locale files are properly configured and loaded. Following model spec organization pattern (spec/models/user/i18n_spec.rb), this creates one focused spec file per concern. Tests serve as documentation for expected attribute labels and catch regressions during locale file updates.
+
+---
+
+### Version 1.13.0 - 2026-02-11
+**Type**: MINOR (Application model i18n management requirement)
+
+**Changes**:
+- Added new principle: VIII. Application Model Internationalization (i18n) Management
+- Established requirements for model locale files:
+  - Create/update config/locales/app/models/[model_name].en.yml when creating/updating models
+  - Include model names (singular/plural) under activerecord.models namespace
+  - Include ALL attributes under activerecord.attributes.[model_name] (database columns + virtual attributes)
+  - Follow Rails i18n namespace conventions (activerecord.models, activerecord.attributes)
+  - Update locale file when adding/removing/renaming attributes
+  - Commit locale files alongside model changes (same PR/commit)
+- Added implementation process with model locale file template
+- Added example for User model showing database columns and virtual attributes
+- Added usage examples: User.model_name.human, User.human_attribute_name(:email)
+- Updated locale file organization structure:
+  - Added config/locales/app/models/ for application model translations
+  - Separated app-specific (app/) from gem-specific (gems/) locale directories
+  - Maintained config/locales/en.yml for global application translations
+- Added maintenance workflow (add attribute → update locale → commit together)
+- Listed benefits: centralized translations, human-readable errors, consistent terminology, easy customization, multi-language ready, Rails integration, maintainability
+
+**Rationale**: User model creation revealed need for standardized model i18n management. Rails i18n supports model/attribute name translation via activerecord.models and activerecord.attributes, but requires explicit locale files. Creating config/locales/app/models/xxx.en.yml per model ensures all attribute names are translatable, improving user-facing error messages and form labels. Separating application-specific (app/) from gem-specific (gems/) locale files improves organization and prevents mixing concerns. Pattern aligns with Rails i18n best practices (User.model_name.human, User.human_attribute_name(:email)) and supports future multi-language requirements.
+
+---
+
+### Version 1.12.0 - 2026-02-11
+**Type**: MINOR (Gem i18n management principle)
+
+**Changes**:
+- Added new principle: VII. Gem Internationalization (i18n) Management
+- Established requirements for managing gem locale files:
+  - Copy locale files from gem GitHub repos to config/locales/gems/[gem_name]/
+  - Directory organization: rails/, devise/, etc.
+  - Use official GitHub source at tagged version matching installed gem
+  - Download ALL locale files (minimum en.yml)
+  - Rails core uses separate files: actionview.en.yml, activemodel.en.yml, activerecord.en.yml, activesupport.en.yml
+  - Commit locale files to version control (NOT ignored)
+- Added implementation process with curl examples for Rails 8.1.2 and Devise
+- Added configuration requirements: recursive locale loading via config.i18n.load_path
+- Added locale file organization structure showing gems/ directory hierarchy
+- Documented gem upgrade process (check version, download new files, review diff, test, commit)
+- Listed benefits: version control, customization, offline development, explicit visibility, consistency, review process, debugging
+
+**Rationale**: Rails 8.1.2 i18n setup revealed that gems include locale files in their load paths, but these aren't tracked in version control or easily customizable. Copying from GitHub to config/locales/gems/ ensures explicit control over all user-facing text and supports i18n best practices with recursive locale loading. This pattern applies to Rails core components (actionview, activemodel, activerecord, activesupport) and third-party gems (Devise, Pundit, etc.). Directory organization keeps gem locale files separate from application-specific translations, improving maintainability and reducing merge conflicts during gem upgrades.
+
+---
+
+### Version 1.11.0 - 2026-02-10
+**Type**: PATCH (Helper spec organization pattern)
+
+**Changes**:
+- Updated Principle II (Test-Driven Development) > Test Organization
+- Added Helper Spec Organization Pattern section with requirements:
+  - Helper specs organized by helper module in subdirectories (spec/helpers/[helper_name]/)
+  - One spec file per public method ([method_name]_spec.rb)
+  - Each file tests ONE method only (focused, single responsibility)
+- Updated spec/ directory structure example to show helper organization:
+  - Added spec/helpers/error_helper/ example with 3 method-specific spec files
+  - Added spec/helpers/application_helper/ example
+- Documented benefits: easy test location, faster test runs, 1:1 file-method mapping, simplified PRs, better git history
+- Provided code example showing spec file structure for helper methods
+
+**Rationale**: ErrorHelper refactoring revealed need for standardized helper spec organization. All helper methods were tested in single file (error_helper_spec.rb with 13 examples), making it harder to locate and run tests for specific methods. Splitting into separate files (field_error_message_spec.rb, field_icon_color_spec.rb, field_border_classes_spec.rb) improved maintainability and follows single responsibility principle at file level. Pattern aligns with Rails convention of one concern per file and mirrors spec/models/ organization (one model = one spec file). This prevents helper spec files from becoming unwieldy as helper modules grow.
+
+---
+
+### Version 1.10.0 - 2026-02-10
+**Type**: MINOR (RSpec testing framework standardization)
+
+**Changes**:
+- Expanded Principle II (Test-Driven Development) with comprehensive RSpec requirements
+- Added Testing Framework section specifying RSpec as mandatory
+- Added Test Types and Coverage Requirements (model 95%, request 90%, system critical paths)
+- Added Automatic Spec Generation requirements via Rails generators
+- Added "When Creating/Updating Code" workflow mandating specs alongside code
+- Added Test Data Management section (FactoryBot, Faker, traits)
+- Added Test Helpers and Support section (Shoulda Matchers, Database Cleaner, Devise helpers)
+- Added Running Tests commands and Test Organization structure
+- Updated Technology Stack > Testing: Added Shoulda Matchers, Database Cleaner, Selenium WebDriver
+- Made "Every commit MUST include specs" explicit requirement
+
+**Rationale**: RSpec provides superior BDD-style testing with self-documenting "describe/context/it" structure. FactoryBot reduces test data boilerplate compared to fixtures. Shoulda Matchers simplify Rails validation tests. Automatic spec generation via Rails generators ensures tests are written alongside code, not as afterthought. This codifies existing testing infrastructure and prevents regression to Minitest or manual test creation.
+
+---
+
+### Version 1.
+## Version History
+
+### Version 1.9.0 - 2026-02-10
+**Type**: MINOR (Error handling and validation UX principle)
+
+**Changes**:
+- Added new principle: VI. User-Centric Error Handling & Validation UX
+- Established validation error display requirements:
+  - Inline field errors directly below invalid inputs
+  - Visual indicators: red borders (`border-red-500`), red icons (`text-red-400`)
+  - Error text using Tailwind v4 compatible colors (`text-red-700`)
+  - Consistent focus states (red border maintained, no black ring fallback)
+- Defined Tailwind Notifications pattern for form errors:
+  - Fixed top-right position (`fixed top-4 right-4 z-50`)
+  - Error summary with count and resource name
+  - Dismissible close button with accessible labels
+  - Professional styling with ring shadow
+- Added implementation standards with ERB code examples
+- Specified Tailwind v4 color constraints (avoid `text-red-600`, use available variants only)
+- Required progressive enhancement (errors work without JavaScript)
+- Mandated consistency across all forms (authentication, resource CRUD)
+
+**Rationale**: User signup form improvements revealed need for standardized error handling pattern. Inconsistent error feedback creates poor UX and increases user frustration. This principle codifies: (1) top-right notification for global context, (2) inline field errors for actionable guidance, (3) visual indicators for immediate recognition. Pattern follows Tailwind UI best practices and modern web application standards. Tailwind v4's on-demand class generation requires explicit color utility verification to prevent styling bugs (e.g., `text-red-600` not generated, renders as black).
+
+---
+
+### Version 1.8.0 - 2026-02-10
+**Type**: MINOR (Commit message format - spec and task number prefixes)
+
+**Changes**:
+- Updated Development Standards > Workflow: Added mandatory commit message prefix format
+- Commit messages for spec-related work MUST include `[specs#xxx][tasks#yyy]` prefix
+- Added format specification: `[specs#xxx][tasks#yyy] type: description`
+  - xxx = spec number (zero-padded, e.g., 001)
+  - yyy = task number (zero-padded, e.g., 054)
+  - type = conventional commit type (feat, fix, refactor, test, docs)
+- Example: `[specs#001][tasks#054] test: add User model validation tests`
+- Exception documented for infrastructure/non-spec commits
+
+**Rationale**: Standardized commit prefixes enable traceability between commits and specification tasks. The format creates explicit links in git history, facilitating automated verification of spec completion, improving audit trails for feature implementation, and enabling tooling to track task-to-commit mappings. This enhances existing conventional commit format with spec/task context without replacing it.
+
+---
+
+### Version 1.7.0 - 2026-02-10
+**Type**: MINOR (UI standards - Tailwind CSS official patterns requirement)
+
+**Changes**:
+- Updated Technology Stack > Frontend: Added requirement to use official Tailwind CSS patterns from https://tailwindcss.com/
+- Added "UI Standards" subsection to Development Standards with specific Tailwind CSS usage requirements:
+  - Mandates using official tailwindcss.com patterns for all screens
+  - Prohibits custom gradients, animations, or non-standard utility classes
+  - Requires semantic Tailwind utilities (`ring-*` for focus, `leading-*` for spacing)
+  - Enforces mobile-first responsive design with standard breakpoints
+  - Specifies form validation and authentication pages must follow official examples
+
+**Rationale**: Recent UI refactoring demonstrated benefits of migrating from custom designs to official Tailwind CSS patterns. Official patterns are community-tested for accessibility, responsive design, and cross-browser compatibility. This constitutional requirement prevents future custom implementations that diverge from Tailwind's design system, ensuring consistency across all screens. Forms, authentication pages, and component layouts leveraging tailwindcss.com examples reduce maintenance overhead and inherit best practices from the Tailwind community.
+
+---
 
 ### Version 1.6.0 - 2026-02-10
 **Type**: PATCH (Documentation clarity - production environment)
