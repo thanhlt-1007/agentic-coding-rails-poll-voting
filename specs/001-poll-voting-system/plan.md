@@ -1,7 +1,7 @@
 # Implementation Plan: Poll Voting System
 
-**Branch**: `001-poll-voting-system` | **Date**: February 10, 2026 | **Spec**: [spec.en.md](spec.en.md) | [spec.vi.md](spec.vi.md)  
-**Input**: Feature specification from `/specs/001-poll-voting-system/spec.en.md`
+**Branch**: `001-poll-voting-system` | **Date**: February 10, 2026 | **Spec**: [spec.md](spec.md)  
+**Input**: Feature specification from `/specs/001-poll-voting-system/spec.md`
 
 ## Summary
 

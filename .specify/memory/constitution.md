@@ -1,32 +1,19 @@
 <!--
 SYNC IMPACT REPORT - Constitution Update
 ========================================
-Version Change: 1.6.0 → 1.7.0
-Type: MINOR (Bilingual specification workflow)
+Version Change: 1.7.0 → 1.6.1
+Type: PATCH (Removed bilingual specification requirement)
 
 Modified Principles: None
-Modified Sections: Development Standards > Documentation Requirements (bilingual spec requirement)
+Modified Sections: Development Standards > Documentation Requirements (removed bilingual spec requirement)
 
 Rationale: 
-  Bilingual documentation (English + Vietnamese) improves accessibility for Vietnamese-speaking
-  team members and stakeholders while maintaining English as the international standard.
-  English specification (spec.en.md) serves as the source of truth, then translated to
-  Vietnamese (spec.vi.md) to ensure consistency. This workflow ensures all stakeholders can
-  review and understand feature specifications in their preferred language.
+  Reverted bilingual specification requirement. Single language (English) specification files
+  (spec.md, plan.md, tasks.md) are sufficient for this project. Bilingual workflow added
+  unnecessary complexity without clear benefit for current team composition.
 
 Template Consistency Status:
-  ⚠️  spec-template.md - Needs update to generate both spec.en.md and spec.vi.md
-  ⚠️  speckit.specify.prompt.md - Needs update to enforce bilingual workflow
-  ✅ plan-template.md - No changes required
-  ✅ tasks-template.md - No changes required
-  ✅ README.md - May need bilingual version (future consideration)
-  ✅ .env.example - No changes required
-
-Follow-up TODOs:
-  - Update spec-template.md to include bilingual instructions
-  - Update speckit.specify command to generate both spec.en.md and spec.vi.md
-  - Translate existing spec.md to spec.en.md and spec.vi.md
-  - Consider bilingual README.md for future releases
+  ✅ All templates consistent with single-language specification workflow
 -->
 
 # Rails Poll Voting Constitution
@@ -192,12 +179,6 @@ Start with the simplest solution that works. Complexity requires explicit justif
   - When setup steps change (database, Redis, background jobs)
   - When new dependencies require local installation
   - All updates MUST maintain accuracy of Quick Start section
-- Feature specifications MUST be bilingual (NON-NEGOTIABLE):
-  - Generate spec.en.md FIRST in English (source of truth)
-  - Translate spec.en.md to spec.vi.md in Vietnamese
-  - Both files MUST be kept in sync when changes occur
-  - English version takes precedence in case of translation discrepancies
-  - Workflow: English specification → Vietnamese translation → validate consistency
 - README updated for new user-facing features
 - Inline comments for non-obvious business logic
 - API documentation via RDoc for public methods
@@ -228,24 +209,21 @@ This constitution supersedes all ad-hoc practices. When in doubt, constitution r
 - Template commands reference constitution for validation gates
 - Onboarding checklist includes constitution review
 
-**Current Version**: 1.7.0 | **Ratified**: 2026-02-10 | **Last Amended**: 2026-02-10
+**Current Version**: 1.6.1 | **Ratified**: 2026-02-10 | **Last Amended**: 2026-02-10
 
 ---
 
 ## Version History
 
-### Version 1.7.0 - 2026-02-10
-**Type**: MINOR (Bilingual specification workflow)
+### Version 1.6.1 - 2026-02-10
+**Type**: PATCH (Removed bilingual specification requirement)
 
 **Changes**:
-- Added bilingual specification requirement to Documentation Requirements section
-- Feature specifications MUST be created in both English (spec.en.md) and Vietnamese (spec.vi.md)
-- English version (spec.en.md) is the source of truth, generated first
-- Vietnamese version (spec.vi.md) is translated from English
-- Both files must be kept in sync when changes occur
-- English takes precedence in case of translation discrepancies
+- Removed bilingual specification requirement from Documentation Requirements section
+- Reverted to single-language specification files (spec.md, plan.md, tasks.md)
+- Deleted Vietnamese translation files (spec.vi.md, plan.vi.md)
 
-**Rationale**: Bilingual documentation improves accessibility for Vietnamese-speaking team members and stakeholders while maintaining English as the international standard. This ensures all stakeholders can review and understand feature specifications in their preferred language. English-first workflow prevents translation drift and establishes clear source of truth. This supports inclusive collaboration while maintaining professional documentation standards required for international deployment.
+**Rationale**: Bilingual workflow added unnecessary complexity without clear benefit for current team composition. Single language (English) specification files are sufficient. This simplification reduces maintenance overhead and aligns with project simplicity principles.
 
 ---
 
