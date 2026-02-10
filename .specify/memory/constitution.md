@@ -1,23 +1,24 @@
 <!--
 SYNC IMPACT REPORT - Constitution Update
 ========================================
-Version Change: 1.0.0 → 1.1.0
-Type: MINOR (Deployment target change)
+Version Change: 1.1.0 → 1.2.0
+Type: MINOR (Environment configuration documentation)
 
 Modified Principles: None
 Modified Sections:
-  - Technology Stack > Deployment: Updated from Kamal 2.0 to Render.com
-  - Development Standards > Workflow: Added Render.com deployment notes
+  - Development Standards: Added Environment Configuration section
+  - Documentation Requirements: Added .env.example maintenance requirement
 
 Rationale: 
-  Render.com provides managed PostgreSQL, Redis, and automatic deployments
-  from Git, reducing infrastructure complexity and maintenance overhead.
-  No Docker containerization needed - Render uses native buildpacks.
+  Explicit environment variable documentation ensures consistent configuration
+  across development, staging, and production. .env.example serves as canonical
+  reference for required and optional environment variables.
 
 Template Consistency Status:
   ✅ plan-template.md - No changes required
   ✅ spec-template.md - No changes required
   ✅ tasks-template.md - No changes required
+  ✅ .env.example - Updated with constitutional requirements
 
 Follow-up TODOs:
   - Configure render.yaml for service definitions
@@ -161,11 +162,27 @@ Start with the simplest solution that works. Complexity requires explicit justif
 - Database migrations: reversible, tested in Render preview environments before production
 - Deployment: Automatic on merge to `main` (via Render.com GitHub integration)
 
+**Environment Configuration**:
+- All configuration via environment variables (12-factor app)
+- .env.example MUST be kept up-to-date with all required/optional variables
+- Secrets NEVER committed to source control (use Rails credentials or ENV)
+- Required variables for production:
+  - DATABASE_URL (Render.com auto-provided)
+  - REDIS_URL (Render.com auto-provided)
+  - RAILS_MASTER_KEY or Rails credentials
+  - RAILS_ENV=production
+  - RAILS_LOG_LEVEL (info or warn recommended)
+- Security variables:
+  - RAILS_FORCE_SSL=true (production)
+  - RACK_ATTACK configuration for rate limiting
+- Feature-specific variables documented in .env.example
+
 **Documentation Requirements**:
 - README updated for new user-facing features
 - Inline comments for non-obvious business logic
 - API documentation via RDoc for public methods
 - Database schema maintained (schema.rb automatically tracked)
+- .env.example updated when new environment variables introduced
 
 ## Governance
 
@@ -190,4 +207,4 @@ This constitution supersedes all ad-hoc practices. When in doubt, constitution r
 - Template commands reference constitution for validation gates
 - Onboarding checklist includes constitution review
 
-**Version**: 1.1.0 | **Ratified**: 2026-02-10 | **Last Amended**: 2026-02-10
+**Version**: 1.2.0 | **Ratified**: 2026-02-10 | **Last Amended**: 2026-02-10
