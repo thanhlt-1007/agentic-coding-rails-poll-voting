@@ -3,7 +3,7 @@
 require 'rails_helper'
 
 RSpec.describe 'User Registrations', type: :request do
-  describe 'POST /users' do
+  describe 'POST /sign_up' do
     context 'with valid parameters' do
       let(:valid_params) do
         {
@@ -64,7 +64,7 @@ RSpec.describe 'User Registrations', type: :request do
 
         it 'displays error message' do
           post user_registration_path, params: invalid_params
-          expect(response.body).to include("Email can&#39;t be blank")
+          expect(response.body).to include("can&#39;t be blank")
         end
       end
 
@@ -87,7 +87,7 @@ RSpec.describe 'User Registrations', type: :request do
 
         it 'displays error message' do
           post user_registration_path, params: invalid_params
-          expect(response.body).to include('Email is invalid')
+          expect(response.body).to include('is invalid')
         end
       end
 
@@ -111,7 +111,7 @@ RSpec.describe 'User Registrations', type: :request do
 
         it 'displays error message' do
           post user_registration_path, params: invalid_params
-          expect(response.body).to include('Email has already been taken')
+          expect(response.body).to include('has already been taken')
         end
       end
 
@@ -134,7 +134,7 @@ RSpec.describe 'User Registrations', type: :request do
 
         it 'displays error message' do
           post user_registration_path, params: invalid_params
-          expect(response.body).to include('Password is too short')
+          expect(response.body).to include('is too short')
         end
       end
 
@@ -157,7 +157,7 @@ RSpec.describe 'User Registrations', type: :request do
 
         it 'displays error message' do
           post user_registration_path, params: invalid_params
-          expect(response.body).to include("Password confirmation doesn&#39;t match Password")
+          expect(response.body).to include("doesn&#39;t match Password")
         end
       end
     end

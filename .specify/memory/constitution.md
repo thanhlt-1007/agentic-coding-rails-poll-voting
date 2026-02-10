@@ -1,71 +1,102 @@
 <!--
 SYNC IMPACT REPORT - Constitution Update
 ========================================
-Version Change: 1.15.0 → 1.16.0
-Type: MINOR (Stimulus/JavaScript interactivity patterns & helper spec enforcement)
+Version Change: 1.17.0 → 1.18.0
+Type: PATCH (Request spec organization clarification and existing spec discovery requirement)
 
 Modified Sections:
-  - Added new principle: X. Stimulus JavaScript Controllers (No Inline JavaScript)
-  - Enhanced Principle II: Test-Driven Development - emphasized helper spec organization
+  - Enhanced Principle II (Test-Driven Development): Added requirement to find existing specs before creating new ones
+  - Expanded "Test Organization" section with organized request spec pattern documentation
+  - Added "Request Spec Organization Patterns" subsection with detailed examples
 
-Added Requirements (Principle X):
-  - ALL JavaScript interactivity MUST use Stimulus controllers
-  - NO inline JavaScript (no onclick, onchange, onsubmit attributes)
-  - Controllers in app/javascript/controllers/ following naming convention
-  - Use data-controller, data-action, data-target attributes for DOM binding
-  - Auto-dismiss patterns (flash messages, notifications) via Stimulus values API
-  - Progressive enhancement: JavaScript enhances, doesn't replace server-rendered functionality
+Changes to TDD Principle:
+  - Added Point 4: "CRITICAL: Find Existing Specs Before Creating New Ones"
+  - Requires using file_search/grep_search to locate existing specs
+  - Documents pattern recognition for organized vs flat request specs
+  - Prevents duplicate spec creation (e.g., registrations_controller_spec.rb when registrations/post_create_spec.rb exists)
 
-Enhanced Requirements (Principle II - Helper Specs):
-  - MANDATORY: Helper specs MUST be organized in spec/helpers/[helper_name]/ subdirectory
-  - ONE spec file per public method: [method_name]_spec.rb
-  - This pattern already existed but is now ENFORCED with explicit examples
-  - When generating helpers: MUST generate corresponding spec files following this structure
+Request Spec Organization Documentation:
+  - Documented PREFERRED pattern: spec/requests/[namespace]/[controller]/[http_method]_[action]_spec.rb
+  - Documented ALTERNATIVE pattern: spec/requests/[namespace]/[controller]_spec.rb (flat file)
+  - Provided comprehensive examples of organized request specs
+  - Listed benefits: clear ownership, faster test runs, easier navigation, better git history, reduced merge conflicts
+  - Defined migration path from flat to organized specs (when to split)
+  - Use organized specs when controller has >3 actions or >100 lines of tests
 
-Directory Structure Added:
-  - app/javascript/controllers/[feature]_controller.js for Stimulus controllers
-  - spec/helpers/[helper_name]/[method_name]_spec.rb for helper specs (MANDATORY pattern)
-
-Benefits Documented (Principle X):
-  - No inline JavaScript (clean HTML, better security via CSP)
-  - Reusable controllers across views
-  - Testable JavaScript behavior
-  - Progressive enhancement (works without JS, enhanced with JS)
-  - Auto-cleanup via disconnect() lifecycle (no memory leaks)
-  - Configurable behavior via data attributes
-
-Rationale (Principle X):
-  Flash messages refactoring revealed need for standardized JavaScript interactivity patterns.
-  Inline onclick/onchange handlers violate Content Security Policy (CSP), are hard to test,
-  and create maintenance burden. Stimulus provides declarative data attributes for DOM binding,
-  lifecycle hooks for cleanup, and values API for configuration. Flash controller demonstrated
-  auto-dismiss pattern: data-controller="flash" data-flash-auto-dismiss-value="true"
-  data-flash-dismiss-after-value="5000". All JavaScript should follow this pattern for
-  consistency, testability, and security.
-
-Rationale (Principle II Enhancement):
-  Flash helper spec generation revealed inconsistency in following helper spec organization
-  pattern. The pattern (spec/helpers/[helper_name]/[method_name]_spec.rb) exists and is used
-  for error_helper but wasn't emphasized enough, leading to flat file generation
-  (spec/helpers/flash_helper_spec.rb initially). Making this MANDATORY and adding explicit
-  examples prevents future violations.
+Rationale:
+  Agent speckit.implement created duplicate spec file (registrations_controller_spec.rb) instead of updating
+  existing organized spec (registrations/post_create_spec.rb). This pattern has existed in project since initial
+  setup but was not documented in constitution. Adding explicit requirement to search for existing specs prevents
+  duplication and maintains project organization. Documenting organized request spec pattern (one file per action)
+  ensures future agents respect existing structure and provides clear guidance on when to use organized vs flat
+  patterns. This is a PATCH version (clarification/documentation) not MINOR (new requirement) because organized
+  specs were already project standard - constitution is catching up to reality.
 
 Template Consistency Status:
-  ✅ plan-template.md - No changes required (JavaScript patterns not in planning phase)
-  ✅ spec-template.md - No changes required (acceptance criteria unchanged)
-  ✅ tasks-template.md - Should add Stimulus controller generation task pattern
-  ✅ README.md - Should document Stimulus controller organization
-  ✅ templates/commands/implement.md - Should enforce helper spec folder structure
+  ✅ plan-template.md - No changes required (spec organization in implementation phase)
+  ✅ spec-template.md - Could add acceptance criteria about spec organization (optional)
+  ✅ tasks-template.md - Should reference searching for existing specs as task step
+  ✅ README.md - Should document organized request spec pattern
 
 Follow-up TODOs:
-  - Update tasks-template.md to include Stimulus controller creation tasks
-  - Add README.md section documenting app/javascript/controllers/ organization
-  - Update implement command to enforce spec/helpers/[helper_name]/ pattern
-  - Consider adding Stimulus controller spec pattern (testing JavaScript controllers)
+  - Update tasks-template.md to include "search for existing spec files" step
+  - Add README.md section explaining organized request spec pattern
+  - Consider adding spec organization linter/checker in CI
 
-Previous Update (v1.15.0):
-  Added View i18n Management principle requiring config/locales/app/views/ locale files
-  for all views with lazy lookup pattern t('.key').
+Previous Update (v1.17.0):
+  Added Controller i18n Management principle (Principle X) and renumbered Stimulus to Principle XI.
+
+Previous Update (v1.16.0):
+  Added Stimulus JavaScript Controllers principle (no inline JavaScript) and enhanced helper spec
+  organization requirement (MANDATORY spec/helpers/[helper_name]/[method_name]_spec.rb pattern).
+
+Added Requirements (Principle X):
+  - When creating/updating controllers, MUST create/update i18n file at config/locales/app/controllers/[path]/[action].en.yml
+  - Controller locale files organized by action (one file per action with user-facing messages)
+  - Include ALL flash messages (success, error, alert, warning, notice)
+  - Organize by controller path: config/locales/app/controllers/users/registrations/create.en.yml matches Users::RegistrationsController#create
+  - Use lazy lookup pattern: t('.key') instead of t('full.path.key')
+  - Rails infers full key from controller class and action name automatically
+  - Update locale file when adding/removing/changing flash messages
+  - Commit locale files alongside controller changes (same PR/commit)
+
+Directory Structure:
+  - config/locales/app/controllers/ mirrors app/controllers/ directory structure
+  - Organized by action: users/registrations/create.en.yml, users/registrations/update.en.yml
+  - Example: Users::RegistrationsController → config/locales/app/controllers/users/registrations/
+  - One locale file per action that has user-facing messages
+
+Benefits Documented:
+  - Centralized controller text (all flash messages in one place per action)
+  - Easy localization (add .es.yml, .fr.yml for multi-language support)
+  - DRY code (no hardcoded strings in controllers)
+  - Consistent messaging (reuse translations)
+  - Lazy lookup reduces verbosity (t('.error') vs t('users.registrations_controller.create.error'))
+
+Rationale:
+  Users::RegistrationsController implementation revealed need for standardized controller i18n management.
+  Hardcoded flash messages in controllers make localization difficult and create maintenance burden.
+  Rails i18n supports lazy lookup (t('.key')) which automatically infers full key from controller class
+  and action name. Creating config/locales/app/controllers/[path]/[action].en.yml per action ensures
+  all flash messages are translatable. Mirroring app/controllers/ directory structure in
+  config/locales/app/controllers/ maintains clear 1:1 mapping. Organizing by action (one file per
+  action) keeps translations focused and prevents large monolithic files. Pattern aligns with Rails
+  i18n best practices and supports future multi-language requirements without code changes.
+
+Template Consistency Status:
+  ✅ plan-template.md - No changes required (i18n management not in planning phase)
+  ✅ spec-template.md - No changes required (acceptance criteria unchanged)
+  ✅ tasks-template.md - Should add controller i18n file generation task pattern
+  ✅ README.md - Should document controller i18n file management process
+
+Follow-up TODOs:
+  - Update tasks-template.md to include controller locale file creation tasks
+  - Add README.md section explaining controller i18n management process
+  - Consider adding controller i18n spec pattern if needed
+
+Previous Update (v1.16.0):
+  Added Stimulus JavaScript Controllers principle (no inline JavaScript) and enhanced helper spec
+  organization requirement (MANDATORY spec/helpers/[helper_name]/[method_name]_spec.rb pattern).
 -->
 
 # Rails Poll Voting Constitution
@@ -156,7 +187,22 @@ end
    - If adding method: Add `describe '#method_name'` with test cases first
    - If changing behavior: Update specs to reflect new expected behavior first
 
-4. **Every Commit MUST Include**:
+4. **CRITICAL: Find Existing Specs Before Creating New Ones**:
+   - **MUST** search for existing spec files before creating new specs
+   - Request specs may be organized by action/HTTP method (e.g., `spec/requests/users/registrations/post_create_spec.rb`)
+   - Use `file_search` or `grep_search` to locate existing specs for the controller/model
+   - If organized specs exist, UPDATE them instead of creating flat controller spec
+   - Example: For `Users::RegistrationsController#create`, look for:
+     - `spec/requests/users/registrations/post_create_spec.rb` (organized by action - PREFERRED)
+     - `spec/requests/users/registrations_controller_spec.rb` (flat controller spec)
+     - `spec/requests/users/registrations_spec.rb` (legacy naming)
+   - **Pattern Recognition**:
+     - If `spec/requests/[namespace]/[controller]/[http_method]_[action]_spec.rb` exists, use it
+     - If `spec/requests/[namespace]/[controller]_spec.rb` exists, use it
+     - Only create new spec if NO existing spec found for that controller
+   - **Benefits**: Prevents spec duplication, maintains project organization, respects existing test structure
+
+5. **Every Commit MUST Include**:
    - Code changes AND corresponding spec updates
    - All specs passing (`bundle exec rspec`)
    - No decrease in test coverage
@@ -205,6 +251,18 @@ spec/
 ├── factories/          # FactoryBot factories for test data
 ├── models/            # Model unit tests
 ├── requests/          # Request specs (controller actions, APIs)
+│   ├── users/         # Namespace-organized request specs
+│   │   ├── registrations/  # Controller-specific directory
+│   │   │   ├── post_create_spec.rb   # One file per action (PREFERRED)
+│   │   │   ├── get_new_spec.rb
+│   │   │   ├── patch_update_spec.rb
+│   │   │   ├── get_edit_spec.rb
+│   │   │   └── delete_destroy_spec.rb
+│   │   ├── sessions/       # Another controller directory
+│   │   │   ├── post_create_spec.rb
+│   │   │   └── delete_destroy_spec.rb
+│   │   └── passwords/      # Yet another controller directory
+│   └── polls_spec.rb      # Alternative: flat file for simple controllers
 ├── system/            # End-to-end browser tests (Capybara)
 ├── helpers/           # Helper method tests (organized by helper module)
 │   ├── error_helper/  # ErrorHelper method specs (one file per method)
@@ -219,6 +277,76 @@ spec/
 ├── rails_helper.rb    # Rails-specific RSpec configuration
 └── spec_helper.rb     # General RSpec configuration
 ```
+
+**Request Spec Organization Patterns**:
+
+This project uses **organized request specs** (one file per controller action) instead of flat controller specs:
+
+**PREFERRED: Organized by Action** (spec/requests/[namespace]/[controller]/[http_method]_[action]_spec.rb):
+```
+spec/requests/users/registrations/
+├── post_create_spec.rb      # POST /sign_up (registration creation)
+├── get_new_spec.rb          # GET /sign_up (registration form)
+├── patch_update_spec.rb     # PATCH /users (account update)
+├── get_edit_spec.rb         # GET /users/edit (account form)
+└── delete_destroy_spec.rb   # DELETE /users (account deletion)
+```
+
+Each file tests ONE controller action comprehensively:
+```ruby
+# spec/requests/users/registrations/post_create_spec.rb
+RSpec.describe 'User Registrations', type: :request do
+  describe 'POST /sign_up' do
+    context 'with valid parameters' do
+      it 'creates a new user'
+      it 'signs in the user automatically'
+      it 'redirects to root path'
+      it 'sets a success flash message'
+    end
+
+    context 'with invalid parameters' do
+      context 'when email is blank' do
+        it 'does not create a new user'
+        it 'returns unprocessable entity status'
+        it 'displays error message'
+      end
+      # ... more validation scenarios
+    end
+  end
+end
+```
+
+**Benefits of Organized Request Specs**:
+- **Clear ownership**: Each file maps 1:1 with controller action
+- **Faster test runs**: Run only tests for action being worked on
+- **Easier navigation**: Find tests by action name, not line number
+- **Better git history**: Action changes affect single spec file
+- **Reduced merge conflicts**: Team members work on different action spec files
+- **Comprehensive coverage**: Dedicated file encourages thorough testing of edge cases
+
+**ALTERNATIVE: Flat Controller Spec** (spec/requests/[namespace]/[controller]_spec.rb):
+```ruby
+# spec/requests/polls_spec.rb - acceptable for simple controllers
+RSpec.describe 'Polls', type: :request do
+  describe 'GET /polls' do
+    # index action tests
+  end
+
+  describe 'POST /polls' do
+    # create action tests
+  end
+end
+```
+
+Use flat controller specs ONLY when:
+- Controller has ≤3 actions
+- Each action has ≤5 test cases
+- Team hasn't established organized pattern yet
+
+**Migration Path**:
+- When flat controller spec grows beyond 100 lines, split into organized action specs
+- When adding 4th action to controller, reorganize into action-based structure
+- Don't mix patterns: if controller has organized specs, maintain that pattern
 
 **Helper Spec Organization Pattern**:
 
@@ -765,7 +893,149 @@ config/locales/
 
 ---
 
-### X. Stimulus JavaScript Controllers (No Inline JavaScript)
+### X. Application Controller Internationalization (i18n) Management
+
+When creating or updating controllers in `app/controllers/`, corresponding i18n locale files MUST be created/updated in `config/locales/app/controllers/` to provide translations for flash messages and other user-facing text.
+
+**Requirements**:
+- **Directory organization**: `config/locales/app/controllers/[controller_path]/[action].en.yml`
+  - Mirrors controller path: `app/controllers/users/registrations_controller.rb` → `config/locales/app/controllers/users/registrations/`
+  - One file per action that has user-facing messages: `create.en.yml`, `update.en.yml`, `destroy.en.yml`
+  - Example: `config/locales/app/controllers/users/registrations/create.en.yml`
+  - Example: `config/locales/app/controllers/polls/create.en.yml`
+- **Content**: Include ALL user-facing text from controller actions
+  - Flash messages (success, error, alert, warning, notice)
+  - Redirect messages
+  - Confirmation messages
+  - Any text set via `flash[:key] = "message"`
+- **Lazy lookup pattern**: Use `t('.key')` in controller actions
+  - Rails automatically infers full key from controller class and action name
+  - Example: In `Users::RegistrationsController#create`, `t('.error')` resolves to `users.registrations.create.error`
+  - Note: Controller lazy lookup uses controller path WITHOUT `_controller` suffix
+  - Shorter, more maintainable than `t('users.registrations.create.error')`
+- **Namespace convention**: Follow controller class hierarchy WITHOUT `_controller` suffix
+  - Namespaced controllers: `users.registrations.create.key` (NOT `users.registrations_controller`)
+  - Top-level controllers: `polls.create.key` (NOT `polls_controller`)
+- **Synchronization**: Update locale file when adding/removing/changing flash messages in controller actions
+- **Commit together**: Controller changes and locale file updates in same PR/commit
+- **Version control**: Locale files MUST be committed to git
+
+**Implementation Process**:
+```bash
+# When creating Users::RegistrationsController with create action
+# Immediately create corresponding locale file
+mkdir -p config/locales/app/controllers/users/registrations
+touch config/locales/app/controllers/users/registrations/create.en.yml
+
+# Add all flash messages and user-facing text
+```
+
+**Controller Locale File Template**:
+```yaml
+en:
+  [namespace]:
+    [controller_name]:  # WITHOUT _controller suffix
+      [action]:
+        success: "[Success Message]"
+        error: "[Error Message]"
+        notice: "[Notice Message]"
+        # Add all flash message keys
+```
+
+**Example - Users::RegistrationsController#create**:
+```yaml
+# config/locales/app/controllers/users/registrations/create.en.yml
+en:
+  users:
+    registrations:  # NOT registrations_controller
+      create:
+        error: "Registration failed"
+        success: "Welcome! You have signed up successfully."
+```
+
+**Usage in Controllers** (Lazy Lookup):
+```ruby
+# app/controllers/users/registrations_controller.rb
+class Users::RegistrationsController < Devise::RegistrationsController
+  def create
+    super do |resource|
+      if !resource.persisted? && resource.errors.any?
+        flash.now[:alert] = t('.error')  # Resolves to users.registrations.create.error
+      end
+    end
+  end
+end
+```
+
+**Locale File Organization**:
+```
+config/locales/
+├── en.yml                          # Global application translations
+├── app/
+│   ├── models/                     # Model translations
+│   │   ├── user.en.yml
+│   │   └── poll.en.yml
+│   ├── views/                      # View translations (mirrors app/views/)
+│   │   ├── devise/
+│   │   │   ├── sessions/
+│   │   │   │   └── new.en.yml
+│   │   │   └── registrations/
+│   │   │       └── new.en.yml
+│   │   └── polls/
+│   │       └── index.en.yml
+│   └── controllers/                # Controller translations (mirrors app/controllers/)
+│       ├── users/
+│       │   └── registrations/
+│       │       ├── create.en.yml
+│       │       └── update.en.yml
+│       └── polls/
+│           ├── create.en.yml
+│           ├── update.en.yml
+│           └── destroy.en.yml
+└── gems/                           # Gem locale files
+    ├── rails/
+    └── devise/
+```
+
+**Benefits**:
+- **Centralized controller text**: All flash messages in one place per action
+- **Easy localization**: Add `.es.yml`, `.fr.yml` files for multi-language support
+- **DRY code**: No hardcoded strings in controllers
+- **Consistent messaging**: Reuse translations across controllers via shared keys
+- **Lazy lookup**: Reduces verbosity (`t('.error')` vs `t('users.registrations_controller.create.error')`)
+- **Maintainability**: Clear 1:1 mapping between controller actions and their messages
+- **Refactoring safety**: Change messaging without touching controller code
+- **Testable**: i18n keys can be verified in controller specs
+
+**Maintenance Workflow**:
+1. Add/modify flash message in controller action
+2. Update `config/locales/app/controllers/[path]/[action].en.yml` with new/changed translations
+3. Use lazy lookup `t('.key')` in controller
+4. Verify message displays correctly
+5. Commit controller and locale file together
+6. Review: ensure no hardcoded strings remain in controller actions
+
+**Controller Spec Pattern** (Optional but recommended):
+```ruby
+# spec/requests/users/registrations_controller_spec.rb
+RSpec.describe Users::RegistrationsController, type: :request do
+  describe 'POST /sign_up' do
+    context 'when registration fails' do
+      it 'sets flash alert with translated error message' do
+        post user_registration_path, params: { user: { email: '' } }
+        
+        expect(flash[:alert]).to eq(I18n.t('users.registrations.create.error'))
+      end
+    end
+  end
+end
+```
+
+**Rationale**: Hardcoded flash messages in controllers make localization difficult and create maintenance burden when copy changes. Rails i18n supports lazy lookup (`t('.key')`) which automatically infers full key from controller class and action name, reducing verbosity and improving maintainability. Creating `config/locales/app/controllers/[path]/[action].en.yml` per action ensures all flash messages are translatable. Mirroring `app/controllers/` directory structure in `config/locales/app/controllers/` maintains clear 1:1 mapping and makes locale files easy to find. Organizing by action (one file per action) keeps translations focused and prevents large monolithic files. This pattern aligns with Rails i18n best practices and supports future multi-language requirements without code changes.
+
+---
+
+### XI. Stimulus JavaScript Controllers (No Inline JavaScript)
 
 ALL JavaScript interactivity MUST be implemented using Stimulus controllers. Inline JavaScript (onclick, onchange, onsubmit, etc.) is PROHIBITED.
 
@@ -1108,11 +1378,77 @@ This constitution supersedes all ad-hoc practices. When in doubt, constitution r
 - Template commands reference constitution for validation gates
 - Onboarding checklist includes constitution review
 
-**Current Version**: 1.15.0 | **Ratified**: 2026-02-10 | **Last Amended**: 2026-02-11
+**Current Version**: 1.18.0 | **Ratified**: 2026-02-10 | **Last Amended**: 2026-02-11
 
 ---
 
 ## Version History
+
+### Version 1.18.0 - 2026-02-11
+**Type**: PATCH (Request spec organization clarification and existing spec discovery requirement)
+
+**Changes**:
+- Enhanced Principle II (Test-Driven Development):
+  - Added Point 4: "CRITICAL: Find Existing Specs Before Creating New Ones"
+  - MUST search for existing spec files using file_search or grep_search before creating new specs
+  - Request specs may be organized by action/HTTP method (e.g., spec/requests/users/registrations/post_create_spec.rb)
+  - If organized specs exist for a controller, UPDATE them instead of creating flat controller spec
+  - Added pattern recognition guidelines for finding specs:
+    - spec/requests/[namespace]/[controller]/[http_method]_[action]_spec.rb (organized by action - PREFERRED)
+    - spec/requests/[namespace]/[controller]_spec.rb (flat controller spec - ALTERNATIVE)
+  - Listed benefits: prevents spec duplication, maintains project organization, respects existing test structure
+- Expanded "Test Organization" section:
+  - Documented organized request spec pattern (one file per controller action)
+  - Added comprehensive directory structure examples showing namespace/controller/action organization
+  - Added "Request Spec Organization Patterns" subsection with detailed examples
+  - Documented PREFERRED pattern: spec/requests/users/registrations/post_create_spec.rb (one file per action)
+  - Documented ALTERNATIVE pattern: spec/requests/polls_spec.rb (flat file for simple controllers)
+  - Provided complete example spec structure for organized pattern
+  - Listed benefits of organized request specs:
+    - Clear ownership (1:1 mapping with controller action)
+    - Faster test runs (run only tests for action being worked on)
+    - Easier navigation (find tests by action name, not line number)
+    - Better git history (action changes affect single spec file)
+    - Reduced merge conflicts (team members work on different action spec files)
+    - Comprehensive coverage (dedicated file encourages thorough testing of edge cases)
+  - Defined when to use flat vs organized specs:
+    - Flat acceptable when: controller has ≤3 actions, each action has ≤5 test cases, team hasn't established organized pattern
+    - Use organized when: controller has >3 actions or >100 lines of tests
+  - Added migration path: split flat specs into organized when growing beyond 100 lines or adding 4th action
+  - Emphasized: "Don't mix patterns - if controller has organized specs, maintain that pattern"
+
+**Rationale**: Agent speckit.implement created duplicate spec file (spec/requests/users/registrations_controller_spec.rb) instead of updating existing organized spec (spec/requests/users/registrations/post_create_spec.rb). This organized pattern has existed in project since initial setup but was not documented in constitution, causing agents to create flat controller specs when organized action-based specs already existed. Adding explicit requirement to search for existing specs prevents duplication and maintains project organization. Documenting organized request spec pattern (one file per action) ensures future agents respect existing structure and provides clear guidance on when to use organized vs flat patterns. This is a PATCH version (clarification/documentation) rather than MINOR (new requirement) because organized specs were already the project standard - constitution is catching up to reality rather than introducing new rules. No code changes required, only procedural clarification to prevent future spec duplication.
+
+---
+
+### Version 1.17.0 - 2026-02-11
+**Type**: MINOR (Controller i18n management requirement)
+
+**Changes**:
+- Added new principle: X. Application Controller Internationalization (i18n) Management
+- Renumbered existing Principle X (Stimulus JavaScript Controllers) → Principle XI
+- Established requirements for controller locale files:
+  - Create/update config/locales/app/controllers/[path]/[action].en.yml when creating/updating controllers
+  - Mirror app/controllers/ directory structure in config/locales/app/controllers/
+  - Organize by action (one file per action with user-facing messages)
+  - Include ALL flash messages (success, error, alert, warning, notice)
+  - Use lazy lookup pattern: t('.key') instead of t('full.path.key')
+  - Rails infers full key from controller class and action name automatically
+  - Update locale file when adding/removing/changing flash messages
+  - Commit locale files alongside controller changes (same PR/commit)
+- Added implementation process with controller locale file template
+- Added example for Users::RegistrationsController#create showing flash message pattern
+- Added usage examples demonstrating lazy lookup: t('.error'), t('.success')
+- Updated locale file organization structure:
+  - Added config/locales/app/controllers/ mirroring app/controllers/ directory structure
+  - Example paths: users/registrations/create.en.yml, polls/create.en.yml
+  - One locale file per action that has user-facing messages
+- Added maintenance workflow (modify flash message → update locale → use t('.key') → commit together)
+- Listed benefits: centralized controller text, easy localization, DRY code, consistent messaging, lazy lookup reduces verbosity, maintainability, refactoring safety, testable
+
+**Rationale**: Users::RegistrationsController implementation revealed need for standardized controller i18n management. Hardcoded flash messages in controllers make localization difficult and create maintenance burden when copy changes. Rails i18n supports lazy lookup (t('.key')) which automatically infers full key from controller class and action name, reducing verbosity and improving maintainability. Creating config/locales/app/controllers/[path]/[action].en.yml per action ensures all flash messages are translatable. Mirroring app/controllers/ directory structure in config/locales/app/controllers/ maintains clear 1:1 mapping and makes locale files easy to find. Organizing by action (one file per action) keeps translations focused and prevents large monolithic files. This pattern aligns with Rails i18n best practices and supports future multi-language requirements without code changes.
+
+---
 
 ### Version 1.16.0 - 2026-02-11
 **Type**: MINOR (Stimulus JavaScript interactivity patterns & helper spec enforcement)

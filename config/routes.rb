@@ -3,6 +3,8 @@ Rails.application.routes.draw do
     sign_in: 'login',
     sign_out: 'logout',
     sign_up: 'sign_up'
+  }, controllers: {
+    registrations: 'users/registrations'
   }
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 
