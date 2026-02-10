@@ -6,7 +6,17 @@ module Me
     before_action :authenticate_poll!, only: :show
 
     def index
-      @polls = current_user.polls.recent
+      @filter = params[:filter] || 'all'
+      @polls = current_user.polls
+      
+      case @filter
+      when 'active'
+        @polls = @polls.active
+      when 'expired'
+        @polls = @polls.expired
+      end
+      
+      @polls = @polls.recent
     end
 
     def new
