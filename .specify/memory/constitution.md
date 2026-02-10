@@ -1,47 +1,50 @@
 <!--
 SYNC IMPACT REPORT - Constitution Update
 ========================================
-Version Change: 1.17.0 → 1.18.0
-Type: PATCH (Request spec organization clarification and existing spec discovery requirement)
+Version Change: 1.18.0 → 1.19.0
+Type: MINOR (View i18n 1:1 mapping pattern for partials)
 
 Modified Sections:
-  - Enhanced Principle II (Test-Driven Development): Added requirement to find existing specs before creating new ones
-  - Expanded "Test Organization" section with organized request spec pattern documentation
-  - Added "Request Spec Organization Patterns" subsection with detailed examples
+  - Enhanced Principle IX (Application View Internationalization): Added 1:1 mapping pattern for partials
+  - Added partial locale file organization requirements
+  - Added refactoring workflow for splitting views into partials with corresponding locale files
 
-Changes to TDD Principle:
-  - Added Point 4: "CRITICAL: Find Existing Specs Before Creating New Ones"
-  - Requires using file_search/grep_search to locate existing specs
-  - Documents pattern recognition for organized vs flat request specs
-  - Prevents duplicate spec creation (e.g., registrations_controller_spec.rb when registrations/post_create_spec.rb exists)
-
-Request Spec Organization Documentation:
-  - Documented PREFERRED pattern: spec/requests/[namespace]/[controller]/[http_method]_[action]_spec.rb
-  - Documented ALTERNATIVE pattern: spec/requests/[namespace]/[controller]_spec.rb (flat file)
-  - Provided comprehensive examples of organized request specs
-  - Listed benefits: clear ownership, faster test runs, easier navigation, better git history, reduced merge conflicts
-  - Defined migration path from flat to organized specs (when to split)
-  - Use organized specs when controller has >3 actions or >100 lines of tests
+Changes to View i18n Principle:
+  - Added "1:1 Mapping Pattern" requirement: each .html.erb file has corresponding .en.yml file
+  - Documented partial locale file naming: app/views/path/_partial.html.erb → config/locales/app/views/path/partial.en.yml
+  - Added partial translation scoping: devise.sessions.new.[partial_name].[key]
+  - Added "Scope to partial" requirement: each partial's locale file contains ONLY translations for that partial
+  - Updated lazy lookup examples to show partial-scoped resolution
+  - Added complete example with multiple partial locale files
+  - Updated locale file organization structure to show partial subdirectory pattern
+  - Added refactoring workflow for splitting monolithic view locale files into partial-specific files
+  - Enhanced benefits list with partial-specific advantages (modular organization, scoped translations, 1:1 file mapping)
 
 Rationale:
-  Agent speckit.implement created duplicate spec file (registrations_controller_spec.rb) instead of updating
-  existing organized spec (registrations/post_create_spec.rb). This pattern has existed in project since initial
-  setup but was not documented in constitution. Adding explicit requirement to search for existing specs prevents
-  duplication and maintains project organization. Documenting organized request spec pattern (one file per action)
-  ensures future agents respect existing structure and provides clear guidance on when to use organized vs flat
-  patterns. This is a PATCH version (clarification/documentation) not MINOR (new requirement) because organized
-  specs were already project standard - constitution is catching up to reality.
+  Session login view refactoring revealed need for documenting partial i18n pattern. Project split
+  sessions/new.html.erb into partials (_header, _form_email, _form_password, _form_button_submit)
+  and correspondingly split new.en.yml into partial-specific locale files (header.en.yml,
+  form_email.en.yml, etc.). This 1:1 mapping between partial files and locale files improves
+  maintainability and makes it clear where to find/update translations for each UI component.
+  Rails lazy lookup automatically scopes partial translations under partial name, preventing key
+  collisions. Pattern was already implemented but not documented. Adding to constitution ensures
+  future view refactorings follow this pattern consistently. This is MINOR (new pattern requirement)
+  because it extends existing view i18n principle with partial-specific guidance.
 
 Template Consistency Status:
-  ✅ plan-template.md - No changes required (spec organization in implementation phase)
-  ✅ spec-template.md - Could add acceptance criteria about spec organization (optional)
-  ✅ tasks-template.md - Should reference searching for existing specs as task step
-  ✅ README.md - Should document organized request spec pattern
+  ✅ plan-template.md - No changes required (i18n in implementation phase)
+  ✅ spec-template.md - No changes required (acceptance criteria unchanged)
+  ✅ tasks-template.md - Should add task for splitting locale files when creating partials
+  ✅ README.md - Should document 1:1 view/partial i18n mapping pattern
 
 Follow-up TODOs:
-  - Update tasks-template.md to include "search for existing spec files" step
-  - Add README.md section explaining organized request spec pattern
-  - Consider adding spec organization linter/checker in CI
+  - Update tasks-template.md to include "create partial locale file" step when creating partials
+  - Add README.md section explaining 1:1 view/partial i18n mapping
+  - Consider adding locale file organization checker in CI
+
+Previous Update (v1.18.0):
+  Enhanced TDD principle with requirement to find existing specs before creating new ones.
+  Documented organized request spec pattern (one file per action).
 
 Previous Update (v1.17.0):
   Added Controller i18n Management principle (Principle X) and renumbered Stimulus to Principle XI.
@@ -784,22 +787,36 @@ When creating or updating views in `app/views/`, corresponding i18n locale files
 
 **Requirements**:
 - **Directory organization**: `config/locales/app/views/[path]/[view_name].en.yml`
-  - Mirrors `app/views/` directory structure
-  - Example: `app/views/devise/sessions/new.html.erb` → `config/locales/app/views/devise/sessions/new.en.yml`
-  - Example: `app/views/polls/index.html.erb` → `config/locales/app/views/polls/index.en.yml`
-- **Content**: Include ALL user-facing text
+  - Mirrors `app/views/` directory structure exactly
+  - **1:1 Mapping Pattern**: Each `.html.erb` file has corresponding `.en.yml` file
+  - Main views: `app/views/devise/sessions/new.html.erb` → `config/locales/app/views/devise/sessions/new.en.yml`
+  - **Partials**: `app/views/devise/sessions/new/_header.html.erb` → `config/locales/app/views/devise/sessions/new/header.en.yml`
+  - Remove leading underscore from partial name in locale file
+  - Partials nested in subdirectory: `app/views/[path]/[view]/` → `config/locales/app/views/[path]/[view]/`
+  - Example structure:
+    ```
+    app/views/devise/sessions/new/
+    ├── _header.html.erb           → config/locales/app/views/devise/sessions/new/header.en.yml
+    ├── _form_email.html.erb       → config/locales/app/views/devise/sessions/new/form_email.en.yml
+    └── _form_button_submit.html.erb → config/locales/app/views/devise/sessions/new/form_button_submit.en.yml
+    ```
+- **Content**: Include ALL user-facing text for that specific view/partial only
   - Page titles and headings
   - Button labels and link text
   - Form labels and placeholders
   - Helper text and instructions
   - Success/error messages specific to the view
+  - **Scope to partial**: Each partial's locale file contains ONLY translations used in that partial
 - **Lazy lookup pattern**: Use `t('.key')` instead of full path
-  - Rails automatically infers full key from view path
-  - Example: In `app/views/devise/sessions/new.html.erb`, `t('.title')` resolves to `devise.sessions.new.title`
-  - Shorter, more maintainable than `t('devise.sessions.new.title')`
+  - Rails automatically infers full key from view path and partial name
+  - In main view `app/views/devise/sessions/new.html.erb`: `t('.title')` → `devise.sessions.new.title`
+  - In partial `app/views/devise/sessions/new/_header.html.erb`: `t('.title')` → `devise.sessions.new.header.title`
+  - Partial translations scoped under partial name: `devise.sessions.new.[partial_name].[key]`
+  - Shorter, more maintainable than full paths
 - **Synchronization**: Update locale file when adding/removing/changing user-facing text in views
 - **Commit together**: View changes and locale file updates in same PR/commit
 - **Version control**: Locale files MUST be committed to git
+- **Refactoring**: When splitting view into partials, split locale file into corresponding partial locale files
 
 **Implementation Process**:
 ```bash
@@ -813,6 +830,7 @@ touch config/locales/app/views/devise/sessions/new.en.yml
 
 **View Locale File Template**:
 ```yaml
+# Main view locale file
 en:
   [controller]:
     [action]:
@@ -821,30 +839,88 @@ en:
         subtitle: "[Subtitle or Description]"
         button_name: "[Button Text]"
         field_placeholder: "[Placeholder Text]"
-        # Add all user-facing strings
+        # Add all user-facing strings for main view
+
+# Partial locale file (scoped under partial name)
+en:
+  [controller]:
+    [action]:
+      [view_name]:
+        [partial_name]:  # Scoped under partial name (without underscore)
+          key: "[Translation]"
+          # Add only strings used in this specific partial
 ```
 
-**Example - Devise Sessions New View**:
+**Example - Devise Sessions New View with Partials**:
+
+Main view locale (if needed for view-level translations):
 ```yaml
-# config/locales/app/views/devise/sessions/new.en.yml
+# config/locales/app/views/devise/sessions/new.en.yml (optional if all text in partials)
 en:
   devise:
     sessions:
       new:
-        title: "Welcome Back"
-        subtitle: "Sign in to continue to your account"
-        submit_button: "Log in"
-        email_placeholder: "you@example.com"
-        password_placeholder: "••••••••"
+        # View-level translations (if any)
+```
+
+Partial locale files (1:1 mapping with each partial):
+```yaml
+# config/locales/app/views/devise/sessions/new/header.en.yml
+en:
+  devise:
+    sessions:
+      new:
+        header:
+          title: "Welcome Back"
+          subtitle: "Sign in to continue to your account"
+
+# config/locales/app/views/devise/sessions/new/form_email.en.yml
+en:
+  devise:
+    sessions:
+      new:
+        form_email:
+          email_placeholder: "you@example.com"
+
+# config/locales/app/views/devise/sessions/new/form_password.en.yml
+en:
+  devise:
+    sessions:
+      new:
+        form_password:
+          password_placeholder: "••••••••"
+
+# config/locales/app/views/devise/sessions/new/form_button_submit.en.yml
+en:
+  devise:
+    sessions:
+      new:
+        form_button_submit:
+          submit_button: "Log in"
 ```
 
 **Usage in Views** (Lazy Lookup):
+
+Main view:
 ```erb
 <!-- app/views/devise/sessions/new.html.erb -->
-<h2><%= t('.title') %></h2>
-<p><%= t('.subtitle') %></p>
-<%= f.submit t('.submit_button') %>
-<%= f.email_field :email, placeholder: t('.email_placeholder') %>
+<%= render 'devise/sessions/new/header' %>
+<%= render 'devise/sessions/new/form_email', f: f %>
+```
+
+Partials (lazy lookup scoped to partial name):
+```erb
+<!-- app/views/devise/sessions/new/_header.html.erb -->
+<h2><%= t('.title') %></h2>  <!-- Resolves to devise.sessions.new.header.title -->
+<p><%= t('.subtitle') %></p>  <!-- Resolves to devise.sessions.new.header.subtitle -->
+
+<!-- app/views/devise/sessions/new/_form_email.html.erb -->
+<%= f.email_field :email, placeholder: t('.email_placeholder') %>  
+<!-- Resolves to devise.sessions.new.form_email.email_placeholder -->
+
+<!-- app/views/devise/sessions/new/_form_button_submit.html.erb -->
+<%= f.submit t('.submit_button') %>  
+<!-- Resolves to devise.sessions.new.form_button_submit.submit_button -->
 ```
 
 **Locale File Organization**:
@@ -855,12 +931,20 @@ config/locales/
 │   ├── models/                     # Model translations
 │   │   ├── user.en.yml
 │   │   └── poll.en.yml
+│   ├── controllers/                # Controller translations
+│   │   └── users/
+│   │       └── registrations/
+│   │           └── create.yml
 │   └── views/                      # View translations (mirrors app/views/)
 │       ├── devise/
 │       │   ├── sessions/
-│       │   │   └── new.en.yml
+│       │   │   └── new/            # Partial locale files (1:1 with partials)
+│       │   │       ├── header.en.yml
+│       │   │       ├── form_email.en.yml
+│       │   │       ├── form_password.en.yml
+│       │   │       └── form_button_submit.en.yml
 │       │   └── registrations/
-│       │       ├── new.en.yml
+│       │       ├── new.en.yml      # Main view locale (if needed)
 │       │       └── edit.en.yml
 │       └── polls/
 │           ├── index.en.yml
@@ -872,24 +956,57 @@ config/locales/
 ```
 
 **Benefits**:
-- **Centralized view text**: All user-facing strings in one place per view
-- **Easy localization**: Add `.es.yml`, `.fr.yml` files for multi-language support
-- **DRY code**: No hardcoded strings in views
+- **1:1 File Mapping**: Each `.html.erb` file (view or partial) has exactly one `.en.yml` file
+- **Centralized partial text**: All user-facing strings for a partial in one dedicated file
+- **Easy localization**: Add `.es.yml`, `.fr.yml` files for multi-language support (same 1:1 structure)
+- **DRY code**: No hardcoded strings in views or partials
 - **Consistent wording**: Reuse translations across views via shared keys
-- **Lazy lookup**: Reduces verbosity (`t('.title')` vs `t('devise.sessions.new.title')`)
-- **Maintainability**: Clear 1:1 mapping between views and their translations
-- **Refactoring safety**: Change wording without touching view code
+- **Lazy lookup**: Reduces verbosity (`t('.title')` vs `t('devise.sessions.new.header.title')`)
+- **Maintainability**: Clear 1:1 mapping between partials and their translations makes finding/updating text trivial
+- **Refactoring safety**: Change wording without touching view code; split view into partials without losing organization
 - **Designer-friendly**: Non-technical team members can update copy in YAML files
+- **Scoped translations**: Partial translations automatically scoped under partial name, preventing key collisions
+- **Modular organization**: When extracting partial, extract its translations into dedicated locale file simultaneously
 
 **Maintenance Workflow**:
-1. Add/modify text in view template
-2. Update `config/locales/app/views/[path]/[view].en.yml` with new/changed translations
-3. Use lazy lookup `t('.key')` in view
+1. Add/modify text in view template or partial
+2. Update corresponding `config/locales/app/views/[path]/[file].en.yml` with new/changed translations
+   - Main view: `config/locales/app/views/[path]/[view].en.yml`
+   - Partial: `config/locales/app/views/[path]/[view]/[partial].en.yml` (remove underscore from partial name)
+3. Use lazy lookup `t('.key')` in view/partial
 4. Verify translation displays correctly
-5. Commit view and locale file together
-6. Review: ensure no hardcoded strings remain in view
+5. Commit view/partial and locale file together
+6. Review: ensure no hardcoded strings remain
 
-**Rationale**: Hardcoded strings in views make localization difficult and create maintenance burden when copy changes. Rails i18n supports lazy lookup (`t('.key')`) which automatically infers full key from view path, reducing verbosity and improving maintainability. Creating `config/locales/app/views/[path]/[view].en.yml` per view ensures all user-facing text is translatable. Mirroring `app/views/` directory structure in `config/locales/app/views/` maintains clear 1:1 mapping and makes locale files easy to find. This pattern aligns with Rails i18n best practices and supports future multi-language requirements without code changes.
+**Refactoring Workflow (Splitting Views into Partials)**:
+1. Identify sections of view to extract as partials
+2. Create partial files in `app/views/[path]/[view]/` directory
+3. Split existing locale file into partial-specific locale files:
+   - Create `config/locales/app/views/[path]/[view]/` directory
+   - Create one `.en.yml` file per partial (remove underscore from partial name)
+   - Move relevant translations from main locale file to partial locale files
+   - Scope translations under partial name: `[view].[partial_name].[key]`
+4. Update lazy lookup calls in partials to use `t('.key')`
+5. Delete main view locale file if all translations moved to partials
+6. Test that all translations resolve correctly
+7. Commit view refactoring and locale restructuring together
+
+**Example Refactoring**:
+```bash
+# Before: monolithic view
+app/views/devise/sessions/new.html.erb
+config/locales/app/views/devise/sessions/new.en.yml  # All translations here
+
+# After: split into partials with 1:1 locale mapping
+app/views/devise/sessions/new.html.erb              # Renders partials
+app/views/devise/sessions/new/_header.html.erb
+app/views/devise/sessions/new/_form_email.html.erb
+config/locales/app/views/devise/sessions/new/header.en.yml        # Header translations
+config/locales/app/views/devise/sessions/new/form_email.en.yml    # Email field translations
+# Main locale file deleted (all translations now in partial files)
+```
+
+**Rationale**: Hardcoded strings in views make localization difficult and create maintenance burden when copy changes. Rails i18n supports lazy lookup (`t('.key')`) which automatically infers full key from view path and partial name, reducing verbosity and improving maintainability. The **1:1 mapping pattern** ensures each `.html.erb` file (view or partial) has exactly one corresponding `.en.yml` locale file, making it trivial to find and update translations. When refactoring monolithic views into smaller partials, locale files should be split similarly to maintain this 1:1 relationship. Partial translations are automatically scoped under the partial name (e.g., `devise.sessions.new.header.title` for `_header.html.erb`), preventing key collisions and organizing translations hierarchically. This pattern scales well: small views can use a single locale file, while complex views split into partials have dedicated locale files per partial. Mirroring `app/views/` directory structure in `config/locales/app/views/` maintains clear mapping. This aligns with Rails i18n best practices, supports future multi-language requirements without code changes, and makes view refactoring safer by ensuring translations move with their partials.
 
 ---
 
@@ -1378,11 +1495,49 @@ This constitution supersedes all ad-hoc practices. When in doubt, constitution r
 - Template commands reference constitution for validation gates
 - Onboarding checklist includes constitution review
 
-**Current Version**: 1.18.0 | **Ratified**: 2026-02-10 | **Last Amended**: 2026-02-11
+**Current Version**: 1.19.0 | **Ratified**: 2026-02-10 | **Last Amended**: 2026-02-11
 
 ---
 
 ## Version History
+
+### Version 1.19.0 - 2026-02-11
+**Type**: MINOR (View i18n 1:1 mapping pattern for partials)
+
+**Changes**:
+- Enhanced Principle IX (Application View Internationalization):
+  - Added **1:1 Mapping Pattern** requirement: each `.html.erb` file (view or partial) has exactly one corresponding `.en.yml` locale file
+  - Documented partial locale file naming convention:
+    - Partial file: `app/views/[path]/[view]/_partial.html.erb`
+    - Locale file: `config/locales/app/views/[path]/[view]/partial.en.yml` (remove underscore from partial name)
+    - Example: `app/views/devise/sessions/new/_header.html.erb` → `config/locales/app/views/devise/sessions/new/header.en.yml`
+  - Added partial translation scoping under partial name:
+    - Main view: `t('.title')` → `devise.sessions.new.title`
+    - Partial: `t('.title')` in `_header.html.erb` → `devise.sessions.new.header.title`
+  - Added "Scope to partial" requirement: each partial's locale file contains ONLY translations used in that specific partial
+  - Updated view locale file template to show both main view and partial locale structure
+  - Added complete example showing 4 partial locale files for sessions/new:
+    - `header.en.yml` (title, subtitle)
+    - `form_email.en.yml` (email_placeholder)
+    - `form_password.en.yml` (password_placeholder)
+    - `form_button_submit.en.yml` (submit_button)
+  - Updated lazy lookup usage examples to demonstrate partial-scoped resolution with comments
+  - Updated locale file organization structure to show partial subdirectory pattern
+  - Added "Refactoring Workflow" section documenting how to split monolithic view locale files into partial-specific files:
+    - Step-by-step process for extracting partials with corresponding locale files
+    - Example showing before/after directory structure
+    - Guidance on moving translations from main locale file to partial locale files
+    - Emphasis on scoping translations under partial name
+  - Enhanced benefits list with partial-specific advantages:
+    - 1:1 File Mapping (each file has exactly one locale file)
+    - Centralized partial text (all strings for partial in one dedicated file)
+    - Scoped translations (automatic scoping under partial name prevents key collisions)
+    - Modular organization (extract partial with its translations simultaneously)
+  - Updated rationale to explain 1:1 mapping benefits, partial scoping, and scalability
+
+**Rationale**: Session login view refactoring (splitting `sessions/new.html.erb` into partials) revealed need for documenting partial i18n pattern. Project split view into 4 partials (`_header`, `_form_email`, `_form_password`, `_form_button_submit`) and correspondingly split monolithic `new.en.yml` into 4 partial-specific locale files (`header.en.yml`, `form_email.en.yml`, `form_password.en.yml`, `form_button_submit.en.yml`). This 1:1 mapping between partial files and locale files significantly improves maintainability by making it clear exactly where to find and update translations for each UI component. Rails lazy lookup automatically scopes partial translations under the partial name (e.g., `devise.sessions.new.header.title`), preventing key collisions and organizing translations hierarchically. Pattern scales well: simple views can use single locale file, complex views split into partials have dedicated locale files per partial. This pattern was already implemented during sessions view refactoring but not documented in constitution. Adding to constitution ensures future view refactorings follow this 1:1 pattern consistently and provides clear workflow for splitting monolithic views. This is MINOR version (new pattern requirement) because it extends existing view i18n principle with partial-specific guidance that changes how developers should organize locale files when refactoring views.
+
+---
 
 ### Version 1.18.0 - 2026-02-11
 **Type**: PATCH (Request spec organization clarification and existing spec discovery requirement)

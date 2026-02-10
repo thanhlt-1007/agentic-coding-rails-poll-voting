@@ -1,0 +1,6 @@
+en:
+  devise:
+    sessions:
+      new:
+        form_button_submit:
+          submit_button: "Log in"
