@@ -5,7 +5,6 @@ class Choice < ApplicationRecord
 
   # Validations
   validates :text, presence: true, length: { maximum: 200 }
-  validates :poll_id, presence: true
 
   # Counter cache callbacks
   after_create :update_poll_total_votes

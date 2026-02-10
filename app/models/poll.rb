@@ -7,7 +7,7 @@ class Poll < ApplicationRecord
   # Validations
   validates :question, presence: true, length: { maximum: 500 }
   validates :deadline, presence: true
-  validates :access_code, presence: true, uniqueness: true
+  validates :access_code, uniqueness: true, allow_nil: true
   validates :status, inclusion: { in: %w[active closed] }
   validate :deadline_must_be_in_future, on: :create
   validate :minimum_two_choices, on: :create

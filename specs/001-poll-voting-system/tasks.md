@@ -56,26 +56,26 @@
 
 ### Tests for User Story 1 (TDD - Write First, Ensure FAIL)
 
-- [ ] T019 [P] [US1] Create model test `test/models/poll_test.rb` with test cases: should_not_save_without_question, should_not_save_with_past_deadline, should_generate_unique_access_code, should_require_minimum_2_choices
-- [ ] T020 [P] [US1] Create model test `test/models/choice_test.rb` with test cases: should_belong_to_poll, should_validate_text_presence, should_validate_text_length_max_200
-- [ ] T021 [P] [US1] Create controller test `test/controllers/polls_controller_test.rb` with test cases: should_get_new, should_create_poll_with_valid_params, should_not_create_poll_with_invalid_params, should_redirect_to_poll_show_after_create
-- [ ] T022 [P] [US1] Create system test `test/system/create_poll_test.rb` with scenarios: creating_poll_with_valid_data, showing_validation_errors_for_invalid_poll
-- [ ] T023 [US1] Run tests to verify all FAIL (red phase), commit failing tests
+- [X] T019 [P] [US1] Create model test `test/models/poll_test.rb` with test cases: should_not_save_without_question, should_not_save_with_past_deadline, should_generate_unique_access_code, should_require_minimum_2_choices
+- [X] T020 [P] [US1] Create model test `test/models/choice_test.rb` with test cases: should_belong_to_poll, should_validate_text_presence, should_validate_text_length_max_200
+- [X] T021 [P] [US1] Create controller test `test/controllers/polls_controller_test.rb` with test cases: should_get_new, should_create_poll_with_valid_params, should_not_create_poll_with_invalid_params, should_redirect_to_poll_show_after_create
+- [X] T022 [P] [US1] Create system test `test/system/create_poll_test.rb` with scenarios: creating_poll_with_valid_data, showing_validation_errors_for_invalid_poll
+- [X] T023 [US1] Run tests to verify all FAIL (red phase), commit failing tests
 
 ### Implementation for User Story 1
 
-- [ ] T024 [P] [US1] Generate `PollsController` with actions: new, create in `app/controllers/polls_controller.rb`
-- [ ] T025 [US1] Implement `PollsController#new` to initialize `@poll = Poll.new` with 3 empty choices via `3.times { @poll.choices.build }`
-- [ ] T026 [US1] Implement `PollsController#create` with strong params (question, deadline, show_results_while_voting, choices_attributes), save poll, redirect to show on success, render new on failure
-- [ ] T027 [US1] Add `accepts_nested_attributes_for :choices, reject_if: :all_blank` in Poll model
-- [ ] T028 [US1] Create poll form view `app/views/polls/new.html.erb` with Tailwind-styled form for question, deadline (datetime_field), choices (nested fields_for), show_results_while_voting checkbox
-- [ ] T029 [P] [US1] Create form partial `app/views/polls/_form.html.erb` with poll fields, choice dynamic add/remove using Stimulus controller
-- [ ] T030 [P] [US1] Create Stimulus controller `app/javascript/controllers/poll_form_controller.js` to handle dynamic choice addition/removal
-- [ ] T031 [US1] Implement `PollsController#show` to find poll by access_code, set `@poll`, `@vote = Vote.new(poll: @poll)`, check if participant voted
-- [ ] T032 [US1] Create poll show view `app/views/polls/show.html.erb` displaying question, shareable link, time remaining, choices list
-- [ ] T033 [US1] Add helper method `shareable_poll_url` in `app/helpers/polls_helper.rb` to generate full URL with access_code
-- [ ] T034 [US1] Run all tests for US1, verify they PASS (green phase)
-- [ ] T035 [US1] Refactor code for readability, extract common validations to concerns if needed
+- [X] T024 [P] [US1] Generate `PollsController` with actions: new, create in `app/controllers/polls_controller.rb`
+- [X] T025 [US1] Implement `PollsController#new` to initialize `@poll = Poll.new` with 3 empty choices via `3.times { @poll.choices.build }`
+- [X] T026 [US1] Implement `PollsController#create` with strong params (question, deadline, show_results_while_voting, choices_attributes), save poll, redirect to show on success, render new on failure
+- [X] T027 [US1] Add `accepts_nested_attributes_for :choices, reject_if: :all_blank` in Poll model
+- [X] T028 [US1] Create poll form view `app/views/polls/new.html.erb` with Tailwind-styled form for question, deadline (datetime_field), choices (nested fields_for), show_results_while_voting checkbox
+- [X] T029 [P] [US1] Create form partial `app/views/polls/_form.html.erb` with poll fields, choice dynamic add/remove using Stimulus controller
+- [X] T030 [P] [US1] Create Stimulus controller `app/javascript/controllers/poll_form_controller.js` to handle dynamic choice addition/removal
+- [X] T031 [US1] Implement `PollsController#show` to find poll by access_code, set `@poll`, `@vote = Vote.new(poll: @poll)`, check if participant voted
+- [X] T032 [US1] Create poll show view `app/views/polls/show.html.erb` displaying question, shareable link, time remaining, choices list
+- [X] T033 [US1] Add helper method `shareable_poll_url` in `app/helpers/polls_helper.rb` to generate full URL with access_code
+- [X] T034 [US1] Run all tests for US1, verify they PASS (green phase)
+- [X] T035 [US1] Refactor code for readability, extract common validations to concerns if needed
 
 **Checkpoint**: Poll creator can create poll with question, choices, deadline, receive shareable link. Tests pass.
 
