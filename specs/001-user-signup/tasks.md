@@ -32,7 +32,7 @@
 - [X] T003 Run devise installation generator: rails generate devise:install
 - [X] T004 Review and configure config/initializers/devise.rb settings
 - [X] T005 [P] Configure default URL options in config/environments/development.rb
-- [ ] T006 [P] Verify root route exists or create placeholder in config/routes.rb
+- [X] T006 [P] Verify root route exists or create placeholder in config/routes.rb
 
 ---
 
