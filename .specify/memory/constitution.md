@@ -1,32 +1,44 @@
 <!--
 SYNC IMPACT REPORT - Constitution Update
 ========================================
-Version Change: 1.7.0 → 1.8.0
-Type: MINOR (Commit message format - spec and task number prefixes)
+Version Change: 1.8.0 → 1.9.0
+Type: MINOR (Error handling and validation UX principle)
 
 Modified Principles: None
-Modified Sections: 
-  - Workflow section (Development Standards): Added commit message prefix requirement
+Added Principles:
+  - VI. User-Centric Error Handling & Validation UX
 
 Added Requirements:
-  - Commit messages MUST include [specs#xxx][tasks#yyy] prefix for spec-related work
+  - Validation error display requirements (inline field errors, visual indicators, notifications)
+  - Tailwind Notifications pattern for form errors (fixed top-right position)
+  - Inline field error messages directly below invalid inputs
+  - Red border and icon highlighting for invalid fields
+  - Error text color constraints for Tailwind v4 compatibility
+  - Consistent error patterns across all forms
+  - Progressive enhancement requirement (errors work without JavaScript)
+  - Tailwind v4 color utility verification requirement
 
-Rationale: 
-  Standardized commit message prefixes enable automated tooling to track which commits
-  correspond to specific spec tasks. The format [specs#xxx][tasks#yyy] creates explicit
-  traceability between commits and their corresponding specifications/tasks, improving
-  git history readability, enabling automated spec-completion verification, and facilitating
-  audit trails for feature implementation. This complements existing conventional commit
-  format requirements while adding spec/task context.
+Rationale:
+  Recent user signup form improvements demonstrated need for standardized error handling
+  across all application forms. Inconsistent error feedback creates poor UX and increases
+  user frustration. This principle codifies the pattern: (1) top-right notification for
+  global error summary, (2) inline field errors for actionable feedback, (3) visual
+  indicators (red borders/icons) for immediate recognition. The pattern balances visibility
+  with usability, following Tailwind UI best practices. Tailwind v4's on-demand class
+  generation requires explicit color utility verification to prevent black-rendering bugs
+  (e.g., text-red-600 not generated, falls back to currentColor/black).
 
 Template Consistency Status:
-  ✅ plan-template.md - No changes required
-  ✅ spec-template.md - No changes required
-  ✅ tasks-template.md - No changes required (task-based workflow already implicit)
-  ✅ README.md - No changes required
+  ✅ plan-template.md - No changes required (form error handling not in planning phase)
+  ✅ spec-template.md - Will add validation UX requirements to UI section template
+  ✅ tasks-template.md - Will add error handling tasks to form implementation checklist
+  ⚠️  README.md - Consider adding UX standards section referencing constitution
   ✅ .env.example - No changes required
 
-Follow-up TODOs: None
+Follow-up TODOs:
+  - TODO(spec-template): Add "Validation & Error Handling" subsection to UI Requirements
+  - TODO(tasks-template): Add "T0XX: Implement form validation with error feedback" task pattern
+  - TODO(README): Consider adding "UX Standards" section linking to constitution principle VI
 -->
 
 # Rails Poll Voting Constitution
@@ -115,6 +127,60 @@ Start with the simplest solution that works. Complexity requires explicit justif
 - Background job complexity beyond simple enqueue/perform
 
 **Rationale**: Simple code is maintainable code. Rails' sweet spot is conventional applications; fighting the framework creates maintenance debt.
+
+### VI. User-Centric Error Handling & Validation UX
+
+All forms and user inputs MUST provide clear, actionable error feedback following established UX patterns:
+
+**Validation Error Display Requirements**:
+- **Inline field errors**: Display error messages directly below invalid input fields
+- **Visual indicators**: Highlight invalid fields with red border (`border-red-500`)
+- **Icon feedback**: Change field icons to red when validation fails (`text-red-400`)
+- **Error text color**: Use Tailwind red variants available in v4 (`text-red-700`, not `text-red-600`)
+- **Focus state consistency**: Invalid fields maintain red border on focus (no color switching)
+- **No focus ring overlap**: Remove `focus:ring-2` on error states to prevent black ring fallback
+
+**Notification Pattern** (Tailwind Notifications style):
+- **Position**: Fixed top-right corner (`fixed top-4 right-4 z-50`)
+- **Summary message**: Display error count and resource name (e.g., "1 error prohibited this user from being saved")
+- **Error list**: Show up to 3 specific errors in notification; full list via inline field errors
+- **Dismissible**: Include close button with accessible label (`sr-only`)
+- **Visual hierarchy**: 
+  - Warning icon (red) for error notifications
+  - White background with ring shadow (`ring-1 ring-black ring-opacity-5`)
+  - Professional spacing and typography
+
+**Implementation Standards**:
+```erb
+<!-- Top-right notification for form errors -->
+<% if resource.errors.any? %>
+  <div class="fixed top-4 right-4 z-50 max-w-md">
+    <div class="bg-white rounded-lg shadow-lg pointer-events-auto ring-1 ring-black ring-opacity-5">
+      <!-- Error summary with dismissible close button -->
+    </div>
+  </div>
+<% end %>
+
+<!-- Inline field error example -->
+<%= f.email_field :email,
+    class: "#{resource.errors[:email].any? ? 'border-red-500 focus:border-red-500' : 'border-gray-300 focus:ring-indigo-500 focus:ring-2'}" %>
+<% if resource.errors[:email].any? %>
+  <p class="mt-1 text-sm text-red-700"><%= resource.errors[:email].first %></p>
+<% end %>
+```
+
+**Consistency Requirements**:
+- All forms (authentication, resource creation/editing) use identical error pattern
+- Flash messages for non-form errors (login failures, authorization) use layout notification area
+- Progressive enhancement: errors work without JavaScript
+- Server-side validation primary; client-side optional enhancement only
+
+**Tailwind v4 Color Constraints**:
+- ONLY use red variants that exist in generated CSS: `text-red-400`, `text-red-500`, `text-red-700`, `text-red-800`, `border-red-500`
+- Avoid `text-red-600` (not generated in Tailwind v4, renders as black)
+- Check `app/assets/builds/tailwind.css` for available color utilities before use
+
+**Rationale**: Consistent, clear error feedback reduces user frustration and form abandonment. Inline field errors provide immediate, actionable guidance at the point of error. Top-right notifications give global context without blocking form content. This pattern balances visibility with usability, following established UX best practices from Tailwind UI and modern web applications. Tailwind v4's on-demand class generation requires explicit verification of color utility availability to prevent styling bugs.
 
 ## Technology Stack
 
@@ -238,11 +304,35 @@ This constitution supersedes all ad-hoc practices. When in doubt, constitution r
 - Template commands reference constitution for validation gates
 - Onboarding checklist includes constitution review
 
-**Current Version**: 1.8.0 | **Ratified**: 2026-02-10 | **Last Amended**: 2026-02-10
+**Current Version**: 1.9.0 | **Ratified**: 2026-02-10 | **Last Amended**: 2026-02-10
 
 ---
 
 ## Version History
+
+### Version 1.9.0 - 2026-02-10
+**Type**: MINOR (Error handling and validation UX principle)
+
+**Changes**:
+- Added new principle: VI. User-Centric Error Handling & Validation UX
+- Established validation error display requirements:
+  - Inline field errors directly below invalid inputs
+  - Visual indicators: red borders (`border-red-500`), red icons (`text-red-400`)
+  - Error text using Tailwind v4 compatible colors (`text-red-700`)
+  - Consistent focus states (red border maintained, no black ring fallback)
+- Defined Tailwind Notifications pattern for form errors:
+  - Fixed top-right position (`fixed top-4 right-4 z-50`)
+  - Error summary with count and resource name
+  - Dismissible close button with accessible labels
+  - Professional styling with ring shadow
+- Added implementation standards with ERB code examples
+- Specified Tailwind v4 color constraints (avoid `text-red-600`, use available variants only)
+- Required progressive enhancement (errors work without JavaScript)
+- Mandated consistency across all forms (authentication, resource CRUD)
+
+**Rationale**: User signup form improvements revealed need for standardized error handling pattern. Inconsistent error feedback creates poor UX and increases user frustration. This principle codifies: (1) top-right notification for global context, (2) inline field errors for actionable guidance, (3) visual indicators for immediate recognition. Pattern follows Tailwind UI best practices and modern web application standards. Tailwind v4's on-demand class generation requires explicit color utility verification to prevent styling bugs (e.g., `text-red-600` not generated, renders as black).
+
+---
 
 ### Version 1.8.0 - 2026-02-10
 **Type**: MINOR (Commit message format - spec and task number prefixes)
