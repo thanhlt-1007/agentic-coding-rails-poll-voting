@@ -6,4 +6,8 @@ module ErrorHelper
 
     content_tag(:p, resource.errors[field].first, class: "mt-1 text-sm text-red-700")
   end
+
+  def field_icon_color(resource, field)
+    resource.errors[field].any? ? 'text-red-400' : 'text-gray-400'
+  end
 end
