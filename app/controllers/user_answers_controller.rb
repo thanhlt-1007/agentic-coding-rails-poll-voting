@@ -2,7 +2,7 @@
 
 class UserAnswersController < ApplicationController
   before_action :authenticate_user!
-  before_action :set_poll
+  before_action :authenticate_poll!
 
   def create
     @user_answer = current_user.user_answers.build(user_answer_params)
@@ -17,8 +17,24 @@ class UserAnswersController < ApplicationController
 
   private
 
-  def set_poll
-    @poll = Poll.find(params[:poll_id])
+  def authenticate_poll!
+    # Find poll that belongs to other users only
+    @poll = Poll.where.not(user_id: current_user.id).find_by(id: params[:poll_id])
+    
+    unless @poll
+      redirect_to polls_path, alert: t("user_answers.create.errors.poll_not_found")
+      return
+    end
+    
+    if @poll.deadline <= Time.current
+      redirect_to polls_path, alert: t("user_answers.create.errors.poll_expired")
+      return
+    end
+    
+    if current_user.user_answers.exists?(poll_id: @poll.id)
+      redirect_to poll_path(@poll), alert: t("user_answers.create.errors.poll_answered")
+      return
+    end
   end
 
   def user_answer_params

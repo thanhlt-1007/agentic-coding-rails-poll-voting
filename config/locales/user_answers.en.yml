@@ -3,3 +3,7 @@ en:
     create:
       success: "Your answer has been saved successfully."
       error: "Failed to save your answer: %{errors}"
+      errors:
+        poll_not_found: "Poll not found."
+        poll_expired: "This poll has expired and is no longer accepting votes."
+        poll_answered: "You have already answered this poll."

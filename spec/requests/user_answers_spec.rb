@@ -63,10 +63,9 @@ RSpec.describe 'POST /polls/:poll_id/user_answers', type: :request do
       expect(response).to redirect_to(poll_path(poll))
     end
 
-    it 'shows error message' do
+    it 'shows "already answered" error message' do
       post poll_user_answers_path(poll), params: { user_answer: { answer_id: poll.answers.second.id } }
-      follow_redirect!
-      expect(response.body).to include('Failed to save your answer')
+      expect(flash[:alert]).to eq('You have already answered this poll.')
     end
   end
 
@@ -96,4 +95,67 @@ RSpec.describe 'POST /polls/:poll_id/user_answers', type: :request do
       expect(response).to redirect_to(new_user_session_path)
     end
   end
+
+  describe 'when poll does not exist' do
+    it 'redirects to polls index with error message' do
+      post "/polls/999999/user_answers", params: { user_answer: { answer_id: answer.id } }
+      expect(response).to redirect_to(polls_path)
+      expect(flash[:alert]).to eq('Poll not found.')
+    end
+  end
+
+  describe 'when poll belongs to current user' do
+    let(:own_poll) { create(:poll, :with_answers, user: user) }
+
+    it 'redirects to polls index with error message' do
+      post poll_user_answers_path(own_poll), params: { user_answer: { answer_id: own_poll.answers.first.id } }
+      expect(response).to redirect_to(polls_path)
+      expect(flash[:alert]).to eq('Poll not found.')
+    end
+
+    it 'does not create a user answer' do
+      expect {
+        post poll_user_answers_path(own_poll), params: { user_answer: { answer_id: own_poll.answers.first.id } }
+      }.not_to change(UserAnswer, :count)
+    end
+  end
+
+  describe 'when poll is expired' do
+    let(:expired_poll) do
+      poll = build(:poll, :with_answers, user: other_user, deadline: 1.day.ago)
+      poll.save(validate: false)
+      poll
+    end
+
+    it 'redirects to polls index with error message' do
+      post poll_user_answers_path(expired_poll), params: { user_answer: { answer_id: expired_poll.answers.first.id } }
+      expect(response).to redirect_to(polls_path)
+      expect(flash[:alert]).to eq('This poll has expired and is no longer accepting votes.')
+    end
+
+    it 'does not create a user answer' do
+      expect {
+        post poll_user_answers_path(expired_poll), params: { user_answer: { answer_id: expired_poll.answers.first.id } }
+      }.not_to change(UserAnswer, :count)
+    end
+  end
+
+  describe 'when user has already answered the poll' do
+    before do
+      UserAnswer.create!(user: user, poll: poll, answer: answer)
+    end
+
+    it 'redirects to poll page with error message' do
+      post poll_user_answers_path(poll), params: { user_answer: { answer_id: poll.answers.second.id } }
+      expect(response).to redirect_to(poll_path(poll))
+      expect(flash[:alert]).to eq('You have already answered this poll.')
+    end
+
+    it 'does not create a duplicate answer' do
+      expect {
+        post poll_user_answers_path(poll), params: { user_answer: { answer_id: poll.answers.second.id } }
+      }.not_to change(UserAnswer, :count)
+    end
+  end
 end
+
